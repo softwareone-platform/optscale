@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, type FC, type ReactNode } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useForm, type SubmitHandler, FormProvider, useFieldArray } from "react-hook-form";
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, useIntl } from "react-intl";
 import { FIELD_NAMES } from "@main/components/forms/InviteEmployeesForm/constants";
 import { AdditionalRolesFieldArray } from "@main/components/forms/InviteEmployeesForm/FormElements";
 import {
@@ -12,11 +12,11 @@ import {
   Invitation,
   InviteEmployeesFormProps
 } from "@main/components/forms/InviteEmployeesForm/types";
-import Button from "components/Button";
-import ButtonLoader from "components/ButtonLoader";
+import ButtonBase from "components/Button";
+import ButtonLoaderBase from "components/ButtonLoader";
 import Chip from "components/Chip";
 import FormButtonsWrapper from "components/FormButtonsWrapper";
-import Input from "components/Input";
+import InputBase from "components/Input";
 import { useOrganizationActionRestrictions } from "hooks/useOrganizationActionRestrictions";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { intl } from "translations/react-intl-config";
@@ -25,6 +25,31 @@ import { SCOPE_TYPES, EMAIL_MAX_LENGTH, MANAGER, ORGANIZATION_MANAGER } from "ut
 import { SPACING_1 } from "utils/layouts";
 import { removeKey } from "utils/objects";
 import { emailRegex, splitInvites } from "utils/strings";
+
+const Input = InputBase as unknown as FC<{
+  value?: string;
+  defaultValue?: string;
+  label?: ReactNode;
+  type?: string;
+  dataTestId?: string;
+  multiline?: boolean;
+  required?: boolean;
+  error?: boolean;
+  helperText?: ReactNode;
+  InputProps?: Record<string, unknown>;
+  [key: string]: unknown;
+}>;
+const Button = ButtonBase as unknown as FC<{ messageId: string; dataTestId?: string; onClick?: () => void }>;
+const ButtonLoader = ButtonLoaderBase as unknown as FC<{
+  messageId: string;
+  dataTestId?: string;
+  color?: string;
+  variant?: string;
+  type?: string;
+  disabled?: boolean;
+  tooltip?: { show: boolean; value?: string };
+  isLoading?: boolean;
+}>;
 
 const ADDITIONAL_ROLES = "additionalRoles";
 
@@ -45,6 +70,8 @@ const getEmailInvitations = (
 };
 
 const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProps = {} }: InviteEmployeesFormProps) => {
+  const localizedIntl = useIntl();
+
   const { isRestricted, restrictionReasonMessage } = useOrganizationActionRestrictions();
 
   const { isCreateInvitationsLoading = false, isGetAvailablePoolsLoading = false } = isLoadingProps;
@@ -100,7 +127,8 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
           InputProps={{
             readOnly: true
           }}
-          defaultValue={intl.formatMessage({ id: "member" })}
+          // Controlled and read through the hook-obtained intl — see `localizedIntl` note above.
+          value={localizedIntl.formatMessage({ id: "member" })}
           label={<FormattedMessage id="role" />}
           type="text"
           dataTestId="input_role"
@@ -196,12 +224,14 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
               return deleteEmail(first);
             }
           }
-          const email = event.target.value;
+          // Autocomplete's `onChange` types `event.target` as `EventTarget`, which has no `value`.
+          // In this path the event is a change from the input; cast to the DOM shape upstream uses.
+          const email = (event.target as HTMLInputElement).value;
           return handleEmailsChange(email);
         }}
         onClose={(event, reason) => {
           if (reason === "blur") {
-            const email = event.target.value;
+            const email = (event.target as HTMLInputElement).value;
             if (email) {
               return handleEmailsChange(email);
             }
@@ -210,7 +240,10 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
         }}
         renderTags={(value, getTagProps) =>
           value.map((option, index) => (
+            // `getTagProps` returns its own `key`, so spread first and let our explicit `key`
+            // win. `removeKey` still drops `onDelete` since we provide our own handler.
             <Chip
+              {...removeKey(getTagProps({ index }), "onDelete")}
               onDelete={() => deleteEmail(option)}
               key={option}
               size="small"
@@ -220,7 +253,6 @@ const InviteEmployeesForm = ({ availablePools, onSubmit, onCancel, isLoadingProp
                 chip: `chip_${index}`,
                 deleteIcon: `chip_btn_close_${index}`
               }}
-              {...removeKey(getTagProps({ index }), "onDelete")}
             />
           ))
         }

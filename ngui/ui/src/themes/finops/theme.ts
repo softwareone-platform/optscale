@@ -4,7 +4,7 @@
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import { common } from "@mui/material/colors";
-import { createTheme, alpha, darken, lighten } from "@mui/material/styles";
+import { createTheme, alpha, darken, lighten, type Theme } from "@mui/material/styles";
 import { isEmptyArray } from "utils/arrays";
 import { customResponsiveFontSizes } from "utils/fonts";
 import { isEmptyObject } from "utils/objects";
@@ -922,7 +922,12 @@ const getThemeConfig = (settings = {}) => {
           h6: {
             color: "black",
             fontSize: "24px"
-          }
+          },
+          body2: ({ theme }: { theme: Theme }) => ({
+            "&[disabled]": {
+              color: theme.palette.text.disabled
+            }
+          })
         },
         variants: [
           {
