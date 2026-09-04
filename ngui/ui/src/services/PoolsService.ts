@@ -9,7 +9,7 @@ import {
   RESTAPI,
   createPool as createPoolApi,
   updatePool as updatePoolApi,
-  getPoolOwners,
+  getPoolOwners
 } from "api";
 import { GET_POOL_ALLOWED_ACTIONS } from "api/auth/actionTypes";
 import {
@@ -61,7 +61,7 @@ export const dataMocked = {
       parent_id: MOCKED_ORGANIZATION_POOL_ID,
       forecast: 1102.04,
       limit: 15000,
-      purpose: "business_unit",
+      purpose: "business_unit"
     },
     {
       name: "Engineering",
@@ -77,7 +77,7 @@ export const dataMocked = {
       parent_id: MOCKED_ORGANIZATION_POOL_ID,
       forecast: 39351.96,
       limit: 50000,
-      purpose: "business_unit",
+      purpose: "business_unit"
     },
     {
       name: "Operations",
@@ -93,7 +93,7 @@ export const dataMocked = {
       parent_id: MOCKED_ORGANIZATION_POOL_ID,
       forecast: 9037.68,
       limit: 15000,
-      purpose: "asset_pool",
+      purpose: "asset_pool"
     },
     {
       name: "QA",
@@ -109,7 +109,7 @@ export const dataMocked = {
       parent_id: "7112961c-1225-4022-b529-029bfaee8e07",
       forecast: 3861.77,
       limit: 1800,
-      purpose: "team",
+      purpose: "team"
     },
     {
       name: "Ops",
@@ -125,7 +125,7 @@ export const dataMocked = {
       parent_id: "7112961c-1225-4022-b529-029bfaee8e07",
       forecast: 34632.99,
       limit: 30000,
-      purpose: "cicd",
+      purpose: "cicd"
     },
     {
       name: "Dev",
@@ -141,7 +141,7 @@ export const dataMocked = {
       parent_id: "7112961c-1225-4022-b529-029bfaee8e07",
       forecast: 857.2,
       limit: 500,
-      purpose: "team",
+      purpose: "team"
     },
     {
       name: "Release 3.4",
@@ -157,7 +157,7 @@ export const dataMocked = {
       parent_id: "ad70fb29-3ef7-4bc2-8ed1-6110df0bcca6",
       forecast: 0,
       limit: 1000,
-      purpose: "project",
+      purpose: "project"
     },
     {
       name: "Release 3.5",
@@ -173,9 +173,9 @@ export const dataMocked = {
       parent_id: "ad70fb29-3ef7-4bc2-8ed1-6110df0bcca6",
       forecast: 0,
       limit: 500,
-      purpose: "project",
-    },
-  ],
+      purpose: "project"
+    }
+  ]
 };
 
 export const useGetAvailablePools = (params) => {
@@ -183,7 +183,7 @@ export const useGetAvailablePools = (params) => {
   const { organizationId } = useOrganizationInfo();
 
   const {
-    apiData: { pools = [] },
+    apiData: { pools = [] }
   } = useApiData(GET_AVAILABLE_POOLS);
 
   const { isLoading, shouldInvoke, isDataReady } = useApiState(GET_AVAILABLE_POOLS, { ...params, organizationId });
@@ -220,14 +220,14 @@ const useGet = ({ withPoolDetails = true, withPoolChildren = true } = {}) => {
   const dispatch = useDispatch();
 
   const {
-    apiData: { pool: data = {} },
+    apiData: { pool: data = {} }
   } = useApiData(GET_POOL);
 
   // TODO - details: true is temporary, remove it and fix the root cause NGUI-1055
   const { isLoading, shouldInvoke, isDataReady } = useApiState(GET_POOL, {
     poolId: organizationPoolId,
     children: withPoolChildren,
-    details: withPoolDetails,
+    details: withPoolDetails
   });
 
   const { isLoading: isGetPoolAllowedActionsLoading } = useApiState(GET_POOL_ALLOWED_ACTIONS);
@@ -311,7 +311,7 @@ const useUpdatePool = () => {
           id: poolId,
           parentId: parentPoolId,
           limit: parseFloat(limit),
-          defaultOwnerId,
+          defaultOwnerId
         };
         dispatch((_, getState) => {
           dispatch(
@@ -321,7 +321,7 @@ const useUpdatePool = () => {
                     ...defaultParameters,
                     name,
                     type: poolType,
-                    autoExtension,
+                    autoExtension
                   }
                 : defaultParameters
             )
@@ -357,7 +357,7 @@ const useGetPoolOwners = (
   }, [dispatch, shouldInvoke, poolId, excludeMyself]);
 
   const {
-    apiData: { poolOwners = [] },
+    apiData: { poolOwners = [] }
   } = useApiData(GET_POOL_OWNERS);
 
   return { poolOwners, isLoading, isDataReady };

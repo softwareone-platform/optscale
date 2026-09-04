@@ -1,0 +1,236 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 0px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-bottom: 10px; padding-top: 10px; padding-left: 0px; padding-right: 20px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                Some of the resources you own violate their constraints or have constraints different from Pool Constraints Policy.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pad" style="padding-bottom: 15px; padding-top: 10px; padding-left: 0px; padding-right: 20px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                <strong>Resource constraint violations</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pad" style="padding-bottom: 25px; padding-top: 10px;  padding-right: 20px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                <strong>{{texts.total_violated}}</strong> new constraints violations
+                                                have been detected for your resources:
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Table header -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="40%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 0px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
+                                        <span style="font-size: 16px">
+                                          <strong>Resource</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="40%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 20px; padding-top: 0px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
+                                        <span style="font-size: 16px">
+                                          <strong>Pool</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="20%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 20px; padding-top: 0px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="margin: 0; font-size: 16px; text-align: left; mso-line-height-alt: 21px">
+                                        <span style="font-size: 16px">
+                                          <strong>Type</strong>
+                                        </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Table -->
+{% for resource in texts.violated_resources %}
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="40%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 5px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+
+                                            <a href="https://{{etcd.control_panel_link}}/resources/{{resource.resource_id}}{{texts.control_panel_parameters}}&tab=constraints"
+                                               target="_blank" rel="noopener">{{resource.cloud_resource_id}}</a>
+                                            </p>
+                                            <p style="font-size:13px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                               {{resource.resource_name}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="40%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 10px; padding-top: 5px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+
+                                            <a href="https://{{etcd.control_panel_link}}/pools/{{resource.pool_id}}{{texts.control_panel_parameters}}"
+                                               target="_blank" rel="noopener">{{resource.pool_name}}</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="20%"
+                        style="padding-left: 16px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 10px; padding-right: 10px; padding-top: 5px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                {{resource.type}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endfor %}
+
+{% set gotoLink = 'https://' + etcd.control_panel_link + '/resource-lifecycle' + texts.control_panel_parameters + '&tab=resourceConstraints' %}
+{% include 'partials/goto_button.html' %}
+
+{% endblock %}

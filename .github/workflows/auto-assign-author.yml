@@ -11,6 +11,8 @@ jobs:
       pull-requests: write
       issues: write  # Required because assignees API works via issues 
       contents: read # Minimal read access to repository contents
+      issues: write  # Required because assignees API works via issues 
+      contents: read # Minimal read access to repository contents
 
     steps:
       - name: Assign PR author
