@@ -16,19 +16,14 @@ def _normalize_cloud_type(value):
 DataSourceType = Annotated[CloudTypes, BeforeValidator(_normalize_cloud_type)]
 
 
-class DataSourceBase(BaseSchema):
+class DataSourceBase(IdSchema, BaseSchema):
     name: Annotated[str, Field(examples=["Adobe subscription"])]
     type: DataSourceType
     account_id: Annotated[str | None, Field(examples=["203589795269"])] = None
 
 
-class DataSourceReference(IdSchema):
-    name: Annotated[str, Field(examples=["Adobe subscription"])]
-    type: DataSourceType
-
-
-class DataSourceRead(IdSchema, DataSourceBase):
-    parent: DataSourceReference | None = None
+class DataSourceRead(DataSourceBase):
+    parent: DataSourceBase | None = None
     tags: list[TagRef] = []
 
 
