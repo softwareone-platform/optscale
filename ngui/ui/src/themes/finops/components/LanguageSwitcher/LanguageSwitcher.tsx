@@ -10,8 +10,8 @@ import { useLocaleContext } from "contexts/LocaleContext";
 import { type SupportedLocale as ContextLocale } from "translations/localeManager";
 import { LOCALE_FLAGS } from "./localeFlags";
 
-const TRIGGER_FLAG_SIZE = 24;
-const MENU_FLAG_SIZE = 28;
+const TRIGGER_FLAG_SIZE = 18;
+const MENU_FLAG_SIZE = 18;
 
 const LocaleFlag = ({ locale, size }: { locale: SupportedLocale; size: number }) => (
   <Avatar src={LOCALE_FLAGS[locale]} alt="" sx={{ width: size, height: size, border: 1, borderColor: "divider" }} />
