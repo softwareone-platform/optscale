@@ -187,6 +187,10 @@ class DataSource(Base):
     )
     organization: Mapped["Organization"] = relationship(back_populates="cloudaccounts")
     account_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    last_import_at: Mapped[int] = mapped_column(Integer)
+    last_import_modified_at: Mapped[int] = mapped_column(Integer)
+    last_import_attempt_at: Mapped[int] = mapped_column(Integer)
+    last_import_attempt_error: Mapped[str | None] = mapped_column(Text, nullable=True)
     parent_id: Mapped[str | None] = mapped_column(
         String(36),
         ForeignKey(f"{DB_SCHEMA}.cloudaccount.id"),
