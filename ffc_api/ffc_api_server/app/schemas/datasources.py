@@ -25,6 +25,10 @@ class DataSourceBase(IdSchema, BaseSchema):
 class DataSourceRead(DataSourceBase):
     parent: DataSourceBase | None = None
     tags: list[TagRef] = []
+    last_import_at: int
+    last_import_modified_at: int
+    last_import_attempt_at: int
+    last_import_attempt_error: str | None
 
 
 class DataSourceWithExpenses(DataSourceRead):
