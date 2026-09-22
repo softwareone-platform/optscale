@@ -30,8 +30,14 @@ while IFS= read -r -d '' dockerfile; do
         continue
     fi    
 
+    # Path to the uv.lock file, if the module is managed with uv
+    uv_lock="$(dirname "$dockerfile")/uv.lock"
+    if [[ ! -f "$uv_lock" ]]; then
+        uv_lock=""
+    fi
+
     # Escape values for JSON
-    entries+=("{\"name\": \"${component}\", \"dockerfile\": \"${dockerfile}\"}")
+    entries+=("{\"name\": \"${component}\", \"dockerfile\": \"${dockerfile}\", \"uv_path\": \"${uv_lock}\"}")
 done < <(find . -mindepth 2 -maxdepth 3 -type f -name 'Dockerfile' ! -name '*test*' ! -name '*.j2' -print0)
 
 # Join entries with comma
