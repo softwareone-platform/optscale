@@ -91,13 +91,12 @@ jobs:
     - name: Generate SBOM
       run: uv tool run --from cyclonedx-bom cyclonedx-py environment "$(dirname "${{ matrix.uv_path }}")/.venv" > sbom.json
     - name: Upload SBOM
-      uses: DependencyTrack/gh-upload-sbom@v3
+      uses: DependencyTrack/gh-upload-sbom@v4
       with:
-        serverHostname: 'dependency-track.s1.team'
+        server-hostname: 'dependency-track.s1.team'
         protocol: 'https'
-        apiKey: ${{ secrets.DEPENDENCYTRACK_APIKEY }}
-        projectName: 'optscale-${{ matrix.name }}'
-        projectVersion: ${{ needs.prepare.outputs.major_version }}
-        parentName: 'optscale'
-        bomFilename: "sbom.json"
-        autoCreate: true
+        api-key: ${{ secrets.DEPENDENCYTRACK_APIKEY }}
+        project-name: 'optscale-${{ matrix.name }}'
+        project-version: ${{ needs.prepare.outputs.major_version }}
+        bom-filename: "sbom.json"
+        auto-create: true
