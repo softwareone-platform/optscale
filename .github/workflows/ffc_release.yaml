@@ -13,7 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      sbom_matrix: ${{ steps.set-sbom-matrix.outputs.sbom_matrix }}
       build_tag: ${{ steps.get-build-tag.outputs.build_tag }}
+      major_version: ${{ steps.get-build-tag.outputs.major_version }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -24,9 +26,17 @@ jobs:
     - id: set-matrix
       name: Read module.json into matrix
       run: echo "matrix=$(cat modules.json)" >> $GITHUB_OUTPUT
+    - id: set-sbom-matrix
+      name: Read uv managed modules into the SBOM matrix
+      run: |
+        echo "sbom_matrix=$(jq -c '{include: [.include[] | select(.uv_path != "")]}' modules.json)" >> $GITHUB_OUTPUT
     - name: 'Get the version'
       id: get-build-tag
-      run: echo "build_tag=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+      run: |
+        BUILD_TAG="${GITHUB_REF/refs\/tags\//}"
+        MAJOR_VERSION="${BUILD_TAG#v}"
+        echo "build_tag=${BUILD_TAG}" >> $GITHUB_OUTPUT
+        echo "major_version=${MAJOR_VERSION%%.*}" >> $GITHUB_OUTPUT
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
   build:
@@ -60,3 +70,33 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
     - name: Docker image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
+  dtrack:
+    needs: prepare
+    runs-on: ubuntu-latest
+    name: Generate and upload SBOM
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.sbom_matrix) }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+    - name: Install module dependencies
+      run: uv sync --frozen --no-dev --project "$(dirname "${{ matrix.uv_path }}")"
+    - name: Install cyclonedx-bom
+      run: uv tool install cyclonedx-bom
+    - name: Generate SBOM
+      run: uv tool run --from cyclonedx-bom cyclonedx-py environment "$(dirname "${{ matrix.uv_path }}")/.venv" > sbom.json
+    - name: Upload SBOM
+      uses: DependencyTrack/gh-upload-sbom@v4
+      with:
+        server-hostname: 'dependency-track.s1.team'
+        protocol: 'https'
+        api-key: ${{ secrets.DEPENDENCYTRACK_APIKEY }}
+        project-name: 'optscale-${{ matrix.name }}'
+        project-version: ${{ needs.prepare.outputs.major_version }}
+        bom-filename: "sbom.json"
+        auto-create: true
