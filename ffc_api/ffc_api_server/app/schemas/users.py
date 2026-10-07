@@ -57,4 +57,6 @@ class UserRead(IdSchema, UserBase):
     @computed_field  # type: ignore[misc]
     @property
     def roles(self) -> int:
+        if self.auth_user is None:
+            return 0
         return len(self.auth_user.assignments)

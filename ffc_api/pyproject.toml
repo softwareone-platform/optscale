@@ -5,7 +5,7 @@ readme = { file = "README.md", content-type = "text/markdown" }
 authors = [
     { name = "SoftwareOne AG" },
 ]
-requires-python = ">=3.12,<4"
+requires-python = ">=3.12.11,<3.13"
 dependencies = [
     "aiofiles>=24.1.0,<25",
     "alembic>=1.14.1,<2",
@@ -44,6 +44,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "asgi-lifespan>=2.1.0,<3.0",
+    "aiosqlite>=0.21.0,<1.0",
     "bandit>=1.8.0,<2.0",
     "faker>=33.1.0,<34.0",
     "ipdb>=0.13.13,<1.0",
@@ -53,7 +54,7 @@ dev = [
     "pycodestyle>=2.14.0,<3.0",
     "pylint>=4.0.5,<5.0",
     "pytest>=8.3.3,<9.0",
-    "pytest-asyncio>=0.24.0,<1.0",
+    "pytest-asyncio>=0.26.0,<1.0",
     "pytest-capsqlalchemy>=0.2.0,<1.0",
     "pytest-cov>=6.0.0,<7.0",
     "pytest-httpx>=0.34.0,<1.0",
@@ -125,14 +126,16 @@ testpaths = "ffc_api_server/tests/"
 pythonpath = "."
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
-addopts = "--cov=ffc_api --cov-report=term-missing --cov-report=html --cov-report=xml"
+asyncio_default_test_loop_scope = "session"
+addopts = "--cov --cov-report=term-missing --cov-report=html --cov-report=xml"
 cache_dir = ".cache/pytest"
 env_override_existing_values = 1
 env_files = [".env", ".env.test"]
 
 [tool.coverage.run]
 branch = true
-source = ["ffc_api"]
+source = ["ffc_api_server/app"]
+omit = ["optscale_client/", "tools/"]
 relative_files = true
 # SQLAlchemy uses greenlets to pass context, so we need to specify this here,
 # so that the coverage is calculated correctly. 'thread' is the default value,
