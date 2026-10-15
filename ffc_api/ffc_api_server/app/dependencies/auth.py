@@ -35,3 +35,9 @@ def verify_org_permission(action: str):
         authorize(token, action, "organization", organization.id)
 
     return dependency
+
+
+def require_token(token: str | None = Depends(token_bearer)) -> str:
+    if token is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+    return token

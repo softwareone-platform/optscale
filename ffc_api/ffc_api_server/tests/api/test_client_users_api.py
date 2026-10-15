@@ -1,0 +1,121 @@
+from datetime import UTC, datetime
+
+import requests
+from ffc_api.ffc_api_server.app.db.models.optscale import Invite
+from ffc_api.ffc_api_server.tests.types import ModelFactory
+from httpx import AsyncClient
+
+REGISTRATION = {
+    "email": "peter.parker@test.org.com",
+    "display_name": "Peter Parker",
+    "password": "S3cret!",
+}
+AUTH_USER_RESPONSE = {
+    "id": "user-id",
+    "display_name": "Peter Parker",
+    "email": "peter.parker@test.org.com",
+    "created_at": 1730126521,
+    "verified": False,
+    "token": None,
+}
+
+
+async def test_register_invited_user(
+    api_client: AsyncClient, invite_factory: ModelFactory[Invite], mock_auth_client
+):
+    await invite_factory(email="peter.parker@test.org.com")
+    mock_auth_client.user_create.return_value = (201, AUTH_USER_RESPONSE)
+
+    response = await api_client.post("/client/users", json=REGISTRATION)
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["id"] == "user-id"
+    assert data["name"] == "Peter Parker"
+    mock_auth_client.user_create.assert_called_once_with(
+        email="peter.parker@test.org.com",
+        password="S3cret!",
+        display_name="Peter Parker",
+        verified=False,
+    )
+
+
+async def test_register_email_case_insensitively(
+    api_client: AsyncClient, invite_factory: ModelFactory[Invite], mock_auth_client
+):
+    await invite_factory(email="Peter.Parker@Test.Org.com")
+    mock_auth_client.user_create.return_value = (201, AUTH_USER_RESPONSE)
+
+    response = await api_client.post("/client/users", json=REGISTRATION)
+
+    assert response.status_code == 201
+
+
+async def test_register_no_invitation(api_client: AsyncClient, mock_auth_client):
+    response = await api_client.post("/client/users", json=REGISTRATION)
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "No invitation found for email peter.parker@test.org.com."
+    mock_auth_client.user_create.assert_not_called()
+
+
+async def test_register_expired_invitation(
+    api_client: AsyncClient, invite_factory: ModelFactory[Invite], mock_auth_client
+):
+    expired = int(datetime.now(UTC).timestamp()) - 60
+    await invite_factory(email="peter.parker@test.org.com", ttl=expired)
+
+    response = await api_client.post("/client/users", json=REGISTRATION)
+
+    assert response.status_code == 400
+    mock_auth_client.user_create.assert_not_called()
+
+
+async def test_register_deleted_invitation(
+    api_client: AsyncClient, invite_factory: ModelFactory[Invite], mock_auth_client
+):
+    await invite_factory(email="peter.parker@test.org.com", deleted_at=1700000000)
+
+    response = await api_client.post("/client/users", json=REGISTRATION)
+
+    assert response.status_code == 400
+    mock_auth_client.user_create.assert_not_called()
+
+
+async def test_register_propagates_auth_errors(
+    api_client: AsyncClient,
+    invite_factory: ModelFactory[Invite],
+    mock_auth_client,
+    optscale_http_error,
+):
+    await invite_factory(email="peter.parker@test.org.com")
+    mock_auth_client.user_create.side_effect = optscale_http_error(409, "User already exists")
+
+    response = await api_client.post("/client/users", json=REGISTRATION)
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "User already exists"
+
+
+async def test_register_auth_unreachable(
+    api_client: AsyncClient, invite_factory: ModelFactory[Invite], mock_auth_client
+):
+    await invite_factory(email="peter.parker@test.org.com")
+    mock_auth_client.user_create.side_effect = requests.exceptions.ConnectionError("refused")
+
+    response = await api_client.post("/client/users", json=REGISTRATION)
+
+    assert response.status_code == 400
+
+
+async def test_register_does_not_require_authentication(
+    api_client: AsyncClient, invite_factory: ModelFactory[Invite], mock_auth_client
+):
+    await invite_factory(email="peter.parker@test.org.com")
+    mock_auth_client.user_create.return_value = (201, AUTH_USER_RESPONSE)
+    assert "Authorization" not in api_client.headers
+    assert "Secret" not in api_client.headers
+
+    response = await api_client.post("/client/users", json=REGISTRATION)
+
+    assert response.status_code == 201
