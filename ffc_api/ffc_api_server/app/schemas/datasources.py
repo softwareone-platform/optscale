@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from pydantic import BeforeValidator, Field
 from tools.cloud_adapter.enums import CloudTypes
@@ -14,6 +14,13 @@ def _normalize_cloud_type(value):
 
 
 DataSourceType = Annotated[CloudTypes, BeforeValidator(_normalize_cloud_type)]
+
+ALLOWED_TYPES = [
+    CloudTypes.AWS_CNR,
+    CloudTypes.GCP_CNR,
+    CloudTypes.AZURE_CNR,
+    CloudTypes.AZURE_TENANT,
+]
 
 
 class DataSourceBase(IdSchema, BaseSchema):
@@ -31,7 +38,21 @@ class DataSourceRead(DataSourceBase):
     last_import_attempt_error: str | None
 
 
+class DataSourceWithConfig(DataSourceRead):
+    config: dict[str, Any]
+    auto_import: Annotated[bool, Field(examples=[True])]
+    process_recommendations: Annotated[bool, Field(examples=[True])]
+
+
 class DataSourceWithExpenses(DataSourceRead):
     forecast: Annotated[float | None, Field(examples=[325777.232])] = None
     resources: Annotated[int | None, Field(examples=[17])] = None
     cost: Annotated[float | None, Field(examples=[89011.43])] = None
+
+
+class DataSourceAdd(BaseSchema):
+    name: Annotated[str, Field(examples=["AWS HQ"])]
+    type: DataSourceType
+    config: dict[str, Any]
+    auto_import: Annotated[bool, Field(default=True, examples=[True])]
+    process_recommendations: Annotated[bool, Field(default=True, examples=[True])]

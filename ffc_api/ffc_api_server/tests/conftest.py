@@ -1,8 +1,10 @@
+import json
 import uuid
 from collections.abc import AsyncGenerator, Generator
 from datetime import UTC, datetime
 
 import pytest
+import requests
 import sqlalchemy as sa
 from asgi_lifespan import LifespanManager
 from faker import Faker
@@ -23,6 +25,7 @@ from ffc_api.ffc_api_server.app.db.models.optscale import (
     Assignment,
     AuthUser,
     DataSource,
+    Invite,
     Organization,
     Pool,
     Role,
@@ -274,6 +277,8 @@ def datasource_factory(faker: Faker, db_session: AsyncSession) -> ModelFactory[D
         account_id: str | None = None,
         config: str = "{}",
         parent: DataSource | None = None,
+        auto_import: bool = True,
+        process_recommendations: bool = True,
         deleted_at: int = 0,
         last_import_at: int = 0,
         last_import_modified_at: int = 0,
@@ -286,6 +291,8 @@ def datasource_factory(faker: Faker, db_session: AsyncSession) -> ModelFactory[D
             type=type,
             account_id=account_id or str(faker.random_number(digits=12)),
             config=config,
+            auto_import=auto_import,
+            process_recommendations=process_recommendations,
             organization_id=organization.id,
             parent_id=parent.id if parent else None,
             deleted_at=deleted_at,
@@ -414,6 +421,44 @@ def tag_factory(faker: Faker, db_session: AsyncSession) -> ModelFactory[Tag]:
 
 
 @pytest.fixture
+def invite_factory(faker: Faker, db_session: AsyncSession) -> ModelFactory[Invite]:
+    async def _invite(
+        email: str | None = None,
+        id: str | None = None,
+        ttl: int | None = None,
+        deleted_at: int = 0,
+    ) -> Invite:
+        invite = Invite(
+            id=id or str(uuid.uuid4()),
+            email=email or faker.email(),
+            ttl=ttl if ttl is not None else int(datetime.now(UTC).timestamp()) + 3600,
+            deleted_at=deleted_at,
+        )
+        db_session.add(invite)
+        await db_session.commit()
+        await db_session.refresh(invite)
+        return invite
+
+    return _invite
+
+
+def _build_optscale_http_error(status_code: int, reason: str) -> requests.exceptions.HTTPError:
+    response = requests.Response()
+    response.status_code = status_code
+    response.headers["Content-Type"] = "application/json"
+    response._content = json.dumps({"error": {"reason": reason, "error_code": "OE0000"}}).encode()
+    return requests.exceptions.HTTPError(f"{status_code} Error", response=response)
+
+
+@pytest.fixture
+def optscale_http_error():
+    def _factory(status_code: int, reason: str):
+        return _build_optscale_http_error(status_code, reason)
+
+    return _factory
+
+
+@pytest.fixture
 async def organization(organization_factory: ModelFactory[Organization]) -> Organization:
     return await organization_factory(name="Test org", currency="USD")
 
@@ -456,3 +501,34 @@ def expense_query(mocker: MockerFixture):
     query.rest_api_client.pool_get.return_value = (200, {})
 
     return query
+
+
+@pytest.fixture
+def mock_auth_client(mocker: MockerFixture):
+    from ffc_api.ffc_api_server.app.routers.admin import users as admin_users
+    from ffc_api.ffc_api_server.app.routers.client import users as client_users
+
+    client = mocker.Mock()
+    mocker.patch.object(admin_users, "get_auth_client", return_value=client)
+    mocker.patch.object(client_users, "get_auth_client", return_value=client)
+    return client
+
+
+@pytest.fixture
+def mock_rest_api_client(mocker: MockerFixture):
+    from ffc_api.ffc_api_server.app.routers.admin import organizations as admin_organizations
+    from ffc_api.ffc_api_server.app.routers.client import organizations as client_organizations
+
+    get_client = mocker.Mock()
+    mocker.patch.object(admin_organizations, "get_rest_api_client", get_client)
+    mocker.patch.object(client_organizations, "get_rest_api_client", get_client)
+    return get_client
+
+
+@pytest.fixture
+def mock_get_token_by_user_id(mocker: MockerFixture):
+    from ffc_api.ffc_api_server.app.routers.admin import organizations as admin_organizations
+
+    return mocker.patch.object(
+        admin_organizations, "get_token_by_user_id", return_value="user-token"
+    )
