@@ -12,6 +12,7 @@ from ffc_api.ffc_api_server.app.db.base import configure_db_engine, verify_db_co
 from ffc_api.ffc_api_server.app.dependencies.auth import verify_cluster_secret
 from ffc_api.ffc_api_server.app.routers.admin import datasources, organizations, tags, users
 from ffc_api.ffc_api_server.app.routers.client import organizations as client_organizations
+from ffc_api.ffc_api_server.app.routers.client import users as client_users
 from ffc_api.ffc_api_server.app.services.roles_loader import configure_roles
 
 logger = logging.getLogger(__name__)
@@ -80,6 +81,11 @@ def setup_app():
     client_router.include_router(
         client_organizations.router,
         prefix="/organizations",
+    )
+
+    client_router.include_router(
+        client_users.router,
+        prefix="/users",
     )
 
     ffc_app.include_router(admin_router)

@@ -45,6 +45,12 @@ class OrganizationRead(IdSchema, OrganizationBase):
     tags: list[TagRef] = []
 
 
+class OrganizationCreate(BaseSchema):
+    name: str
+    currency: str
+    user_id: str
+
+
 class OrganizationExpenses(BaseSchema):
     limit: Annotated[Decimal, Field(examples=["10000.00"], default=Decimal(0))]
     expenses_this_month: Annotated[Decimal, Field(examples=["2111.49"], default=Decimal(0))]

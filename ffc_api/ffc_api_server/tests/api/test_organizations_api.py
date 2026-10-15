@@ -293,3 +293,94 @@ async def test_get_tag_by_organization_id_by_name(
 
     assert response.status_code == 200
     assert response.json()["id"] == str(tag.id)
+
+
+async def test_create_organization(
+    admin_client: AsyncClient, mock_get_token_by_user_id, mock_rest_api_client
+):
+    rest_api_client = mock_rest_api_client.return_value
+    rest_api_client.organization_create.return_value = (
+        201,
+        {
+            "id": "org-id",
+            "name": "FFC",
+            "currency": "EUR",
+            "is_demo": False,
+            "disabled": False,
+            "pool_id": "pool",
+            "created_at": 1732792923,
+            "deleted_at": 0,
+            "cleaned_at": 0,
+        },
+    )
+
+    response = await admin_client.post(
+        "/admin/organizations", json={"name": "FFC", "currency": "EUR", "user_id": "user-1"}
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["id"] == "org-id"
+    assert data["name"] == "FFC"
+    assert data["currency"] == "EUR"
+    assert "pool_id" not in data
+    mock_get_token_by_user_id.assert_called_once_with("user-1")
+    mock_rest_api_client.assert_called_once_with(token="user-token")
+    rest_api_client.organization_create.assert_called_once_with({"name": "FFC", "currency": "EUR"})
+
+
+async def test_create_organization_unverified_user(
+    admin_client: AsyncClient,
+    mock_get_token_by_user_id,
+    mock_rest_api_client,
+    optscale_http_error,
+):
+    mock_get_token_by_user_id.side_effect = optscale_http_error(403, "User is not verified")
+
+    response = await admin_client.post(
+        "/admin/organizations", json={"name": "FFC", "currency": "EUR", "user_id": "user-1"}
+    )
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == "User is not verified"
+    mock_rest_api_client.assert_not_called()
+
+
+async def test_create_organization_propagates_rest_api_errors(
+    admin_client: AsyncClient,
+    mock_get_token_by_user_id,
+    mock_rest_api_client,
+    optscale_http_error,
+):
+    mock_rest_api_client.return_value.organization_create.side_effect = optscale_http_error(
+        400, "Invalid currency: XXX"
+    )
+
+    response = await admin_client.post(
+        "/admin/organizations", json={"name": "FFC", "currency": "XXX", "user_id": "user-1"}
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Invalid currency: XXX"
+
+
+async def test_create_organization_requires_user_id(
+    admin_client: AsyncClient, mock_get_token_by_user_id, mock_rest_api_client
+):
+    response = await admin_client.post(
+        "/admin/organizations", json={"name": "FFC", "currency": "EUR"}
+    )
+
+    assert response.status_code == 422
+    mock_get_token_by_user_id.assert_not_called()
+
+
+async def test_create_organization_requires_cluster_secret(
+    api_client: AsyncClient, mock_get_token_by_user_id
+):
+    response = await api_client.post(
+        "/admin/organizations", json={"name": "FFC", "currency": "EUR", "user_id": "user-1"}
+    )
+
+    assert response.status_code == 403
+    mock_get_token_by_user_id.assert_not_called()

@@ -34,3 +34,7 @@ DataSourceRepository = Annotated[
 ]
 TagRepository = Annotated[handlers.TagHandler, Depends(HandlerFactory(handlers.TagHandler))]
 PoolRepository = Annotated[handlers.PoolHandler, Depends(HandlerFactory(handlers.PoolHandler))]
+InviteRepository = Annotated[
+    handlers.InviteHandler,
+    Depends(HandlerFactory(handlers.InviteHandler)),
+]
