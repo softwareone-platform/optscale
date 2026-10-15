@@ -5,9 +5,9 @@ from pytest_mock import MockerFixture
 
 from ffc_api.ffc_api_server.app.auth import client as auth_client
 from ffc_api.ffc_api_server.app.auth.auth import TokenBearer
-from ffc_api.ffc_api_server.app.auth.client import authorize
+from ffc_api.ffc_api_server.app.auth.client import authorize, get_token_by_user_id
 from ffc_api.ffc_api_server.app.dependencies.auth import verify_cluster_secret
-from ffc_api.ffc_api_server.tests import TEST_AUTH_URL, TEST_CLUSTER_SECRET
+from ffc_api.ffc_api_server.tests import TEST_CLUSTER_SECRET
 
 
 async def test_token_bearer_with_invalid_header():
@@ -48,15 +48,14 @@ def test_verify_cluster_secret__wrong_secret():
 
 @pytest.fixture
 def mock_auth_client(mocker: MockerFixture):
-    return mocker.patch.object(auth_client, "AuthClient")
+    return mocker.patch.object(auth_client, "get_auth_client")
 
 
 def test_authorize(mock_auth_client):
     authorize("token", "INFO_ORGANIZATION", "organization", "ORG-1")
 
-    mock_auth_client.assert_called_once_with(url=TEST_AUTH_URL)
+    mock_auth_client.assert_called_once_with(token="token")
     client = mock_auth_client.return_value
-    assert client.token == "token"
     client.authorize.assert_called_once_with("INFO_ORGANIZATION", "organization", "ORG-1")
 
 
@@ -84,3 +83,20 @@ def test_authorize_errors(
 
     assert exc_info.value.status_code == expected_status
     assert exc_info.value.detail == expected_detail
+
+
+def test_get_token_by_user_id(mock_auth_client):
+    client = mock_auth_client.return_value
+    client.token_get_user_id.return_value = (201, {"token": "user-token", "user_id": "USER-1"})
+
+    assert get_token_by_user_id("USER-1") == "user-token"
+
+    mock_auth_client.assert_called_once_with()
+    client.token_get_user_id.assert_called_once_with("USER-1")
+
+
+def test_get_token_by_user_id_propagates_auth_errors(mock_auth_client):
+    mock_auth_client.return_value.token_get_user_id.side_effect = _http_error(403)
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        get_token_by_user_id("USER-1")

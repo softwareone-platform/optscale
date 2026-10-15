@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import Field, computed_field, model_validator
+from pydantic import EmailStr, Field, computed_field, model_validator
 
 from ffc_api.ffc_api_server.app.enums import RolePurposes
 from ffc_api.ffc_api_server.app.schemas.core import BaseSchema, IdSchema
@@ -11,6 +11,12 @@ from ffc_api.ffc_api_server.app.services.roles_loader import get_roles
 
 class UserBase(BaseSchema):
     name: Annotated[str, Field(examples=["Alex Parish"])]
+
+
+class UserCreate(BaseSchema):
+    email: EmailStr
+    display_name: str
+    password: str
 
 
 class AssignmentRead(IdSchema, BaseSchema):

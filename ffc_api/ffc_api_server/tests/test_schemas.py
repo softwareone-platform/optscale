@@ -13,6 +13,7 @@ from ffc_api.ffc_api_server.app.schemas.core import (
     BaseSchema,
     CommonEventsSchema,
     IdSchema,
+    convert_dict_to_schema,
     convert_model_to_schema,
     convert_schema_to_model,
     extract_events,
@@ -20,6 +21,7 @@ from ffc_api.ffc_api_server.app.schemas.core import (
     resolve_field_type,
 )
 from ffc_api.ffc_api_server.app.schemas.datasources import (
+    DataSourceAdd,
     DataSourceRead,
     DataSourceWithExpenses,
 )
@@ -29,6 +31,7 @@ from ffc_api.ffc_api_server.app.schemas.organizations import (
     OrganizationRead,
 )
 from ffc_api.ffc_api_server.app.schemas.tags import TagCreate, TagRead, TagRef
+from ffc_api.ffc_api_server.app.schemas.users import UserCreate, UserRead
 
 
 def test_convert_model_to_schema():
@@ -166,3 +169,53 @@ def test_datasource_with_expenses_carries_the_figures():
     assert datasource.forecast == pytest.approx(325777.23)
     assert datasource.cost == pytest.approx(89011.43)
     assert datasource.resources == 17
+
+
+def test_convert_dict_to_schema_ignores_unknown_keys():
+    organization = convert_dict_to_schema(
+        OrganizationRead,
+        {
+            "id": "org-1",
+            "name": "Acme",
+            "currency": "USD",
+            "is_demo": False,
+            "disabled": False,
+            "pool_id": "pool-1",
+            "cleaned_at": 0,
+            "created_at": 1700000000,
+        },
+    )
+
+    assert organization.id == "org-1"
+    assert organization.name == "Acme"
+    assert organization.tags == []
+
+
+def test_convert_dict_to_schema_applies_overrides():
+    user = convert_dict_to_schema(
+        UserRead,
+        {"id": "user-1", "display_name": "Spider Man", "created_at": 1730126521},
+        name="Spider Man",
+    )
+
+    assert user.name == "Spider Man"
+    assert user.auth_user is None
+    assert user.roles == 0
+
+
+def test_convert_dict_to_schema_reports_missing_required_fields():
+    with pytest.raises(ValidationError):
+        convert_dict_to_schema(OrganizationRead, {"id": "org-1", "name": "Acme"})
+
+
+def test_datasource_add_defaults():
+    datasource = DataSourceAdd(name="AWS HQ", type="aws_cnr", config={"secret": "secret"})
+
+    assert datasource.type == CloudTypes.AWS_CNR
+    assert datasource.auto_import is True
+    assert datasource.process_recommendations is True
+
+
+def test_user_create_validates_the_email():
+    with pytest.raises(ValidationError):
+        UserCreate(email="not-an-email", display_name="Alex", password="secret")

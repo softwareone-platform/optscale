@@ -1,9 +1,11 @@
 from datetime import UTC, datetime
 
+import requests
 import time_machine
 from ffc_api.ffc_api_server.app.db.models.optscale import DataSource, Organization
 from ffc_api.ffc_api_server.tests.types import ModelFactory
 from httpx import AsyncClient
+from tools.cloud_adapter.enums import CloudTypes
 from tools.optscale_data.expenses import ExpenseQuery
 
 FROZEN_NOW = datetime(2025, 3, 15, 12, 0, 0, tzinfo=UTC)
@@ -143,3 +145,126 @@ async def test_get_datasources_unknown_organization(client_api_client: AsyncClie
 
     assert response.status_code == 404
     expense_query.get_cloud_expenses_with_resource_info.assert_not_called()
+
+
+CLOUD_ACCOUNT_REQUEST = {
+    "name": "AWS HQ",
+    "type": "aws_cnr",
+    "config": {"bucket_name": "bucket", "access_key_id": "key", "secret_access_key": "key"},
+}
+REST_API_CLOUD_ACCOUNT = {
+    "id": "ca-1",
+    "name": "AWS HQ",
+    "type": "aws_cnr",
+    "account_id": "123456789012",
+    "organization_id": "org-1",
+    "config": {"bucket_name": "bucket", "access_key_id": "key"},
+    "auto_import": True,
+    "process_recommendations": True,
+    "import_period": 1,
+    "last_import_at": 0,
+    "last_import_modified_at": 0,
+    "last_import_attempt_at": 0,
+    "last_import_attempt_error": None,
+    "cleaned_at": 0,
+    "parent_id": None,
+}
+
+
+async def test_link_cloud_account(
+    client_api_client: AsyncClient,
+    organization: Organization,
+    mock_rest_api_client,
+    mock_authorize,
+):
+    rest_api_client = mock_rest_api_client.return_value
+    rest_api_client.cloud_account_create.return_value = (201, REST_API_CLOUD_ACCOUNT)
+
+    response = await client_api_client.post(
+        f"/client/organizations/{organization.id}/cloud_accounts", json=CLOUD_ACCOUNT_REQUEST
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["id"] == "ca-1"
+    assert data["type"] == "aws_cnr"
+    assert data["config"] == {"bucket_name": "bucket", "access_key_id": "key"}
+    assert data["auto_import"] is True
+    assert "import_period" not in data
+
+    mock_rest_api_client.assert_called_once_with(token="test-token")
+    mock_authorize.assert_not_called()
+    rest_api_client.cloud_account_create.assert_called_once_with(
+        organization.id,
+        {**CLOUD_ACCOUNT_REQUEST, "auto_import": True, "process_recommendations": True},
+    )
+
+
+async def test_link_cloud_account_unsupported_type(
+    client_api_client: AsyncClient,
+    organization: Organization,
+    mock_rest_api_client,
+):
+    response = await client_api_client.post(
+        f"/client/organizations/{organization.id}/cloud_accounts",
+        json={**CLOUD_ACCOUNT_REQUEST, "type": CloudTypes.NEBIUS.value},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"].startswith(f"Unsupported type: {CloudTypes.NEBIUS.value}.")
+    mock_rest_api_client.assert_not_called()
+
+
+async def test_link_cloud_account_unknown_type(
+    client_api_client: AsyncClient, organization: Organization, mock_rest_api_client
+):
+    response = await client_api_client.post(
+        f"/client/organizations/{organization.id}/cloud_accounts",
+        json={**CLOUD_ACCOUNT_REQUEST, "type": "invalid"},
+    )
+
+    assert response.status_code == 422
+    mock_rest_api_client.assert_not_called()
+
+
+async def test_link_cloud_account_no_token(
+    api_client: AsyncClient, organization: Organization, mock_rest_api_client
+):
+    response = await api_client.post(
+        f"/client/organizations/{organization.id}/cloud_accounts", json=CLOUD_ACCOUNT_REQUEST
+    )
+
+    assert response.status_code == 401
+    mock_rest_api_client.assert_not_called()
+
+
+async def test_link_cloud_account_propagates_rest_api_errors(
+    client_api_client: AsyncClient,
+    organization: Organization,
+    mock_rest_api_client,
+    optscale_http_error,
+):
+    mock_rest_api_client.return_value.cloud_account_create.side_effect = optscale_http_error(
+        403, "Forbidden"
+    )
+
+    response = await client_api_client.post(
+        f"/client/organizations/{organization.id}/cloud_accounts", json=CLOUD_ACCOUNT_REQUEST
+    )
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Forbidden"
+
+
+async def test_link_cloud_account_rest_api_unreachable(
+    client_api_client: AsyncClient, organization: Organization, mock_rest_api_client
+):
+    mock_rest_api_client.return_value.cloud_account_create.side_effect = (
+        requests.exceptions.ConnectionError("refused")
+    )
+
+    response = await client_api_client.post(
+        f"/client/organizations/{organization.id}/cloud_accounts", json=CLOUD_ACCOUNT_REQUEST
+    )
+
+    assert response.status_code == 400
