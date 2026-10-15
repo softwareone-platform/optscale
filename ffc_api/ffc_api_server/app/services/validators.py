@@ -7,7 +7,7 @@ class ResourceValidator:
     repo: Any = None
 
     async def exists(self, resource_id: str) -> bool:
-        count = await self.repo.count(where_clause=[self.repo.model_cls.id == resource_id])
+        count = await self.repo.count(where_clauses=[self.repo.model_cls.id == resource_id])
         return count == 1
 
 

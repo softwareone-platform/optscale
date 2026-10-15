@@ -18,7 +18,7 @@ echo "<<Ruff format"
 
 echo "Run tests with pytest>>>"
 docker run -i --rm ${TEST_IMAGE} bash -c \
-    "uv --project ffc_api run pytest --disable-warnings ffc_api"
+    "cd ffc_api && uv run pytest --disable-warnings"
 echo "<<Pytest"
 
 docker rmi ${TEST_IMAGE}
