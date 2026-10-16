@@ -2,12 +2,14 @@ import logging
 from collections.abc import Sequence
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.concurrency import run_in_threadpool
 from fastapi_pagination import create_page, resolve_params
 from requests import RequestException
 from sqlalchemy import Select
 
+from ffc_api.ffc_api_server.app.auth.client import get_token_by_user_id
+from ffc_api.ffc_api_server.app.clients.rest_api import get_rest_api_client
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.db.models.optscale import DataSource, Organization, Pool, User
 from ffc_api.ffc_api_server.app.dependencies.db import (
@@ -27,19 +29,43 @@ from ffc_api.ffc_api_server.app.rql import (
     TagRules,
     UserRules,
 )
-from ffc_api.ffc_api_server.app.schemas.core import convert_model_to_schema
+from ffc_api.ffc_api_server.app.schemas.core import (
+    convert_dict_to_schema,
+    convert_model_to_schema,
+)
 from ffc_api.ffc_api_server.app.schemas.datasources import DataSourceWithExpenses
-from ffc_api.ffc_api_server.app.schemas.organizations import OrganizationExpenses, OrganizationRead
+from ffc_api.ffc_api_server.app.schemas.organizations import (
+    OrganizationCreate,
+    OrganizationExpenses,
+    OrganizationRead,
+)
 from ffc_api.ffc_api_server.app.schemas.tags import TagRead
 from ffc_api.ffc_api_server.app.schemas.users import UserRead
 from ffc_api.ffc_api_server.app.services.expenses import get_forecasts, get_organization_expenses
 from ffc_api.ffc_api_server.app.services.organizations import fetch_organization_or_404
 from ffc_api.ffc_api_server.app.services.tags import fetch_tag_or_404
 from ffc_api.ffc_api_server.app.services.users import build_user_read
-from ffc_api.ffc_api_server.app.utils import wrap_exc_in_http_response
+from ffc_api.ffc_api_server.app.utils import proxy_optscale_errors, wrap_exc_in_http_response
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+
+@router.post(
+    "",
+    response_model=OrganizationRead,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_organization(
+    data: OrganizationCreate,
+):
+    with proxy_optscale_errors():
+        token = await run_in_threadpool(get_token_by_user_id, data.user_id)
+        client = get_rest_api_client(token=token)
+        _, organization = await run_in_threadpool(
+            client.organization_create, {"name": data.name, "currency": data.currency}
+        )
+    return convert_dict_to_schema(OrganizationRead, organization)
 
 
 @router.get(

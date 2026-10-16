@@ -3,6 +3,7 @@ import hashlib
 import logging
 from datetime import UTC, datetime
 
+import requests
 from fastapi import HTTPException, status
 
 logger = logging.getLogger(__name__)
@@ -41,3 +42,25 @@ def wrap_exc_in_http_response(
             f"returning a {status_code} HTTP response: {error_msg}"
         )
         raise HTTPException(status_code=status_code, detail=error_msg) from e
+
+
+@contextlib.contextmanager
+def proxy_optscale_errors():
+    try:
+        yield
+    except requests.exceptions.HTTPError as exc:
+        raise_from_http_error(exc)
+    except requests.exceptions.ConnectionError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+
+
+def raise_from_http_error(exc: requests.exceptions.HTTPError):
+    response = exc.response
+
+    try:
+        detail = response.json().get("error", {}).get("reason") or response.text
+    except ValueError:
+        detail = response.text
+
+    logger.warning(f"Error {response.status_code}: {detail}")
+    raise HTTPException(status_code=response.status_code, detail=detail) from exc

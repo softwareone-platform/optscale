@@ -180,6 +180,8 @@ class DataSource(Base):
     name: Mapped[str] = mapped_column(String)
     type: Mapped[str] = mapped_column(String)
     config: Mapped[str] = mapped_column(Text)
+    auto_import: Mapped[bool] = mapped_column(Boolean)
+    process_recommendations: Mapped[bool] = mapped_column(Boolean)
     deleted_at: Mapped[int] = mapped_column(Integer)
     organization_id: Mapped[str] = mapped_column(
         String(36),
@@ -252,3 +254,12 @@ class Assignment(Base, IDMixin):
     resource_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
     user_id: Mapped[str] = mapped_column(String(36), ForeignKey(f"{AUTH_DB_SCHEMA}.user.id"))
     user: Mapped["AuthUser"] = relationship(back_populates="assignments")
+
+
+class Invite(Base, IDMixin):
+    __tablename__ = "invite"
+    __table_args__ = {"schema": DB_SCHEMA}
+
+    email: Mapped[str] = mapped_column(String(256))
+    ttl: Mapped[int] = mapped_column(Integer)
+    deleted_at: Mapped[int] = mapped_column(Integer)
