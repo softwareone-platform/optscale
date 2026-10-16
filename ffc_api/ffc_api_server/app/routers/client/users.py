@@ -8,7 +8,7 @@ from ffc_api.ffc_api_server.app.clients.auth import get_auth_client
 from ffc_api.ffc_api_server.app.db.models.optscale import Invite
 from ffc_api.ffc_api_server.app.dependencies.db import InviteRepository
 from ffc_api.ffc_api_server.app.schemas.core import convert_dict_to_schema
-from ffc_api.ffc_api_server.app.schemas.users import UserCreate, UserRead
+from ffc_api.ffc_api_server.app.schemas.users import UserCreate, UserRegistrationRead
 from ffc_api.ffc_api_server.app.utils import proxy_optscale_errors, utcnow_timestamp
 
 router = APIRouter()
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 @router.post(
     "",
     status_code=status.HTTP_201_CREATED,
-    response_model=UserRead,
+    response_model=UserRegistrationRead,
 )
 async def create_user(
     data: UserCreate,
@@ -47,4 +47,4 @@ async def create_user(
             verified=False,
         )
 
-    return convert_dict_to_schema(UserRead, user, name=user["display_name"])
+    return convert_dict_to_schema(UserRegistrationRead, user)
