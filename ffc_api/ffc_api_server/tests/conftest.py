@@ -518,10 +518,12 @@ def mock_auth_client(mocker: MockerFixture):
 def mock_rest_api_client(mocker: MockerFixture):
     from ffc_api.ffc_api_server.app.routers.admin import organizations as admin_organizations
     from ffc_api.ffc_api_server.app.routers.client import organizations as client_organizations
+    from ffc_api.ffc_api_server.app.services import datasources as datasources_service
 
     get_client = mocker.Mock()
     mocker.patch.object(admin_organizations, "get_rest_api_client", get_client)
     mocker.patch.object(client_organizations, "get_rest_api_client", get_client)
+    mocker.patch.object(datasources_service, "get_rest_api_client", get_client)
     return get_client
 
 
