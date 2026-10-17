@@ -19,7 +19,7 @@ from ffc_api.ffc_api_server.app.dependencies.db import (
     TagRepository,
     UserRepository,
 )
-from ffc_api.ffc_api_server.app.dependencies.path import TagIdOrName
+from ffc_api.ffc_api_server.app.dependencies.path import DataSourceId, TagIdOrName
 from ffc_api.ffc_api_server.app.enums import TagResourceType
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, LimitOffsetParams, paginate
 from ffc_api.ffc_api_server.app.rql import (
@@ -33,7 +33,10 @@ from ffc_api.ffc_api_server.app.schemas.core import (
     convert_dict_to_schema,
     convert_model_to_schema,
 )
-from ffc_api.ffc_api_server.app.schemas.datasources import DataSourceWithExpenses
+from ffc_api.ffc_api_server.app.schemas.datasources import (
+    DataSourceDetailRead,
+    DataSourceWithExpenses,
+)
 from ffc_api.ffc_api_server.app.schemas.organizations import (
     OrganizationCreate,
     OrganizationExpenses,
@@ -41,6 +44,10 @@ from ffc_api.ffc_api_server.app.schemas.organizations import (
 )
 from ffc_api.ffc_api_server.app.schemas.tags import TagRead
 from ffc_api.ffc_api_server.app.schemas.users import UserRead
+from ffc_api.ffc_api_server.app.services.datasources import (
+    fetch_datasource_or_404,
+    get_datasource_detail,
+)
 from ffc_api.ffc_api_server.app.services.expenses import get_forecasts, get_organization_expenses
 from ffc_api.ffc_api_server.app.services.organizations import fetch_organization_or_404
 from ffc_api.ffc_api_server.app.services.tags import fetch_tag_or_404
@@ -238,6 +245,21 @@ async def get_datasources_by_organization_id(
         params=params,
         total=total,
     )
+
+
+@router.get(
+    "/{organization_id}/datasources/{datasource_id}",
+    response_model=DataSourceDetailRead,
+)
+async def get_datasource_by_organization_id(
+    organization: Annotated[Organization, Depends(fetch_organization_or_404)],
+    datasource_id: DataSourceId,
+    datasource_repo: DataSourceRepository,
+):
+    datasource = await fetch_datasource_or_404(
+        datasource_repo, datasource_id, organization_id=organization.id
+    )
+    return await get_datasource_detail(datasource)
 
 
 @router.get(

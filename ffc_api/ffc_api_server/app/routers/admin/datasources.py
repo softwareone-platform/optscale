@@ -1,10 +1,9 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy import Select
 
-from ffc_api.ffc_api_server.app.db.handlers import NotFoundError
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.db.models.optscale import DataSource
 from ffc_api.ffc_api_server.app.dependencies.db import DataSourceRepository, TagRepository
@@ -13,8 +12,12 @@ from ffc_api.ffc_api_server.app.enums import TagResourceType
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, paginate
 from ffc_api.ffc_api_server.app.rql import DataSourceRules, RQLQuery, TagRules
 from ffc_api.ffc_api_server.app.schemas.core import convert_model_to_schema
-from ffc_api.ffc_api_server.app.schemas.datasources import DataSourceRead
+from ffc_api.ffc_api_server.app.schemas.datasources import DataSourceDetailRead, DataSourceRead
 from ffc_api.ffc_api_server.app.schemas.tags import TagRead
+from ffc_api.ffc_api_server.app.services.datasources import (
+    fetch_datasource_or_404,
+    get_datasource_detail,
+)
 from ffc_api.ffc_api_server.app.services.tags import fetch_tag_or_404
 
 router = APIRouter()
@@ -36,26 +39,20 @@ async def get_datasources(
     )
 
 
-async def fetch_datasource_or_404(
+async def get_datasource_or_404(
     datasource_id: DataSourceId, datasource_repo: DataSourceRepository
 ) -> DataSource:
-    try:
-        return await datasource_repo.get(id=datasource_id)
-    except NotFoundError as e:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e),
-        ) from e
+    return await fetch_datasource_or_404(datasource_repo, datasource_id)
 
 
 @router.get(
     "/{datasource_id}",
-    response_model=DataSourceRead,
+    response_model=DataSourceDetailRead,
 )
-async def get_organization_by_id(
-    datasource: Annotated[DataSource, Depends(fetch_datasource_or_404)],
+async def get_datasource_by_id(
+    datasource: Annotated[DataSource, Depends(get_datasource_or_404)],
 ):
-    return convert_model_to_schema(DataSourceRead, datasource)
+    return await get_datasource_detail(datasource)
 
 
 @router.get(
@@ -63,7 +60,7 @@ async def get_organization_by_id(
     response_model=LimitOffsetPage[TagRead],
 )
 async def get_tags_by_datasource_id(
-    datasource: Annotated[DataSource, Depends(fetch_datasource_or_404)],
+    datasource: Annotated[DataSource, Depends(get_datasource_or_404)],
     tag_repo: TagRepository,
     base_query: Select = Depends(RQLQuery(TagRules())),
 ):
@@ -84,7 +81,7 @@ async def get_tags_by_datasource_id(
     response_model=TagRead,
 )
 async def get_tag_by_datasource_id(
-    datasource: Annotated[DataSource, Depends(fetch_datasource_or_404)],
+    datasource: Annotated[DataSource, Depends(get_datasource_or_404)],
     tag_id_or_name: TagIdOrName,
     tag_repo: TagRepository,
 ):
