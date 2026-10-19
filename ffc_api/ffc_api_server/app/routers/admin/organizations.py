@@ -5,6 +5,8 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, status
 from fastapi.concurrency import run_in_threadpool
 from fastapi_pagination import create_page, resolve_params
+from pymongo.errors import ExecutionTimeout, PyMongoError
+from requela.builders.mongo import MongoQuery
 from requests import RequestException
 from sqlalchemy import Select
 
@@ -24,6 +26,7 @@ from ffc_api.ffc_api_server.app.enums import TagResourceType
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, LimitOffsetParams, paginate
 from ffc_api.ffc_api_server.app.rql import (
     DataSourceRules,
+    EventRules,
     OrganizationRules,
     RQLQuery,
     TagRules,
@@ -37,6 +40,7 @@ from ffc_api.ffc_api_server.app.schemas.datasources import (
     DataSourceDetailRead,
     DataSourceWithExpenses,
 )
+from ffc_api.ffc_api_server.app.schemas.events import EventRead
 from ffc_api.ffc_api_server.app.schemas.organizations import (
     OrganizationCreate,
     OrganizationExpenses,
@@ -48,6 +52,7 @@ from ffc_api.ffc_api_server.app.services.datasources import (
     fetch_datasource_or_404,
     get_datasource_detail,
 )
+from ffc_api.ffc_api_server.app.services.events import get_organization_events
 from ffc_api.ffc_api_server.app.services.expenses import get_forecasts, get_organization_expenses
 from ffc_api.ffc_api_server.app.services.organizations import fetch_organization_or_404
 from ffc_api.ffc_api_server.app.services.tags import fetch_tag_or_404
@@ -290,6 +295,51 @@ async def get_expenses_by_organization_id(
             expenses_this_month_forecast=expenses.get("forecast", 0),
             possible_monthly_saving=expenses.get("saving", 0),
         )
+
+
+@router.get(
+    "/{organization_id}/events",
+    response_model=LimitOffsetPage[EventRead],
+    responses={
+        200: {
+            "description": "List of Organization Events",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "items": [],
+                        "total": 1,
+                        "limit": 10,
+                        "offset": 0,
+                    },
+                },
+            },
+        },
+    },
+)
+async def get_events_by_organization_id(
+    organization: Annotated[Organization, Depends(fetch_organization_or_404)],
+    rql_query: MongoQuery | None = Depends(RQLQuery(EventRules())),
+):
+    params: LimitOffsetParams = resolve_params()
+    with (
+        wrap_exc_in_http_response(
+            exc_cls=PyMongoError,
+            error_msg="Unable to retrieve the organization events.",
+            status_code=502,
+        ),
+        wrap_exc_in_http_response(
+            exc_cls=ExecutionTimeout,
+            error_msg="The query took too long: narrow it, e.g. with a time range.",
+        ),
+    ):
+        total, events = await get_organization_events(
+            organization.id, rql_query, limit=params.limit, offset=params.offset
+        )
+    return create_page(
+        [EventRead.from_document(event) for event in events],
+        params=params,
+        total=total,
+    )
 
 
 @router.get(

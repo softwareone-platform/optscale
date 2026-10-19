@@ -21,6 +21,7 @@ async def test_lifespan_wires_up_the_infrastructure(mocker: MockerFixture, test_
     configure_roles = mocker.patch.object(main, "configure_roles")
     get_clickhouse_client = mocker.patch.object(main, "get_clickhouse_client")
     get_mongo_client = mocker.patch.object(main, "get_mongo_client")
+    get_async_mongo_client = mocker.patch.object(main, "get_async_mongo_client")
     app = FastAPI()
 
     async with lifespan(app):
@@ -31,3 +32,4 @@ async def test_lifespan_wires_up_the_infrastructure(mocker: MockerFixture, test_
     configure_roles.assert_awaited_once()
     get_clickhouse_client.assert_called_once()
     get_mongo_client.assert_called_once()
+    get_async_mongo_client.assert_called_once()

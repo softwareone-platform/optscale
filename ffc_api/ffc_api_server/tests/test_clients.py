@@ -2,17 +2,26 @@ import pytest
 from pytest_mock import MockerFixture
 
 from ffc_api.ffc_api_server.app.clients import auth as auth_clients
+from ffc_api.ffc_api_server.app.clients import mongo as mongo_clients
 from ffc_api.ffc_api_server.app.clients import rest_api as rest_api_clients
-from ffc_api.ffc_api_server.tests import TEST_AUTH_URL, TEST_CLUSTER_SECRET, TEST_REST_API_URL
+from ffc_api.ffc_api_server.tests import (
+    TEST_AUTH_URL,
+    TEST_CLUSTER_SECRET,
+    TEST_MONGO_DB,
+    TEST_MONGO_URL,
+    TEST_REST_API_URL,
+)
 
 
 @pytest.fixture(autouse=True)
 def reset_clients():
     auth_clients._auth_client = None
     rest_api_clients._rest_api_client = None
+    mongo_clients._async_mongo_client = None
     yield
     auth_clients._auth_client = None
     rest_api_clients._rest_api_client = None
+    mongo_clients._async_mongo_client = None
 
 
 def test_get_rest_api_client_caches_secret(mocker: MockerFixture):
@@ -54,3 +63,22 @@ def test_get_auth_client_builds_client_per_token(mocker: MockerFixture):
         mocker.call(url=TEST_AUTH_URL, token="token-a"),
         mocker.call(url=TEST_AUTH_URL, token="token-b"),
     ]
+
+
+def test_get_async_mongo_client_is_cached(mocker: MockerFixture):
+    client_cls = mocker.patch.object(mongo_clients, "AsyncMongoClient")
+
+    first = mongo_clients.get_async_mongo_client()
+    second = mongo_clients.get_async_mongo_client()
+
+    assert first is second
+    client_cls.assert_called_once_with(TEST_MONGO_URL)
+
+
+def test_get_keeper_events_collection(mocker: MockerFixture):
+    client_cls = mocker.patch.object(mongo_clients, "AsyncMongoClient")
+
+    collection = mongo_clients.get_keeper_events_collection()
+
+    client_cls.return_value.__getitem__.assert_called_once_with(TEST_MONGO_DB)
+    assert collection is client_cls.return_value.__getitem__.return_value.event
