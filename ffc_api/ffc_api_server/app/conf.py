@@ -30,6 +30,8 @@ settings = Dynaconf(
     CLICKHOUSE_DB="clickhouse-db",
     CLICKHOUSE_SECURE=False,
     MONGO_URL="mongodb://mongo:27017",
+    MONGO_DB="keeper",
+    EVENTS_QUERY_MAX_TIME_MS=5000,
 )
 
 

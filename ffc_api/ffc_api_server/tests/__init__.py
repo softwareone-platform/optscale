@@ -10,6 +10,7 @@ TEST_CLUSTER_SECRET = "test_cluster_secret"  # noqa: S105
 TEST_AUTH_URL = "http://auth.test:8080"
 TEST_REST_API_URL = "http://rest-api.test:8080"
 TEST_MONGO_URL = "mongodb://mongo.test:27017"
+TEST_MONGO_DB = "keeper_test"
 
 os.environ.setdefault("FFC_API_DB_NAME", FFC_DB_SCHEMA)
 os.environ.setdefault("FFC_API_ETCD_HOST", "etcd.test")
@@ -36,8 +37,8 @@ class FakeConfigClient:
     def clickhouse_params(self) -> tuple[str, str, str, str, int, bool]:
         return ("user", "password", "clickhouse.test", "clickhouse_test", 9000, False)
 
-    def mongo_params(self) -> tuple[str]:
-        return (TEST_MONGO_URL,)
+    def mongo_params(self) -> tuple[str, str]:
+        return (TEST_MONGO_URL, TEST_MONGO_DB)
 
     def cluster_secret(self) -> str:
         return TEST_CLUSTER_SECRET

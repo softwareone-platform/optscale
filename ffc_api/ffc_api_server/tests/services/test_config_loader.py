@@ -6,6 +6,7 @@ from ffc_api.ffc_api_server.tests import (
     OPTSCALE_DB_SCHEMA,
     TEST_AUTH_URL,
     TEST_CLUSTER_SECRET,
+    TEST_MONGO_DB,
     TEST_MONGO_URL,
     TEST_REST_API_URL,
     FakeConfigClient,
@@ -41,6 +42,7 @@ def test_load_populates_the_settings(mocker: MockerFixture):
     assert data["AUTH_URL"] == TEST_AUTH_URL
     assert data["REST_API_URL"] == TEST_REST_API_URL
     assert data["MONGO_URL"] == TEST_MONGO_URL
+    assert data["MONGO_DB"] == TEST_MONGO_DB
     assert data["CLICKHOUSE_HOST"] == "clickhouse.test"
     assert data["CLICKHOUSE_PORT"] == 9000
     assert data["CLICKHOUSE_SECURE"] is False

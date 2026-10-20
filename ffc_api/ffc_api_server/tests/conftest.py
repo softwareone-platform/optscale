@@ -132,6 +132,7 @@ def unstarted_app(session_mocker: MockerFixture) -> FastAPI:
     session_mocker.patch.object(main, "configure_roles")
     session_mocker.patch.object(main, "get_clickhouse_client")
     session_mocker.patch.object(main, "get_mongo_client")
+    session_mocker.patch.object(main, "get_async_mongo_client")
     return main.setup_app()
 
 
