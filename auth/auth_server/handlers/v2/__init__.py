@@ -4,6 +4,7 @@ import auth.auth_server.handlers.v2.assignments
 import auth.auth_server.handlers.v2.authorization
 import auth.auth_server.handlers.v2.authorization_userlist
 import auth.auth_server.handlers.v2.digests
+import auth.auth_server.handlers.v2.login_options
 import auth.auth_server.handlers.v2.users
 import auth.auth_server.handlers.v2.roles
 import auth.auth_server.handlers.v2.user_roles

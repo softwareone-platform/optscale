@@ -31,7 +31,8 @@ class Urls:
         'verification_codes': r"%s/verification_codes",
         'user_options_collection': r"%s/users/(?P<user_id>[^/]+)/options",
         'user_options':
-            r"%s/users/(?P<user_id>[^/]+)/options/(?P<option_name>[^/]+)"
+            r"%s/users/(?P<user_id>[^/]+)/options/(?P<option_name>[^/]+)",
+        'login_options': r"%s/login_options",
     }
 
     def __init__(self):
