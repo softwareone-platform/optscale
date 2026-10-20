@@ -57,6 +57,11 @@ class Client(Client_v1):
         return url
 
     @staticmethod
+    def login_options_url():
+        url = 'login_options'
+        return url
+
+    @staticmethod
     def query_url(**query):
         query = {
             key: value for key, value in query.items() if value is not None
