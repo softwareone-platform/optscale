@@ -95,7 +95,9 @@ def get_handlers(handler_kwargs):
          handler_kwargs),
         (urls_v2.user_options, get_handler_version(
             h_v2, "user_options").UserOptionsAsyncItemHandler,
-         handler_kwargs)
+         handler_kwargs),
+        (urls_v2.login_options, get_handler_version(
+            h_v2, "login_options").LoginOptionsAsyncHandler, handler_kwargs),
     ]
 
 
