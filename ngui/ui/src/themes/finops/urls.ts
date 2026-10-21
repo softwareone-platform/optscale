@@ -2,6 +2,10 @@ export * from "@main/urls";
 
 export const PENDING_INVITATIONS = "/pending-invitations";
 
+// Reached with a login challenge after the password step, before any token exists.
+export const MFA_CHALLENGE = "/mfa";
+export const MFA_ENROLLMENT = "/mfa-enrollment";
+
 const docUrl = (path: string) => `${DOCS_HYSTAX_OPTSCALE}${path}` as const;
 const dataSourceConnectionDocUrl = (docPath: string) => docUrl(`e2e_guides/${docPath}`);
 
