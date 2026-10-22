@@ -8,7 +8,7 @@ from auth.auth_server.controllers.base import BaseController
 from auth.auth_server.controllers.base_async import BaseAsyncControllerWrapper
 from auth.auth_server.exceptions import Err
 from auth.auth_server.models.models import Token, User
-from auth.auth_server.auth_token.macaroon import MacaroonToken
+from auth.auth_server.auth_token.macaroon import MacaroonToken, MFA_NONE
 from auth.auth_server.utils import (hash_password, popkey,
                                     raise_not_provided_error)
 
@@ -102,13 +102,14 @@ class TokenController(BaseController):
             raise ForbiddenException(Err.OA0073, [])
         return self.create_user_token(user, **kwargs)
 
-    def create_user_token(self, user, **kwargs):
+    def create_user_token(self, user, mfa=MFA_NONE, **kwargs):
         model_type = self._get_model_type()
         LOG.info("Creating %s with parameters %s", model_type.__name__, kwargs)
         now = utcnow()
         macaroon_token = MacaroonToken(user.salt, user.id).create(
             xstr(kwargs.get('register', False)),
-            xstr(kwargs.get('provider', 'optscale'))
+            xstr(kwargs.get('provider', 'optscale')),
+            mfa,
         )
         params = {
             'user_id': user.id,
