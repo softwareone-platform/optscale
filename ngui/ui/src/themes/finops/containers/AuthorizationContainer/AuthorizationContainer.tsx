@@ -1,7 +1,20 @@
+import { useState } from "react";
 import { ApolloError } from "@apollo/client";
 import { Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  AuthToken,
+  CREATE_TOKEN_STATUS,
+  isEmailNotVerifiedError,
+  isInvalidCredentialsError,
+  LOGIN_CHALLENGE_STATE
+} from "@theme/api/auth/signIn";
+import TwoStepLoginForm from "@theme/components/forms/TwoStepLoginForm";
+import { LoginFormError } from "@theme/components/forms/TwoStepLoginForm/types";
+import { useCreateToken } from "@theme/hooks/useCreateToken";
+import { useIsFeatureEnabled } from "@theme/hooks/useIsFeatureEnabled";
+import { MFA_CHALLENGE, MFA_ENROLLMENT } from "@theme/urls";
 import LoginForm from "components/forms/LoginForm";
 import RegistrationForm from "components/forms/RegistrationForm";
 import Greeter from "components/Greeter";
@@ -47,11 +60,27 @@ const AuthorizationContainer = () => {
 
   const { onSend: sendEmailVerificationCode, isLoading: isSendEmailVerificationCodeLoading } = useSendEmailVerificationCode();
 
-  const [createToken, { loading: loginLoading }] = useCreateTokenMutation();
+  // Flip `mfa_login` in theme.features.ts to exercise the two-step login against the mocked
+  // transport; with the flag off the original single-step login runs untouched.
+  const isMfaLoginEnabled = useIsFeatureEnabled("mfa_login");
+
+  const [createToken, { loading: legacyLoginLoading }] = useCreateTokenMutation();
+
+  const { onCreateToken, isLoading: mfaLoginLoading } = useCreateToken();
+
+  const loginLoading = isMfaLoginEnabled ? mfaLoginLoading : legacyLoginLoading;
+
+  const [loginError, setLoginError] = useState<LoginFormError | null>(null);
 
   const [createUser, { loading: registerLoading }] = useCreateUserMutation();
 
-  const handleLogin = async ({ email, password }) => {
+  const completeSignIn = (authToken: AuthToken) => {
+    const caveats = macaroon.processCaveats(macaroon.deserialize(authToken.token).getCaveats());
+
+    dispatch(initialize({ ...authToken, caveats }));
+  };
+
+  const handleLegacyLogin = async ({ email, password }: { email: string; password: string }) => {
     try {
       const { data } = await createToken({ variables: { email, password } });
       const caveats = macaroon.processCaveats(macaroon.deserialize(data.token.token).getCaveats());
@@ -63,6 +92,33 @@ const AuthorizationContainer = () => {
           navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
         }
       }
+    }
+  };
+
+  const handleMfaLogin = async ({ email, password }: { email: string; password: string }) => {
+    setLoginError(null);
+
+    try {
+      const { status, data } = await onCreateToken({ email, password });
+
+      if (status === CREATE_TOKEN_STATUS.CHALLENGE_REQUIRED) {
+        const challengeUrl = data.state === LOGIN_CHALLENGE_STATE.ENROLLMENT_REQUIRED ? MFA_ENROLLMENT : MFA_CHALLENGE;
+
+        navigate(challengeUrl, { state: { challenge: data } });
+        return;
+      }
+
+      completeSignIn(data);
+    } catch (error) {
+      if (isEmailNotVerifiedError(error)) {
+        navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
+        return;
+      }
+
+      // Anything else keeps the visitor on the password step with a retryable message.
+      setLoginError({
+        messageId: isInvalidCredentialsError(error) ? "signIn:invalidCredentials" : "somethingWentWrong"
+      });
     }
   };
 
@@ -98,9 +154,18 @@ const AuthorizationContainer = () => {
 
   const createForm =
     {
-      [LOGIN]: () => (
-        <LoginForm onSubmit={handleLogin} isLoading={loginLoading} disabled={registerLoading} isInvited={isInvited} />
-      ),
+      [LOGIN]: () =>
+        isMfaLoginEnabled ? (
+          <TwoStepLoginForm
+            onSubmit={handleMfaLogin}
+            isLoading={loginLoading}
+            disabled={registerLoading}
+            isInvited={isInvited}
+            error={loginError}
+          />
+        ) : (
+          <LoginForm onSubmit={handleLegacyLogin} isLoading={loginLoading} disabled={registerLoading} isInvited={isInvited} />
+        ),
       [REGISTER]: () => (
         <RegistrationForm
           onSubmit={handleRegister}
