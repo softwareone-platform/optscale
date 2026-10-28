@@ -2,8 +2,10 @@ import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy import Select
 
+from ffc_api.ffc_api_server.app.clients.auth import get_auth_client
 from ffc_api.ffc_api_server.app.db.handlers import NotFoundError
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.db.models.optscale import User
@@ -12,13 +14,38 @@ from ffc_api.ffc_api_server.app.dependencies.path import TagIdOrName, UserId
 from ffc_api.ffc_api_server.app.enums import TagResourceType
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, paginate
 from ffc_api.ffc_api_server.app.rql import RQLQuery, TagRules, UserRules
-from ffc_api.ffc_api_server.app.schemas.core import convert_model_to_schema
+from ffc_api.ffc_api_server.app.schemas.core import (
+    convert_dict_to_schema,
+    convert_model_to_schema,
+)
 from ffc_api.ffc_api_server.app.schemas.tags import TagRead
-from ffc_api.ffc_api_server.app.schemas.users import UserRead
+from ffc_api.ffc_api_server.app.schemas.users import UserCreate, UserRead
 from ffc_api.ffc_api_server.app.services.tags import fetch_tag_or_404
+from ffc_api.ffc_api_server.app.utils import proxy_optscale_errors
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+
+@router.post(
+    "",
+    status_code=status.HTTP_201_CREATED,
+    response_model=UserRead,
+)
+async def create_user(
+    data: UserCreate,
+):
+    auth_client = get_auth_client()
+    with proxy_optscale_errors():
+        _, user = await run_in_threadpool(
+            auth_client.user_create,
+            email=str(data.email),
+            password=data.password,
+            display_name=data.display_name,
+            verified=True,
+        )
+
+    return convert_dict_to_schema(UserRead, user, name=user["display_name"])
 
 
 @router.get(

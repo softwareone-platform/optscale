@@ -16,6 +16,7 @@ from ffc_api.ffc_api_server.app.db.models.optscale import (
     Assignment,
     AuthUser,
     DataSource,
+    Invite,
     Organization,
     Pool,
     Role,
@@ -380,3 +381,7 @@ class TypeHandler(ReadOnlyHandler[Type]):
 
 class PoolHandler(ReadOnlyHandler[Pool]):
     model_cls = Pool
+
+
+class InviteHandler(ReadOnlyHandler[Invite]):
+    model_cls = Invite

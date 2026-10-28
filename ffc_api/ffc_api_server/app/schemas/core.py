@@ -54,6 +54,21 @@ def convert_model_to_schema[M: Base | OptScaleBase, S: BaseModel](
     return schema_cls(**schema_data, events=events, **override_attributes)
 
 
+def convert_dict_to_schema[S: BaseModel](
+    schema_cls: type[S], data: dict[str, Any], **override_attributes: Any
+) -> S:
+    """
+    Converts a raw dict (e.g. a rest_api / auth response body) into a Pydantic schema,
+    keeping only the keys declared on the schema so `extra="forbid"` is not triggered.
+    """
+    schema_data = {
+        field_name: data[field_name]
+        for field_name in schema_cls.model_fields
+        if field_name in data and field_name not in override_attributes
+    }
+    return schema_cls(**schema_data, **override_attributes)
+
+
 def extract_events[M: Base | OptScaleBase, S: BaseModel](
     db_model: M, events_schema_cls: type[S]
 ) -> BaseModel:

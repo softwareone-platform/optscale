@@ -6,12 +6,13 @@ from fastapi import Depends, FastAPI
 from fastapi.routing import APIRoute, APIRouter
 
 from ffc_api.ffc_api_server.app.clients.clickhouse import get_clickhouse_client
-from ffc_api.ffc_api_server.app.clients.mongo import get_mongo_client
+from ffc_api.ffc_api_server.app.clients.mongo import get_async_mongo_client, get_mongo_client
 from ffc_api.ffc_api_server.app.conf import get_settings
 from ffc_api.ffc_api_server.app.db.base import configure_db_engine, verify_db_connection
 from ffc_api.ffc_api_server.app.dependencies.auth import verify_cluster_secret
 from ffc_api.ffc_api_server.app.routers.admin import datasources, organizations, tags, users
 from ffc_api.ffc_api_server.app.routers.client import organizations as client_organizations
+from ffc_api.ffc_api_server.app.routers.client import users as client_users
 from ffc_api.ffc_api_server.app.services.roles_loader import configure_roles
 
 logger = logging.getLogger(__name__)
@@ -26,6 +27,7 @@ async def lifespan(ffc_app: FastAPI):
     await configure_roles()
     get_clickhouse_client()
     get_mongo_client()
+    get_async_mongo_client()
     yield
 
 
@@ -80,6 +82,11 @@ def setup_app():
     client_router.include_router(
         client_organizations.router,
         prefix="/organizations",
+    )
+
+    client_router.include_router(
+        client_users.router,
+        prefix="/users",
     )
 
     ffc_app.include_router(admin_router)

@@ -18,6 +18,8 @@ def load(obj, env=None, silent=True, key=None, filename=None):
 
     c_user, c_password, c_host, c_db_name, c_port, c_secure = config_client.clickhouse_params()
 
+    mongo_url, mongo_db = config_client.mongo_params()
+
     data = {
         "MYSQL_USER": user,
         "MYSQL_PASSWORD": password,
@@ -33,7 +35,8 @@ def load(obj, env=None, silent=True, key=None, filename=None):
         "CLICKHOUSE_DB": c_db_name,
         "CLICKHOUSE_PORT": c_port,
         "CLICKHOUSE_SECURE": c_secure,
-        "MONGO_URL": config_client.mongo_params()[0],
+        "MONGO_URL": mongo_url,
+        "MONGO_DB": mongo_db,
     }
 
     if any(v is None for v in data.values()):

@@ -2,12 +2,16 @@ import logging
 from collections.abc import Sequence
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.concurrency import run_in_threadpool
 from fastapi_pagination import create_page, resolve_params
+from pymongo.errors import ExecutionTimeout, PyMongoError
+from requela.builders.mongo import MongoQuery
 from requests import RequestException
 from sqlalchemy import Select
 
+from ffc_api.ffc_api_server.app.auth.client import get_token_by_user_id
+from ffc_api.ffc_api_server.app.clients.rest_api import get_rest_api_client
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.db.models.optscale import DataSource, Organization, Pool, User
 from ffc_api.ffc_api_server.app.dependencies.db import (
@@ -17,29 +21,63 @@ from ffc_api.ffc_api_server.app.dependencies.db import (
     TagRepository,
     UserRepository,
 )
-from ffc_api.ffc_api_server.app.dependencies.path import TagIdOrName
+from ffc_api.ffc_api_server.app.dependencies.path import DataSourceId, TagIdOrName
 from ffc_api.ffc_api_server.app.enums import TagResourceType
 from ffc_api.ffc_api_server.app.pagination import LimitOffsetPage, LimitOffsetParams, paginate
 from ffc_api.ffc_api_server.app.rql import (
     DataSourceRules,
+    EventRules,
     OrganizationRules,
     RQLQuery,
     TagRules,
     UserRules,
 )
-from ffc_api.ffc_api_server.app.schemas.core import convert_model_to_schema
-from ffc_api.ffc_api_server.app.schemas.datasources import DataSourceWithExpenses
-from ffc_api.ffc_api_server.app.schemas.organizations import OrganizationExpenses, OrganizationRead
+from ffc_api.ffc_api_server.app.schemas.core import (
+    convert_dict_to_schema,
+    convert_model_to_schema,
+)
+from ffc_api.ffc_api_server.app.schemas.datasources import (
+    DataSourceDetailRead,
+    DataSourceWithExpenses,
+)
+from ffc_api.ffc_api_server.app.schemas.events import EventRead
+from ffc_api.ffc_api_server.app.schemas.organizations import (
+    OrganizationCreate,
+    OrganizationExpenses,
+    OrganizationRead,
+)
 from ffc_api.ffc_api_server.app.schemas.tags import TagRead
 from ffc_api.ffc_api_server.app.schemas.users import UserRead
+from ffc_api.ffc_api_server.app.services.datasources import (
+    fetch_datasource_or_404,
+    get_datasource_detail,
+)
+from ffc_api.ffc_api_server.app.services.events import get_organization_events
 from ffc_api.ffc_api_server.app.services.expenses import get_forecasts, get_organization_expenses
 from ffc_api.ffc_api_server.app.services.organizations import fetch_organization_or_404
 from ffc_api.ffc_api_server.app.services.tags import fetch_tag_or_404
 from ffc_api.ffc_api_server.app.services.users import build_user_read
-from ffc_api.ffc_api_server.app.utils import wrap_exc_in_http_response
+from ffc_api.ffc_api_server.app.utils import proxy_optscale_errors, wrap_exc_in_http_response
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+
+@router.post(
+    "",
+    response_model=OrganizationRead,
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_organization(
+    data: OrganizationCreate,
+):
+    with proxy_optscale_errors():
+        token = await run_in_threadpool(get_token_by_user_id, data.user_id)
+        client = get_rest_api_client(token=token)
+        _, organization = await run_in_threadpool(
+            client.organization_create, {"name": data.name, "currency": data.currency}
+        )
+    return convert_dict_to_schema(OrganizationRead, organization)
 
 
 @router.get(
@@ -215,6 +253,21 @@ async def get_datasources_by_organization_id(
 
 
 @router.get(
+    "/{organization_id}/datasources/{datasource_id}",
+    response_model=DataSourceDetailRead,
+)
+async def get_datasource_by_organization_id(
+    organization: Annotated[Organization, Depends(fetch_organization_or_404)],
+    datasource_id: DataSourceId,
+    datasource_repo: DataSourceRepository,
+):
+    datasource = await fetch_datasource_or_404(
+        datasource_repo, datasource_id, organization_id=organization.id
+    )
+    return await get_datasource_detail(datasource)
+
+
+@router.get(
     "/{organization_id}/expenses",
     response_model=OrganizationExpenses,
     responses={
@@ -242,6 +295,51 @@ async def get_expenses_by_organization_id(
             expenses_this_month_forecast=expenses.get("forecast", 0),
             possible_monthly_saving=expenses.get("saving", 0),
         )
+
+
+@router.get(
+    "/{organization_id}/events",
+    response_model=LimitOffsetPage[EventRead],
+    responses={
+        200: {
+            "description": "List of Organization Events",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "items": [],
+                        "total": 1,
+                        "limit": 10,
+                        "offset": 0,
+                    },
+                },
+            },
+        },
+    },
+)
+async def get_events_by_organization_id(
+    organization: Annotated[Organization, Depends(fetch_organization_or_404)],
+    rql_query: MongoQuery | None = Depends(RQLQuery(EventRules())),
+):
+    params: LimitOffsetParams = resolve_params()
+    with (
+        wrap_exc_in_http_response(
+            exc_cls=PyMongoError,
+            error_msg="Unable to retrieve the organization events.",
+            status_code=502,
+        ),
+        wrap_exc_in_http_response(
+            exc_cls=ExecutionTimeout,
+            error_msg="The query took too long: narrow it, e.g. with a time range.",
+        ),
+    ):
+        total, events = await get_organization_events(
+            organization.id, rql_query, limit=params.limit, offset=params.offset
+        )
+    return create_page(
+        [EventRead.from_document(event) for event in events],
+        params=params,
+        total=total,
+    )
 
 
 @router.get(

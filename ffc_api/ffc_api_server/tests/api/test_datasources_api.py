@@ -60,13 +60,21 @@ async def test_get_datasource_by_id(
     admin_client: AsyncClient,
     organization: Organization,
     datasource_factory: ModelFactory[DataSource],
+    mock_rest_api_client,
 ):
     datasource = await datasource_factory(organization=organization)
+    mock_rest_api_client.return_value.cloud_account_get.return_value = (
+        200,
+        {"id": datasource.id, "config": {}},
+    )
 
     response = await admin_client.get(f"/admin/datasources/{datasource.id}")
 
     assert response.status_code == 200
     assert response.json()["id"] == datasource.id
+    mock_rest_api_client.return_value.cloud_account_get.assert_called_once_with(
+        datasource.id, details=True
+    )
 
 
 async def test_get_datasource_by_id_not_found(admin_client: AsyncClient):

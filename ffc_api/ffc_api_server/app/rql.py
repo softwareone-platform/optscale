@@ -1,9 +1,12 @@
+from datetime import datetime
+from typing import Any
 from urllib.parse import parse_qs, quote, unquote
 
 from fastapi import Request
+from pydantic import BaseModel
 from requela import FieldRule, ModelRQLRules, RelationshipRule, RequelaError
+from requela.builders.mongo import MongoQueryBuilder
 from requela.dataclasses import Operator
-from sqlalchemy.sql.selectable import Select
 
 from ffc_api.ffc_api_server.app.db.models.ffc import Tag
 from ffc_api.ffc_api_server.app.db.models.optscale import AuthUser, DataSource, Organization, User
@@ -73,11 +76,40 @@ class DataSourceRules(BaseDataSourceRules):
     tags = RelationshipRule(rules=TagRules())
 
 
+class EventDocument(BaseModel):
+    """
+    The fields of a keeper `event` document that can be used in RQL expressions.
+    Only fields served by an index of the `event` collection are exposed: filtering an
+    organization with hundreds of thousands of events on other fields scans all of them.
+    """
+
+    time: datetime
+    level: str
+    object_id: str | None = None
+
+
+def datetime_to_timestamp(value: datetime) -> int:
+    # keeper stores dates as Unix timestamps
+    return int(value.timestamp())
+
+
+class EventRules(ModelRQLRules):
+    __model__ = EventDocument
+    __builder__ = MongoQueryBuilder
+
+    time = FieldRule(
+        allowed_operators=[Operator.GT, Operator.GTE, Operator.LT, Operator.LTE],
+        value_converter=datetime_to_timestamp,
+    )
+    level = FieldRule(allowed_operators=[Operator.EQ, Operator.IN], allow_ordering=False)
+    object_id = FieldRule(allowed_operators=[Operator.EQ, Operator.IN], allow_ordering=False)
+
+
 class RQLQuery:
     def __init__(self, rules: ModelRQLRules):
         self.rules = rules
 
-    def __call__(self, request: Request) -> Select | None:
+    def __call__(self, request: Request) -> Any:
         qs = quote(
             request.scope["query_string"].decode(), safe="/&()=_.-~:,"
         )  # make sure we can decode datetime
