@@ -7,5 +7,6 @@ export const featureFlags: FeatureFlags = {
   organization_edit_allowed: false,
   product_tour: false,
   paid_organization: true,
-  kubernetes_data_source: false
+  kubernetes_data_source: false,
+  mfa_login: true
 };
