@@ -1584,6 +1584,7 @@
   "notAvailableOnYourSetup": "Not available on your setup.{br}Please contact {email}.",
   "notContainAnyValidEmails": "List of invitees does not contain any valid emails",
   "notCovered": "Not covered",
+  "notEntitled": "Not entitled",
   "notFound": "Not found",
   "notLimited": "Not limited",
   "notMet": "Not met",
