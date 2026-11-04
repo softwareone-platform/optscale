@@ -1,8 +1,10 @@
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { isMockedApiEnabled } from "./src/themes/finops/api/mocked/config";
 import { MockedApi } from "./src/themes/finops/api/mocked/http/mockedApiPlugin";
-import { ThemeResolver } from './src/utils/themeResolver';
+import { featureFlags } from "./src/themes/finops/theme.features";
+import { ThemeResolver } from "./src/utils/themeResolver";
 
 const parseViteHost = (value?: string): string | boolean => {
   const trimmed = value?.trim();
@@ -74,7 +76,7 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           rewrite: (p) => {
-            return p.indexOf('/api/') === 0 ? p.replace(/^\/api/, "/") : p;
+            return p.indexOf("/api/") === 0 ? p.replace(/^\/api/, "/") : p;
           }
         }
       }
@@ -95,10 +97,10 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      ThemeResolver(VITE_APP_THEME || ''),
+      ThemeResolver(VITE_APP_THEME || ""),
       tsconfigPaths(),
-      // Answers the endpoints the backend has not shipped yet; VITE_MOCKED_API=false opts out.
-      MockedApi(VITE_MOCKED_API !== "false")
+      // Answers the endpoints the backend has not shipped yet, while the mfa_login theme flag is on.
+      MockedApi(isMockedApiEnabled({ mfaLogin: featureFlags.mfa_login, mockedApiEnv: VITE_MOCKED_API }))
     ],
     // TODO: Some of the tests are still failing
     test: {

@@ -21,5 +21,16 @@ export const CREATE_TOKEN_STATUS = Object.freeze({
 export const AUTH_ERROR_CODE = Object.freeze({
   INVALID_CREDENTIALS: "OA0037",
   INTERNAL_ERROR: "OA0061",
-  EMAIL_NOT_VERIFIED: "OA0073"
+  EMAIL_NOT_VERIFIED: "OA0073",
+  // Our proposal, not in the auth service yet.
+  INVALID_MFA_CODE: "OA0075",
+  MFA_ATTEMPTS_EXCEEDED: "OA0076",
+  LOGIN_CHALLENGE_NOT_FOUND: "OA0077"
+} as const);
+
+export const MFA_VERIFICATION_FAILURE = Object.freeze({
+  INVALID_CODE: "invalid_code",
+  CHALLENGE_EXPIRED: "challenge_expired",
+  CHALLENGE_LOCKED: "challenge_locked",
+  UNEXPECTED: "unexpected"
 } as const);
