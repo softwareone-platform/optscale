@@ -8,7 +8,8 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 
 from auth.auth_server.exceptions import Err
 from auth.auth_server.models.models import (Token, Type, User, Role,
-                                            PermissionKeys, VerificationCode)
+                                            PermissionKeys, VerificationCode,
+                                            VerificationCodePurpose)
 from auth.auth_server.auth_token.token_store import TokenStore
 from auth.auth_server.utils import Config, popkey, get_digest
 from tools.optscale_exceptions.common_exc import (WrongArgumentsException,
@@ -307,13 +308,15 @@ class BaseController(object):
         nested_dict_iter(downward_hierarchy)
         return res
 
-    def use_verification_code(self, email, code):
+    def use_verification_code(self, email, code,
+                              purpose=VerificationCodePurpose.password):
         if not email or not code:
             return
         now = opttime.utcnow()
         return self.session.query(VerificationCode).filter(
             and_(
                 VerificationCode.email == email,
+                VerificationCode.purpose == VerificationCodePurpose(purpose),
                 VerificationCode.deleted.is_(False),
                 VerificationCode.code == get_digest(str(code)),
                 VerificationCode.valid_until > now
