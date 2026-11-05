@@ -62,6 +62,13 @@ class Client(Client_v1):
         return url
 
     @staticmethod
+    def auth_policies_url(policy_id=None):
+        url = 'auth_policies'
+        if policy_id is not None:
+            url = '%s/%s' % (url, policy_id)
+        return url
+
+    @staticmethod
     def query_url(**query):
         query = {
             key: value for key, value in query.items() if value is not None

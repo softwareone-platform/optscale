@@ -208,3 +208,6 @@ class Err(enum.Enum):
     OA0074 = [
         "Validation error: %s",
     ]
+    OA0081 = [
+        "Authentication policy already exists",
+    ]
