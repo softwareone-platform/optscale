@@ -33,6 +33,8 @@ class Urls:
         'user_options':
             r"%s/users/(?P<user_id>[^/]+)/options/(?P<option_name>[^/]+)",
         'login_options': r"%s/login_options",
+        'auth_policies_collection': r"%s/auth_policies",
+        'auth_policies': r"%s/auth_policies/(?P<policy_id>[^/]+)",
     }
 
     def __init__(self):
