@@ -1,3 +1,4 @@
+import auth.auth_server.handlers.v2.auth_policies
 import auth.auth_server.handlers.v2.action_resources
 import auth.auth_server.handlers.v2.actions
 import auth.auth_server.handlers.v2.assignments
