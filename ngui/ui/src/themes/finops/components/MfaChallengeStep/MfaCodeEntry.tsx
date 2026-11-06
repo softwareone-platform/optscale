@@ -26,7 +26,7 @@ type MfaCodeEntryProps = {
   isVerifying: boolean;
   error: MfaCodeError | null;
   secondsUntilExpiry: number;
-  attemptsLeft: number | null;
+  attemptsLeft: number;
   onUseDifferentMethod?: () => void;
 };
 

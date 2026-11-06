@@ -228,7 +228,7 @@ describe("MfaChallengeStep verification", () => {
   });
 
   it("keeps the form open after a wrong code, with a retryable error, an empty code and the attempts the service reports", async () => {
-    rejectWith(403, AUTH_ERROR_CODE.INVALID_MFA_CODE, [4]);
+    rejectWith(403, AUTH_ERROR_CODE.INVALID_MFA_CODE, [2]);
     const screen = renderAt(totpDefaultChallenge);
 
     await screen.enterCode("000000");
@@ -236,8 +236,20 @@ describe("MfaChallengeStep verification", () => {
 
     expect(screen.text("p_code_error")).toBe("That code is incorrect. Check it and try again.");
     expect(screen.digits()).toBe("");
-    expect(screen.text("p_attempts_left")).toBe("4 attempts left");
+    expect(screen.text("p_attempts_left")).toBe("2 attempts left");
     expect(screen.find("p_challenge_ended")).toBeNull();
+
+    screen.unmount();
+  });
+
+  it("counts one attempt spent after a wrong code when the service does not report how many are left", async () => {
+    rejectWith(403, AUTH_ERROR_CODE.INVALID_MFA_CODE);
+    const screen = renderAt(totpDefaultChallenge);
+
+    await screen.enterCode("000000");
+    await screen.verify();
+
+    expect(screen.text("p_attempts_left")).toBe("4 attempts left");
 
     screen.unmount();
   });

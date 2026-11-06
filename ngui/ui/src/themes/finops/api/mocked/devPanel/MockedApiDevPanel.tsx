@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode, useEffect, useState } from "react";
+import { ChangeEvent, ReactNode, useState } from "react";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
@@ -7,20 +7,43 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useLocation, useNavigate } from "react-router-dom";
-import { createToken, CREATE_TOKEN_STATUS, LoginChallenge } from "@theme/api/auth/signIn";
-import { isSignInScenario, SIGN_IN_SCENARIO, SIGN_IN_SCENARIO_DESCRIPTION } from "@theme/api/mocked/auth/signIn/scenarios";
+import { useNavigate } from "react-router-dom";
+import { createToken, CREATE_TOKEN_STATUS } from "@theme/api/auth/signIn";
+import { isSignInScenario, SIGN_IN_SCENARIO_GROUPS, SIGN_IN_SCENARIO_INFO } from "@theme/api/mocked/auth/signIn/scenarios";
 import { DEV_PANEL_COLLAPSED_STORAGE_KEY, MOCK_SIGN_IN_CREDENTIALS } from "@theme/api/mocked/config";
 import { readSignInScenarioCookie, writeSignInScenarioCookie } from "@theme/api/mocked/http/signInScenarioCookie";
-import { useMfaChallengeStage } from "@theme/components/MfaChallengeStep";
-import { useLoginChallenge, useMfaTerminalFailure, useStartLoginChallenge } from "@theme/hooks/useLoginChallenge";
-import { getLoginUrl, MFA_CHALLENGE } from "@theme/urls";
-import { describeMfaChallengeStage, describeRoute } from "./describeStage";
+import { useLoginChallenge, useStartLoginChallenge } from "@theme/hooks/useLoginChallenge";
+import { getLoginUrl } from "@theme/urls";
+import CopyText from "components/CopyText";
 import useStyles from "./MockedApiDevPanel.styles";
 
 // Developer tooling that never reaches a production build, so its copy is deliberately not translated.
 
 const SCENARIO_SELECT_ID = "mocked_api_dev_panel_scenario";
+
+const TEST_CREDENTIALS = [
+  { id: "email", label: "Email", value: MOCK_SIGN_IN_CREDENTIALS.email, hint: "Any valid address works" },
+  { id: "password", label: "Password", value: MOCK_SIGN_IN_CREDENTIALS.password, hint: "Anything else → 403 OA0037" },
+  { id: "mfa_code", label: "MFA code", value: MOCK_SIGN_IN_CREDENTIALS.mfaCode, hint: "Anything else is a wrong code" }
+] as const;
+
+const CredentialRow = ({ id, label, value, hint }: (typeof TEST_CREDENTIALS)[number]) => {
+  const { classes } = useStyles();
+
+  return (
+    <Box className={classes.credential} data-test-id={`p_dev_credentials_${id}`}>
+      <Typography variant="body2" className={classes.credentialLabel}>
+        {label}
+      </Typography>
+      <CopyText text={value} variant="body2" dataTestIds={{ button: `btn_dev_copy_${id}` }}>
+        <span className={classes.code}>{value}</span>
+      </CopyText>
+      <Typography variant="caption" className={classes.credentialHint}>
+        {hint}
+      </Typography>
+    </Box>
+  );
+};
 
 const PanelSection = ({ title, children }: { title: string; children: ReactNode }) => (
   <Stack spacing={0.5}>
@@ -31,50 +54,12 @@ const PanelSection = ({ title, children }: { title: string; children: ReactNode 
   </Stack>
 );
 
-const ChallengeDetails = ({ challenge }: { challenge: LoginChallenge }) => {
-  const { classes } = useStyles();
-
-  const rows: [string, string][] = [
-    ["state", challenge.state],
-    ["challenge_id", challenge.challenge_id],
-    ["default_method_id", String(challenge.default_method_id)],
-    ["code_sent", String(challenge.code_sent)],
-    ["attempts_left", String(challenge.attempts_left)],
-    ["expires_at", new Date(challenge.expires_at * 1000).toLocaleTimeString()],
-    ...challenge.methods.map(({ id, type, is_default, confirmed }): [string, string] => [
-      `method ${type}`,
-      `${id.slice(0, 8)}… ${confirmed ? "confirmed" : "PENDING"}${is_default ? " · default" : ""}`
-    ])
-  ];
-
-  return (
-    <Box component="dl" className={classes.details} data-test-id="dl_dev_challenge">
-      {rows.map(([term, value]) => (
-        <Box key={term} display="contents">
-          <dt>{term}</dt>
-          <dd>{value}</dd>
-        </Box>
-      ))}
-    </Box>
-  );
-};
-
 const MockedApiDevPanel = () => {
   const { classes } = useStyles();
 
-  const { pathname } = useLocation();
   const navigate = useNavigate();
   const challenge = useLoginChallenge();
   const startLoginChallenge = useStartLoginChallenge();
-  const mfaStage = useMfaChallengeStage();
-  const terminalFailure = useMfaTerminalFailure();
-
-  // The screen tells the visitor sign-in stopped; the exact reason is only for whoever is testing.
-  useEffect(() => {
-    if (terminalFailure) {
-      console.info(`[mocked-api] login challenge ended: ${terminalFailure.reason}`);
-    }
-  }, [terminalFailure]);
 
   const [isCollapsed, setIsCollapsed] = useState(() => localStorage.getItem(DEV_PANEL_COLLAPSED_STORAGE_KEY) === "true");
   const [scenario, setScenario] = useState(() => readSignInScenarioCookie(document.cookie));
@@ -123,15 +108,11 @@ const MockedApiDevPanel = () => {
       {!isCollapsed && (
         <Stack spacing={2} className={classes.body}>
           <PanelSection title="Test credentials">
-            <Typography variant="body2" data-test-id="p_dev_credentials_email">
-              Email: <span className={classes.code}>{MOCK_SIGN_IN_CREDENTIALS.email}</span> (any valid address)
-            </Typography>
-            <Typography variant="body2" data-test-id="p_dev_credentials_password">
-              Password: <span className={classes.code}>{MOCK_SIGN_IN_CREDENTIALS.password}</span> (anything else → 403 OA0037)
-            </Typography>
-            <Typography variant="body2" data-test-id="p_dev_credentials_mfa_code">
-              MFA code: <span className={classes.code}>{MOCK_SIGN_IN_CREDENTIALS.mfaCode}</span> (anything else is a wrong code)
-            </Typography>
+            <Stack spacing={1}>
+              {TEST_CREDENTIALS.map((credential) => (
+                <CredentialRow key={credential.id} {...credential} />
+              ))}
+            </Stack>
           </PanelSection>
           <PanelSection title="Sign-in scenario">
             <TextField
@@ -143,14 +124,18 @@ const MockedApiDevPanel = () => {
               onChange={selectScenario}
               SelectProps={{ native: true }}
             >
-              {Object.values(SIGN_IN_SCENARIO).map((scenarioOption) => (
-                <option key={scenarioOption} value={scenarioOption}>
-                  {scenarioOption}
-                </option>
+              {SIGN_IN_SCENARIO_GROUPS.map(({ label, scenarios }) => (
+                <optgroup key={label} label={label}>
+                  {scenarios.map((scenarioOption) => (
+                    <option key={scenarioOption} value={scenarioOption}>
+                      {SIGN_IN_SCENARIO_INFO[scenarioOption].label}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </TextField>
             <Typography variant="caption" data-test-id="p_dev_scenario_description">
-              {SIGN_IN_SCENARIO_DESCRIPTION[scenario]}
+              {SIGN_IN_SCENARIO_INFO[scenario].description}
             </Typography>
             {challenge ? (
               <Button
@@ -167,17 +152,6 @@ const MockedApiDevPanel = () => {
                 Applies to the next sign-in.
               </Typography>
             )}
-          </PanelSection>
-          <PanelSection title="Current stage">
-            <Typography variant="body2" data-test-id="p_dev_route">
-              {describeRoute(pathname)}
-            </Typography>
-            {pathname === MFA_CHALLENGE && mfaStage && (
-              <Typography variant="body2" fontWeight="bold" data-test-id="p_dev_mfa_stage">
-                {describeMfaChallengeStage(mfaStage)}
-              </Typography>
-            )}
-            {challenge && <ChallengeDetails challenge={challenge} />}
           </PanelSection>
         </Stack>
       )}

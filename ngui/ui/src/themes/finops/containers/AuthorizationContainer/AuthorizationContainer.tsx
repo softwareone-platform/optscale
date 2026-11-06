@@ -9,6 +9,7 @@ import { useCompleteSignIn } from "@theme/hooks/useCompleteSignIn";
 import { useCreateToken } from "@theme/hooks/useCreateToken";
 import { useIsFeatureEnabled } from "@theme/hooks/useIsFeatureEnabled";
 import { useStartLoginChallenge } from "@theme/hooks/useLoginChallenge";
+import { getEmailVerificationUrl } from "@theme/urls";
 import LoginForm from "components/forms/LoginForm";
 import RegistrationForm from "components/forms/RegistrationForm";
 import Greeter from "components/Greeter";
@@ -21,7 +22,6 @@ import {
   REGISTER,
   LOGIN,
   INITIALIZE,
-  EMAIL_VERIFICATION,
   SHOW_POLICY_QUERY_PARAM,
   USER_EMAIL_QUERY_PARAMETER_NAME,
   NEXT_QUERY_PARAMETER_NAME,
@@ -81,7 +81,7 @@ const AuthorizationContainer = () => {
       if (error instanceof ApolloError) {
         const errorsData = error.graphQLErrors.map(processGraphQLErrorData);
         if (errorsData.some(({ errorCode }) => errorCode === ERROR_CODES.OA0073)) {
-          navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
+          navigate(getEmailVerificationUrl(email));
         }
       }
     }
@@ -101,7 +101,7 @@ const AuthorizationContainer = () => {
       completeSignIn(data);
     } catch (error) {
       if (isEmailNotVerifiedError(error)) {
-        navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
+        navigate(getEmailVerificationUrl(email));
         return;
       }
 
@@ -133,12 +133,7 @@ const AuthorizationContainer = () => {
         : undefined
     });
 
-    return navigate(
-      `${EMAIL_VERIFICATION}?${stringifySearchParams({
-        email,
-        [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
-      })}`
-    );
+    return navigate(getEmailVerificationUrl(email, capability));
   };
 
   const isInvited = queryInvited !== undefined;

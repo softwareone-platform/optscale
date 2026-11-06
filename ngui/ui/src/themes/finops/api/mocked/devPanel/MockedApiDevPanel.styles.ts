@@ -33,21 +33,19 @@ const useStyles = makeStyles()((theme) => ({
   hint: {
     color: MPT_GRAY_4
   },
-  details: {
+  // Label left; value and hint stacked on the right, so the values line up under each other.
+  credential: {
     display: "grid",
-    gridTemplateColumns: "auto 1fr",
-    columnGap: MPT_SPACING_2,
-    rowGap: 2,
-    margin: 0,
-    fontSize: theme.typography.caption.fontSize,
-    "& dt": {
-      color: MPT_GRAY_4
-    },
-    "& dd": {
-      margin: 0,
-      fontFamily: "monospace",
-      wordBreak: "break-all"
-    }
+    gridTemplateColumns: "72px 1fr",
+    alignItems: "center",
+    columnGap: MPT_SPACING_1
+  },
+  credentialLabel: {
+    fontWeight: theme.typography.fontWeightMedium
+  },
+  credentialHint: {
+    gridColumn: 2,
+    color: MPT_GRAY_4
   }
 }));
 

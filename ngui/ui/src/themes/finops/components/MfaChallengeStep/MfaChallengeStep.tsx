@@ -20,7 +20,6 @@ import { SPACING_3 } from "utils/layouts";
 import BackToLoginButton from "./BackToLoginButton";
 import { MFA_CHALLENGE_VIEW } from "./constants";
 import MfaChallengeEnded from "./MfaChallengeEnded";
-import { useReportMfaChallengeStage } from "./mfaChallengeStageStore";
 import useStyles from "./MfaChallengeStep.styles";
 import MfaCodeEntry from "./MfaCodeEntry";
 import MfaMethodPicker from "./MfaMethodPicker";
@@ -48,14 +47,13 @@ const MfaChallengeContent = ({ challenge }: { challenge: LoginChallenge }) => {
   const selectableMethods = getSelectableMethods(challenge);
 
   const [selectedMethodId, setSelectedMethodId] = useState(() => getPreselectedMethod(challenge)?.id ?? null);
-  const [isPickingMethod, setIsPickingMethod] = useState(selectedMethodId === null);
-  const [attemptsLeft, setAttemptsLeft] = useState<number | null>(challenge.attempts_left);
+  // Only "use a different method" sets this; with nothing selected the stage opens the picker anyway.
+  const [isPickingMethod, setIsPickingMethod] = useState(false);
+  const [attemptsLeft, setAttemptsLeft] = useState(challenge.attempts_left);
   const [codeError, setCodeError] = useState<MfaCodeError | null>(null);
   const [rejectedCodeCount, setRejectedCodeCount] = useState(0);
 
   const stage = getMfaChallengeStage(challenge, { selectedMethodId, isPickingMethod });
-
-  useReportMfaChallengeStage(stage);
 
   const endChallenge = useCallback(
     (reason: MfaTerminalFailureReason) => endLoginChallenge({ reason, userEmail: challenge.user_email }),
@@ -80,7 +78,7 @@ const MfaChallengeContent = ({ challenge }: { challenge: LoginChallenge }) => {
       switch (failure.kind) {
         case MFA_VERIFICATION_FAILURE.INVALID_CODE:
           // The service's count wins; without it, one attempt was spent.
-          setAttemptsLeft((previous) => failure.attemptsLeft ?? (previous === null ? null : previous - 1));
+          setAttemptsLeft((previous) => failure.attemptsLeft ?? previous - 1);
           setCodeError({ messageId: "signIn:invalidVerificationCode" });
           setRejectedCodeCount((count) => count + 1);
           return;
