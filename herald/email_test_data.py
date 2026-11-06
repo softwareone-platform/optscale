@@ -1439,4 +1439,12 @@ EMAIL_TEST_DATA = {
             },
         },
     },
+    "mfa_code": {
+        "email": ["serviceuser@hystax.com"],
+        "subject": "OptScale verification code",
+        "template_type": "mfa_code",
+        "template_params": {
+            "texts": {"code": "048213"},
+        },
+    },
 }
