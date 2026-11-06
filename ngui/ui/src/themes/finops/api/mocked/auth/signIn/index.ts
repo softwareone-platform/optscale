@@ -1,3 +1,4 @@
-export { createTokenMock, MOCK_EMAIL_PREFIX, MOCK_PASSWORD } from "./createTokenMock";
-export { EMAIL_METHOD_ID, MOCK_TOKEN, MOCK_USER_ID, TOTP_METHOD_ID } from "./fixtures";
+// What the route table needs; scenarios and fixtures are imported from their own files.
+export { completeLoginChallengeMock } from "./completeLoginChallengeMock";
+export { createTokenMock } from "./createTokenMock";
 export { resolveLoginOptionsMock } from "./loginOptionsMock";

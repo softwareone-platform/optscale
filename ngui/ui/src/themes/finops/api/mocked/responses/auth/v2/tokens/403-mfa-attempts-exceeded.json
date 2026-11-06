@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 403,
+    "error_code": "OA0076",
+    "reason": "Too many attempts",
+    "params": []
+  }
+}

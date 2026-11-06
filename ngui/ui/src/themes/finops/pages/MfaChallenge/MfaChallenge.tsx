@@ -1,7 +1,5 @@
-import LoginChallengeStep from "@theme/components/LoginChallengeStep";
+import MfaChallengeStep from "@theme/components/MfaChallengeStep";
 
-const MfaChallenge = () => (
-  <LoginChallengeStep titleMessageId="signIn:mfaRequiredTitle" descriptionMessageId="signIn:mfaRequiredDescription" />
-);
+const MfaChallenge = () => <MfaChallengeStep />;
 
 export default MfaChallenge;
