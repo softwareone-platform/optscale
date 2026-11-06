@@ -117,6 +117,16 @@ class BaseController(object):
             raise NotFoundException(Err.OA0024, [id_])
         return user
 
+    def check_user_access(self, user_id, token):
+        """The user must exist; a token is accepted only from that user
+        (no token means the call was authorized with the cluster secret)"""
+        req_user = self.get_user_by_id(user_id)
+        if token:
+            token_user = self.get_user(token)
+            if token_user.id != user_id:
+                raise ForbiddenException(Err.OA0012, [])
+        return req_user
+
     def get_users_by_ids(self, ids):
         users = self.session.query(User).filter(
             User.id.in_(ids),

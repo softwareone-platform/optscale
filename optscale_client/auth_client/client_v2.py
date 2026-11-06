@@ -69,6 +69,17 @@ class Client(Client_v1):
         return url
 
     @staticmethod
+    def mfa_methods_url(user_id, method_id=None):
+        url = '%s/mfa_methods' % Client.user_url(user_id)
+        if method_id is not None:
+            url = '%s/%s' % (url, method_id)
+        return url
+
+    @staticmethod
+    def mfa_method_confirm_url(user_id, method_id):
+        return '%s/confirm' % Client.mfa_methods_url(user_id, method_id)
+
+    @staticmethod
     def query_url(**query):
         query = {
             key: value for key, value in query.items() if value is not None

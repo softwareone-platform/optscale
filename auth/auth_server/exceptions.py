@@ -211,3 +211,12 @@ class Err(enum.Enum):
     OA0081 = [
         "Authentication policy already exists",
     ]
+    OA0082 = [
+        "Authentication method of type %s already exists",
+    ]
+    OA0083 = [
+        "Invalid authentication code",
+    ]
+    OA0084 = [
+        "Authentication method %s is already confirmed",
+    ]
