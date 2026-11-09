@@ -1,0 +1,25 @@
+{
+  "challenge_id": "6d2f4c0e-3b1a-4b7e-9d1e-0f4c2a6b8e91",
+  "state": "mfa_required",
+  "expires_at": 1758480300,
+  "user_email": "finops.ffc@example.com",
+  "methods": [
+    {
+      "id": "a1d3f7c0-2e18-4c9b-9a55-7b0d1c4e6f32",
+      "type": "totp",
+      "label": "Configured on Google Pixel 10 Pro",
+      "is_default": true,
+      "confirmed": true
+    },
+    {
+      "id": "b2e47d91-6c03-4f8a-b1d2-5e9a3c7f0481",
+      "type": "email",
+      "label": "fi***@example.com",
+      "is_default": false,
+      "confirmed": true
+    }
+  ],
+  "default_method_id": "a1d3f7c0-2e18-4c9b-9a55-7b0d1c4e6f32",
+  "code_sent": false,
+  "attempts_left": 5
+}

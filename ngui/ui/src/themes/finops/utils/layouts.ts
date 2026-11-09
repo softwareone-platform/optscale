@@ -35,6 +35,7 @@ export const MPT_ALERTS_SUCCESS_4 = `#005838`;
 export const MPT_TERTIARY_PRIMARY = `#EBEDFF`;
 export const MPT_TERTIARY_BLUE_1 = `#CAE4FF`;
 export const MPT_TERTIARY_BLUE_2 = `#4DA6FF`;
+export const MPT_TERTIARY_BLUE_3 = `#315CB9`;
 
 export const MPT_BOX_SHADOW = `0 1px 6px #83879257`;
 export const MPT_BOX_SHADOW_HOVER = `0 0 0 2px ${MPT_ALERTS_INFO_2} inset, 0 1px ${MPT_SPACING_1} #6b718057`;

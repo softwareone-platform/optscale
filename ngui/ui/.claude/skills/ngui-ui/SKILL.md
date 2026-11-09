@@ -1,6 +1,6 @@
 ---
 name: ngui-ui
-description: Project-specific bindings for the optscale FinOps for Cloud frontend (ngui/ui). Resolves the concrete values the portable skills reference abstractly — the themes/finops vs src boundary and the theme resolver, alias names, script commands, which checks are already red on main, shared component and hook inventory, test provider stack, i18n namespaces and the translation coverage gate. Use whenever a task touches ngui/ui, in combination with frontend-rules, frontend-react, unit-testing, unit-testing-vitest and git-workflow.
+description: Conventions and values for the optscale FinOps for Cloud frontend (ngui/ui) — the themes/finops vs src boundary and the theme resolver, alias names, script commands, which checks are already red on main, shared component and hook inventory, test provider stack, i18n namespaces and the translation coverage gate. Use whenever a task touches ngui/ui.
 ---
 
 # ngui/ui — FinOps for Cloud frontend
@@ -15,35 +15,19 @@ redirects imports to it at build time. See
 actually behaves, including two traps.
 
 This skill covers the frontend only. The rest of the `optscale` monorepo — the Python services,
-`regression-tests/` — is out of its scope.
-
-## Which skills to load
-
-| Task                                | Load alongside this file               |
-| ----------------------------------- | -------------------------------------- |
-| Any frontend file                   | `frontend-rules`                       |
-| A `.tsx`, hook, context or form     | `frontend-rules` + `frontend-react`    |
-| Writing or fixing a spec            | `unit-testing` + `unit-testing-vitest` |
-| Mock-driven prototype of a new view | `poc-builder`                          |
-| Branch, commit or PR                | `git-workflow`                         |
-
-**Do not load** `mpt-frontend-standards`, `mpt-design-system` or `mpt-module-testing`. Those assume
-`@swo/design-system` / `@mpt-extension/sdk`; this app is **MUI 5 + tss-react** and imports neither.
-`unit-testing-jest` does not apply either — the runner is Vitest.
+`regression-tests/` — is out of its scope. The stack is **React + MUI 5 + tss-react**, tested with
+**Vitest**; it uses neither `@swo/design-system` nor `@mpt-extension/sdk`.
 
 ## Where the rules live
 
-The portable skills carry the rules; this file carries the values. Repo-local docs that are
-authoritative on their own topic:
+Repo-local docs that are authoritative on their own topic:
 
-| Doc                                                                                                   | Authoritative on                              |
-| ----------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| [`src/utils/themeResolver/README.md`](../../../src/utils/themeResolver/README.md)                     | How theme override resolution works           |
-| [`src/themes/finops/translations/README.md`](../../../src/themes/finops/translations/README.md)       | Locales, draft locales, the coverage gate     |
-| [`src/themes/finops/utils/features/README.md`](../../../src/themes/finops/utils/features/README.md)   | Theme feature flags                           |
-| [`src/themes/finops/api/mocked/README.md`](../../../src/themes/finops/api/mocked/README.md)           | Where mocked endpoints live and the seam rule |
-| [`src/themes/finops/api/auth/signIn/README.md`](../../../src/themes/finops/api/auth/signIn/README.md) | The two-step sign-in flow and its two seams   |
-| [`regression-tests/CLAUDE.md`](../../../../../regression-tests/CLAUDE.md)                             | The Playwright visual suite (separate scope)  |
+| Doc                                                                                                 | Authoritative on                             |
+| --------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| [`src/utils/themeResolver/README.md`](../../../src/utils/themeResolver/README.md)                   | How theme override resolution works          |
+| [`src/themes/finops/translations/README.md`](../../../src/themes/finops/translations/README.md)     | Locales, draft locales, the coverage gate    |
+| [`src/themes/finops/utils/features/README.md`](../../../src/themes/finops/utils/features/README.md) | Theme feature flags                          |
+| [`regression-tests/CLAUDE.md`](../../../../../regression-tests/CLAUDE.md)                           | The Playwright visual suite (separate scope) |
 
 ## Canonical config — code is truth
 
@@ -99,26 +83,61 @@ Run from `ngui/ui/`:
 cd ngui/ui
 npx vitest run src/themes/finops/<area>   # the specs you touched
 pnpm lint                                 # must be clean
-npx prettier --write 'src/themes/finops/**/*.{ts,tsx,json,md}'
+npx prettier --write <the files you staged>    # exact command below
 pnpm build                                # resolves the theme + lazy page imports
 pnpm translate:validate                   # only if you touched translations
 ```
 
 ### Three checks are already failing on `main` — diff, don't chase
 
-Measured 2026-10-19 on a clean tree. Treat these as the baseline, not as something you broke:
+Measured 2026-10-19 on a clean tree; `type:check` and `translate:validate` re-measured 2026-11-04 with
+the same result. Treat these as the baseline, not as something you broke:
 
-| Check                     | Pre-existing state                                                                                                                                                                                                  |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm type:check`         | **~15,300 error lines**, ~1,470 of them inside `src/themes/finops`. Not a usable gate. Baseline it (`npx tsc --noEmit > /tmp/tsc-base.txt` on a clean tree), then confirm your files contribute **zero** new lines. |
-| `pnpm translate:validate` | 5 coverage failures for `awsUseExternalId` and `regionScope*`. Confirm your keys are absent from the diff.                                                                                                          |
-| `pnpm prettier:check`     | `src/themes/finops/utils/features/README.md` is unformatted. Leave it; don't sweep it into your diff.                                                                                                               |
+| Check                     | Pre-existing state                                                                                                                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm type:check`         | **~15,300 error lines**, ~1,470 of them inside `src/themes/finops`. Not a usable gate. Baseline it before your first edit, then diff — recipe below. Your files must add **zero** lines. |
+| `pnpm translate:validate` | 5 coverage failures for `awsUseExternalId` and `regionScope*`. Confirm your keys are absent from the diff.                                                                               |
+| `pnpm prettier:check`     | `src/themes/finops/utils/features/README.md` is unformatted. Leave it; don't sweep it into your diff.                                                                                    |
 
 `pnpm build` **is** clean, and is the only check that exercises the theme resolver and the lazy page
 imports. Treat a green build as the real signal.
 
-Running prettier over the whole theme reformats unrelated files. Pass explicit paths, or
-`git checkout --` the collateral before committing.
+Line numbers shift as you edit, so compare the `tsc` runs without `(line,col)` — a raw `diff` reports
+every error below your change as new:
+
+```bash
+npx tsc --noEmit > /tmp/tsc-base.txt    # before the first edit
+npx tsc --noEmit > /tmp/tsc-after.txt   # when done
+diff <(sed -E 's/\([0-9]+,[0-9]+\)//' /tmp/tsc-base.txt | sort -u) \
+     <(sed -E 's/\([0-9]+,[0-9]+\)//' /tmp/tsc-after.txt | sort -u) | grep '^>'   # empty = nothing new
+```
+
+Running prettier over the whole theme reformats unrelated files, so format only what you staged:
+
+```bash
+git diff --cached --name-only --relative --diff-filter=d -- src | grep -E '\.(ts|tsx|json|md)$' | xargs -r npx prettier --write
+```
+
+`--relative` turns the monorepo-root paths (`ngui/ui/src/…`) into ones that resolve from `ngui/ui`.
+`xargs -r` skips prettier when nothing is staged — a bare `npx prettier --write` with no files waits on
+stdin forever. In zsh an unquoted `$FILES` is one argument, so don't collect the list in a variable.
+
+### Seeing the mocked API answer
+
+The mocks run inside the dev server's Node SSR loader, which neither Vitest nor `pnpm build` touches —
+a mock that imports a browser-only module breaks only here. Drive them on a second dev server:
+
+```bash
+npx vite --port 3123 --strictPort &
+curl -s -X POST localhost:3123/api/auth/v2/tokens -H 'Content-Type: application/json' \
+  -H 'Cookie: finops_mocked_sign_in_scenario=mfa_totp_default' \
+  -d '{"email":"finops.ffc@example.com","password":"password"}'   # → 202 challenge
+pkill -f "vite --port 3123"
+```
+
+Each answer is also logged as `[mocked-api] POST /auth/v2/tokens → 202`. `vite.config.mts` loads
+`mockedApiPlugin.ts` without the path aliases, so the plugin may only `import type` from `handlers.ts`,
+plus the import-free `api/mocked/config.ts` that holds every mock setting.
 
 ## Repo layout
 
@@ -137,7 +156,7 @@ ngui/
         │   └── utils/themeResolver/     # the override plugin
         └── themes/finops/   # THIS FORK'S CODE — everything you write
             ├── api/ components/ containers/ contexts/ hooks/
-            ├── icons/ layouts/ pages/ shared/ translations/ utils/
+            ├── icons/ layouts/ pages/ shared/ tests/ translations/ utils/
             ├── theme.ts theme.features.ts urls.ts
 ```
 
@@ -147,6 +166,10 @@ counterpart (new work) are reachable only through an explicit `@theme/…` impor
 
 `themes/finops/shared/` holds fork-only building blocks that aren't overrides — `ResponsiveStack`,
 `DividerHorizontal`, `LabelColon`, `DataSourceTagCell`.
+
+`themes/finops/api/mocked/` holds every endpoint stand-in, plus `devPanel/` — the dev-only scenario
+panel. The theme `Greeter` lazy-loads it in development and is the only app code that reaches into
+`api/mocked/`.
 
 ### Adding a page + route
 
@@ -197,7 +220,9 @@ In `themes/finops/hooks/` — browse the folder for the current list:
 | `useAsyncCall`               | One-shot API call + its pending flag; what endpoint hooks wrap |
 | `useLoginOptions`            | The sign-in email step — resolves an address's auth methods    |
 | `useCreateToken`             | The sign-in password step                                      |
-| `useLoginChallenge`          | Reads the MFA challenge out of router state                    |
+| `useLoginChallenge`          | MFA router state — read, start (`useStartLoginChallenge`), end |
+| `useCompleteSignIn`          | Stores an issued token; shared by every sign-in path           |
+| `useSecondsUntil`            | Countdown to a unix timestamp, ticking once a second           |
 | `coreData/useAllDataSources` | Data-source list from the core-data cache                      |
 
 Upstream hooks worth knowing before writing your own: `useOrganizationInfo`, `useGetToken`,
@@ -221,15 +246,12 @@ query with `container.querySelector("[data-test-id='…']")`.
   `ThemeProviderWrapper` + `IntlProvider` + `MemoryRouter`. Fine for smoke tests, but it **hardcodes
   `MemoryRouter` with no props**, so you cannot nest a router to seed route state, and it supplies
   neither an Apollo client nor an `alerts` slice.
-- Rendering a theme component that reaches `Greeter` or `ThemeProviderWrapper` needs a local
-  provider stack: `Provider store={mockStore({ [ALERTS]: {} })}` → `MockedProvider` (from
-  `@apollo/client/testing`) → `ThemeProviderWrapper` → `IntlProvider` → `MemoryRouter initialEntries`.
-  Working example:
-  [`LoginChallengeStep.test.tsx`](../../../src/themes/finops/components/LoginChallengeStep/LoginChallengeStep.test.tsx).
-  `ThemeProviderWrapper` pulls organization theme settings through Apollo; without `MockedProvider`
-  you get an opaque Apollo `Invariant Violation`.
-- Set `globalThis.IS_REACT_ACT_ENVIRONMENT = true` at the top of a render spec, or React 18 floods
-  the output with act() warnings.
+- Rendering a theme component that reaches `Greeter` or `ThemeProviderWrapper`: use
+  [`@theme/tests/renderWithProviders`](../../../src/themes/finops/tests/renderWithProviders.tsx). It
+  takes an `initialEntry` (route state included) and the `<Route>` elements, supplies the alerts
+  slice, `MockedProvider`, `ThemeProviderWrapper`, `IntlProvider` and `MemoryRouter`, and sets
+  `IS_REACT_ACT_ENVIRONMENT`. `ThemeProviderWrapper` pulls organization theme settings through
+  Apollo; without `MockedProvider` you get an opaque Apollo `Invariant Violation`.
 - No shared factory or `mockResponse` util ships. Keep fixtures beside the module under test and
   promote only on the second duplicate.
 - Specs are co-located `*.test.ts(x)`. Pure logic is by far the cheapest thing to cover here —
@@ -274,29 +296,28 @@ only that one).
 
 ## This repo's answers to the per-project questions
 
-| Question                         | Answer                                                                                                                                                                                                      |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Package manager                  | `pnpm` 10.33.0, Node 22.16.0, workspace `ngui/{ui,server}`                                                                                                                                                  |
-| Where does new code go?          | `src/themes/finops/` — always                                                                                                                                                                               |
-| Server state                     | Two layers: Apollo GraphQL against `ngui/server` (`graphql/__generated__/hooks/*`) **and** a legacy redux REST middleware (`src/api/*`, `apiAction`). Follow whatever the surrounding feature already uses. |
-| Client state                     | redux + redux-persist; `initialize` in `containers/InitializeContainer/redux` holds the session                                                                                                             |
-| Forms                            | react-hook-form via `components/forms/common/fields`                                                                                                                                                        |
-| Routing                          | react-router-dom 6; route classes in `utils/routes/`, rendered by `components/App`                                                                                                                          |
-| Mocking a not-yet-built endpoint | The mock goes in [`api/mocked/`](../../../src/themes/finops/api/mocked/README.md) mirroring the real path; the real `api/` module keeps the contract and a one-line swap seam                               |
-| Feature flags                    | [`theme.features.ts`](../../../src/themes/finops/theme.features.ts) + `useIsFeatureEnabled`                                                                                                                 |
+| Question                         | Answer                                                                                                                                                                                                        |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Package manager                  | `pnpm` 10.33.0, Node 22.16.0, workspace `ngui/{ui,server}`                                                                                                                                                    |
+| Where does new code go?          | `src/themes/finops/` — always                                                                                                                                                                                 |
+| Server state                     | Two layers: Apollo GraphQL against `ngui/server` (`graphql/__generated__/hooks/*`) **and** a legacy redux REST middleware (`src/api/*`, `apiAction`). Follow whatever the surrounding feature already uses.   |
+| Client state                     | redux + redux-persist; `initialize` in `containers/InitializeContainer/redux` holds the session                                                                                                               |
+| Forms                            | react-hook-form via `components/forms/common/fields`                                                                                                                                                          |
+| Routing                          | react-router-dom 6; route classes in `utils/routes/`, rendered by `components/App`                                                                                                                            |
+| Mocking a not-yet-built endpoint | Served over HTTP by the dev server: `api/mocked/` mirroring the real path, bodies as JSON in `api/mocked/responses/`, on with `mfa_login`, off with `VITE_MOCKED_API=false`                                   |
+| Feature flags                    | [`theme.features.ts`](../../../src/themes/finops/theme.features.ts) + `useIsFeatureEnabled`                                                                                                                   |
+| Generated GraphQL types          | Every field is nullable (`data?.token?.token`). Narrow once at the call site, never cast. Apollo runs with the default `errorPolicy: "none"`, so a failed mutation rejects and a resolved one carries `data`. |
 
 ## Git
 
-| Value          | This repo                                                                                                                                                       |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Default branch | **`main`** (not `master`); `integration` tracks upstream, `release/N` for releases                                                                              |
-| Remote         | `git@github.com:softwareone-platform/optscale.git`                                                                                                              |
-| Tracker key    | `MPT-` (Jira: `softwareone.atlassian.net`)                                                                                                                      |
-| Branch shape   | `feature/MPT-12345-kebab-summary`, `fix/MPT-12345-kebab-summary`                                                                                                |
-| Commit style   | `MPT-12345 Sentence describing the change` — **not** Conventional Commits, and not parsed. A few `feat:`/`fix:` commits exist; follow the dominant `MPT-` form. |
-| Merges         | PRs into `main`; upstream arrives as `⚠️ Sync upstream/integration -> main` commits                                                                             |
-
-Never run `git commit` yourself — stage only your own paths and hand the message over.
+| Value          | This repo                                                                                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Default branch | **`main`** (not `master`); `integration` tracks upstream, `release/N` for releases                                                                            |
+| Remote         | `git@github.com:softwareone-platform/optscale.git`                                                                                                            |
+| Tracker key    | `MPT-` (Jira: `softwareone.atlassian.net`)                                                                                                                    |
+| Branch shape   | `feature/MPT-12345-kebab-summary`, `fix/MPT-12345-kebab-summary`                                                                                              |
+| Commit style   | Mixed, and not parsed. Most of `main` is `MPT-12345 Sentence describing the change`; the MFA feature commits are `feat:`/`fix:`. Match the branch you are on. |
+| Merges         | PRs into `main`; upstream arrives as `⚠️ Sync upstream/integration -> main` commits                                                                           |
 
 ## Do not touch
 
@@ -313,8 +334,4 @@ Never run `git commit` yourself — stage only your own paths and hand the messa
 
 Change a script name, alias, locale or shared component in the same commit that changes this file.
 The three "already failing" baselines are dated — re-measure rather than trusting the numbers, and
-update the date. Verify with:
-
-```bash
-node ~/.claude/validate-skills.mjs ngui/ui/.claude/skills
-```
+update the date.
