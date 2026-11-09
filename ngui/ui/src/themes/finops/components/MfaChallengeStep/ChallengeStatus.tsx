@@ -2,6 +2,8 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { formatCountdown } from "./utils";
 
+const COUNTDOWN_ATTEMPTS_SEPARATOR = " · ";
+
 type ChallengeStatusProps = {
   secondsUntilExpiry: number;
   attemptsLeft: number;
@@ -10,7 +12,7 @@ type ChallengeStatusProps = {
 const ChallengeStatus = ({ secondsUntilExpiry, attemptsLeft }: ChallengeStatusProps) => (
   <Typography variant="body2" align="center" color="text.primary" data-test-id="p_challenge_status">
     <FormattedMessage id="signIn:challengeExpiresIn" values={{ time: formatCountdown(secondsUntilExpiry) }} />
-    {" · "}
+    {COUNTDOWN_ATTEMPTS_SEPARATOR}
     <Typography
       component="span"
       variant="body2"
