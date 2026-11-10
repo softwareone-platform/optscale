@@ -4,8 +4,9 @@ ARG IMAGE=node:22.16.0-alpine3.21
 FROM $IMAGE AS base
 
 RUN npm install -g pnpm@10.33.0
-  
-ENV NODE_ENV production
+
+ENV VITE_APP_THEME=finops
+ENV NODE_ENV=production
 
 # --- Setup project source stage ---
 FROM base AS source
@@ -22,7 +23,7 @@ FROM source AS builder
 WORKDIR /usr/src/app
 
 RUN pnpm run -r build
-  
+
 # Prepare production dependencies for the server
 RUN pnpm deploy --filter=server --prod ./prod/server && \
     ./prod/server/scripts/prune_node_modules.sh

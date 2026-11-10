@@ -1,0 +1,83 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+
+{% set name = texts.organization.name %}
+{% set id = texts.organization.id %}
+
+{% include 'partials/organization_block.html' %}
+
+{% if texts.organization_constraint.expense_anomaly %}
+<table class="row row-4"
+       align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace:0;mso-table-rspace:0;background-color:#FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0"
+                   role="presentation"
+                   style="mso-table-lspace:0;mso-table-rspace:0;background-color:#fff;color:#000;"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace:0;mso-table-rspace:0;font-weight:400;text-align:left;vertical-align:top;padding-top:20px;padding-bottom:0;border-top:0;border-right:0;border-bottom:0;border-left:0">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation" style="mso-table-lspace:0;mso-table-rspace:0;word-break:break-word">
+                            <tr>
+                                <td class="pad" style="padding-bottom:5px;padding-left: 0px;padding-right:20px">
+
+                                        <p style="font-size:15px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2">
+                                            Unusual expense growth from <strong>{{ texts.limit_hit.constraint_limit|format_money(currency=texts.organization.currency_code) }}</strong> to <strong>{{ texts.limit_hit.value|format_money(currency=texts.organization.currency_code) }}</strong> is detected by anomaly detection policy <strong>{{ texts.organization_constraint.name }}</strong>
+                                        </p>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endif %}
+{% if texts.organization_constraint.resource_count_anomaly %}
+<table
+        class="row row-5" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+        style="mso-table-lspace:0;mso-table-rspace:0;background-color:#FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0"
+                   role="presentation"
+                   style="mso-table-lspace:0;mso-table-rspace:0;background-color:#fff;color:#000; "
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace:0;mso-table-rspace:0;font-weight:400;text-align:left;vertical-align:top;padding-top:20px;padding-bottom:0;border-top:0;border-right:0;border-bottom:0;border-left:0">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation" style="mso-table-lspace:0;mso-table-rspace:0;word-break:break-word">
+                            <tr>
+                                <td class="pad" style="padding-bottom:5px;padding-left: 0px;padding-right:20px">
+                                            <p style="font-size:15px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2">
+                              Unusual resource count growth from <strong>{{ texts.limit_hit.constraint_limit }}</strong> to <strong>{{ texts.limit_hit.value }}</strong> is detected by anomaly detection policy <strong>{{ texts.organization_constraint.name }}</strong>
+                                            </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endif %}
+
+{% set gotoLink = 'https://' + etcd.control_panel_link + '/anomalies/' + texts.organization_constraint.id %}
+{% include 'partials/goto_button.html' %}
+
+{% endblock %}

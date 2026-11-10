@@ -7,8 +7,8 @@ class InstancesInStoppedStateForALongTimeModal extends BaseSideModal {
     messageId: "instancesInStoppedStateForALongTime",
     dataTestIds: {
       title: "lbl_instances_in_stopped_state_for_a_long_time_sidemodal_title",
-      closeButton: "btn_close",
-    },
+      closeButton: "btn_close"
+    }
   };
 
   dataTestId = "smodal_instances_in_stopped_state_for_a_long_time";

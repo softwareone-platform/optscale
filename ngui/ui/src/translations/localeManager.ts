@@ -11,7 +11,7 @@ export const DEFAULT_LOCALE = "en-US";
 
 export const SUPPORTED_LOCALES = {
   "en-US": "English",
-  "es-ES": "Español",
+  "es-ES": "Español"
 } as const;
 
 export type SupportedLocale = keyof typeof SUPPORTED_LOCALES;
@@ -20,7 +20,7 @@ const getCurrencyConfiguration = (currency, rest = {}) => ({
   style: "currency",
   currency,
   minimumFractionDigits: 0,
-  ...rest,
+  ...rest
 });
 
 const getCompactCurrencyConfiguration = (currency, rest = {}) => ({
@@ -28,7 +28,7 @@ const getCompactCurrencyConfiguration = (currency, rest = {}) => ({
   currency,
   maximumFractionDigits: 1,
   minimumFractionDigits: 0,
-  ...rest,
+  ...rest
 });
 
 const numberFormats = {
@@ -36,25 +36,25 @@ const numberFormats = {
     currencyCodes
       .map((code) => [
         [code, getCurrencyConfiguration(code, { currencyDisplay: "narrowSymbol" })],
-        [`${code}Compact`, getCompactCurrencyConfiguration(code, { currencyDisplay: "narrowSymbol" })],
+        [`${code}Compact`, getCompactCurrencyConfiguration(code, { currencyDisplay: "narrowSymbol" })]
       ])
       .flat()
   ),
   percentage: {
-    style: "percent",
+    style: "percent"
   },
   percentage2: {
     style: "percent",
     maximumFractionDigits: 2,
-    minimumFractionDigits: 0,
-  },
+    minimumFractionDigits: 0
+  }
 };
 
 const formats = { number: numberFormats };
 
 const messagesMap: Record<SupportedLocale, Record<string, string>> = {
   "en-US": messagesEnUS,
-  "es-ES": messagesEsES,
+  "es-ES": messagesEsES
 };
 
 export const getMessagesForLocale = (locale: SupportedLocale): Record<string, string> => messagesMap[locale] ?? messagesEnUS;
@@ -66,9 +66,9 @@ export const getConfigForLocale = (locale: SupportedLocale) => ({
   formats,
   messages: {
     ...messagesEnUS,
-    ...getMessagesForLocale(locale),
+    ...getMessagesForLocale(locale)
   },
-  defaultLocale: DEFAULT_LOCALE,
+  defaultLocale: DEFAULT_LOCALE
 });
 
 export default (() => {
@@ -78,6 +78,6 @@ export default (() => {
 
   return {
     getConfig,
-    getCurrencySymbol: (currencyCode) => getCurrencySymbol(currencyCode, locale),
+    getCurrencySymbol: (currencyCode) => getCurrencySymbol(currencyCode, locale)
   };
 })();

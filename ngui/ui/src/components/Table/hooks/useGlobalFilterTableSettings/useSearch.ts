@@ -11,7 +11,7 @@ type UseSearchParams = {
 const getInitialSearchValue = (key: string): string => {
   const { [key]: search = "" } = getSearchParams({
     parseNumbers: false,
-    parseBooleans: false,
+    parseBooleans: false
   });
 
   return String(search ?? "");
@@ -45,6 +45,6 @@ export const useSearch = <TData>({ queryParamPrefix, enableSearchQueryParam = tr
 
   return {
     search,
-    onSearchChange,
+    onSearchChange
   };
 };

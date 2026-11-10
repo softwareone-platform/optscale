@@ -5,9 +5,8 @@ from collections.abc import MutableMapping
 from types import SimpleNamespace
 from typing import Any
 
-from pytest_mock import MockerFixture
-
 import tools.optscale_telemetry.kombu_instrumentor as kombu_instrumentor_module
+from pytest_mock import MockerFixture
 from tools.optscale_telemetry.kombu_instrumentor import KombuInstrumentor
 
 

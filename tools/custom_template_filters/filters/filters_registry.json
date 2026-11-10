@@ -1,0 +1,6 @@
+[
+    {
+        "name": "format_money",
+        "entrypoint": "ffc.filters.format_money"
+    }
+]

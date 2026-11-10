@@ -44,9 +44,9 @@ const PoolsOverview = ({
         </Tooltip>
       ),
       logo: {
-        icon: <PoolTypeIcon fontSize="medium" type={POOL_TYPE_BUSINESS_UNIT} hasRightMargin dataTestId="img_type" />,
+        icon: <PoolTypeIcon fontSize="medium" type={POOL_TYPE_BUSINESS_UNIT} hasRightMargin dataTestId="img_type" />
       },
-      dataTestId: "lbl_pool_name",
+      dataTestId: "lbl_pool_name"
     },
     items: [
       {
@@ -55,9 +55,9 @@ const PoolsOverview = ({
         messageId: "configureAssignmentRules",
         link: ASSIGNMENT_RULES,
         type: "button",
-        dataTestId: "btn_configure_assignment_rules",
-      },
-    ],
+        dataTestId: "btn_configure_assignment_rules"
+      }
+    ]
   };
 
   return (

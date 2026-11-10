@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { CircularProgress } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -26,22 +26,18 @@ const OrganizationOptions = ({
   handleExpand,
   options,
   onSave,
-  isLoadingProps = {},
+  isLoadingProps = {}
 }) => {
   const {
     isGetOrganizationOptionsLoading = false,
     isGetOrganizationOptionLoading = false,
-    isUpdateOrganizationOptionLoading = false,
+    isUpdateOrganizationOptionLoading = false
   } = isLoadingProps;
 
   const [updatedValue, setUpdatedValue] = useState(value);
   const [isValidJson, setIsValidJson] = useState(true);
 
   const openSideModal = useOpenSideModal();
-
-  useEffect(() => {
-    setUpdatedValue(value);
-  }, [value]);
 
   const onJsonChange = ({ error, jsObject }) => {
     setUpdatedValue(jsObject);
@@ -63,7 +59,7 @@ const OrganizationOptions = ({
   const actionBarDefinition = {
     title: {
       messageId: "organizationOptions",
-      dataTestId: "lbl_organization_options",
+      dataTestId: "lbl_organization_options"
     },
     items: [
       {
@@ -75,9 +71,9 @@ const OrganizationOptions = ({
         action: () => openSideModal(CreateOrganizationOptionModal),
         type: "button",
         requiredActions: ["EDIT_PARTNER"],
-        dataTestId: "btn_add_organization_option",
-      },
-    ],
+        dataTestId: "btn_add_organization_option"
+      }
+    ]
   };
 
   const isChangeSettingsAllowed = useIsAllowed({ requiredActions: ["EDIT_PARTNER"] });

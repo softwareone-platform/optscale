@@ -8,13 +8,13 @@ docker build -t ${TEST_IMAGE} --build-arg BUILDTAG=${BUILD_TAG} -f tools/optscal
 
 echo "Ruff tests>>>"
 docker run -i --rm ${TEST_IMAGE} \
-    bash -c "uv --project tools/optscale_telemetry run ruff check ."
+    bash -c "uv run ruff check ."
 echo "<<<Ruff tests"
 
 
 echo "pytest tests>>>"
 docker run -i --rm ${TEST_IMAGE} \
-    bash -c "uv --project tools/optscale_telemetry run pytest"
+    bash -c "uv run pytest"
 echo "<<<pytest tests"
 
 docker rmi ${TEST_IMAGE}

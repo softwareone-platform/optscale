@@ -13,13 +13,13 @@ const JsonView = ({ value, onChange, id, viewOnly = false }) => {
       height="auto"
       width="100%"
       onChange={onChange}
-      waitAfterKeyPress={1000}
+      waitAfterKeyPress={0}
       confirmGood={false}
       colors={theme.palette.json}
       viewOnly={viewOnly}
       style={{
         warningBox: { display: "none" },
-        body: { fontSize: theme.typography.pxToRem(14), fontFamily: "monospace" },
+        body: { fontSize: theme.typography.pxToRem(14), fontFamily: "monospace" }
       }}
     />
   );

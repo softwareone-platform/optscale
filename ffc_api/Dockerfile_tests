@@ -1,0 +1,10 @@
+ARG BUILDTAG=build
+FROM ffc_api:${BUILDTAG}
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+COPY ffc_api/pyproject.toml ffc_api/uv.lock ffc_api/__init__.py ./ffc_api/
+
+RUN uv --project ffc_api sync --locked
+
+COPY ffc_api/ffc_api_server/tests ffc_api/ffc_api_server/tests

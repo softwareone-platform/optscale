@@ -7,8 +7,8 @@ class VolumesNotAttachedForLongTimeModal extends BaseSideModal {
     messageId: "volumesNotAttachedForLongTime",
     dataTestIds: {
       title: "lbl_volumes_not_attached_for_long_time_sidemodal_title",
-      closeButton: "btn_close",
-    },
+      closeButton: "btn_close"
+    }
   };
 
   dataTestId = "smodal_volumes_not_attached_for_long_time";

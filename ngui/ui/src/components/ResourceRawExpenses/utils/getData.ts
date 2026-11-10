@@ -6,18 +6,18 @@ import { formatISO } from "utils/datetime";
 const AWS = Object.freeze({
   LINE_ITEM_DESCRIPTION: "lineItem/LineItemDescription",
   LINE_ITEM_BLENDED_RATE: "lineItem/BlendedRate",
-  PRICING_UNIT: "pricing/unit",
+  PRICING_UNIT: "pricing/unit"
 });
 
 const ALIBABA = Object.freeze({
-  BILLING_ITEM: "BillingItem",
+  BILLING_ITEM: "BillingItem"
 });
 
 const NEBIUS = Object.freeze({
   SKU_NAME: "sku_name",
   COST: "cost",
   PRICING_QUANTITY: "pricing_quantity",
-  PRICING_UNIT: "pricing_unit",
+  PRICING_UNIT: "pricing_unit"
 });
 
 const AZURE = Object.freeze({
@@ -31,7 +31,7 @@ const USAGE_TRACKED_CLOUD_TYPES = [AWS_CNR, NEBIUS_DATA_SOURCE, AZURE_CNR];
 
 const getFormattedOrdinateValues = (currentValue, currentPointValue) => {
   const values = {
-    y: (currentPointValue.y || 0) + currentValue.expense,
+    y: (currentPointValue.y || 0) + currentValue.expense
   };
 
   if (USAGE_TRACKED_CLOUD_TYPES.includes(currentValue.cloudType)) {
@@ -65,7 +65,7 @@ const getCategory = (cloudType, item) =>
     [ALIBABA_CNR]: item?.[ALIBABA.BILLING_ITEM],
     [NEBIUS_DATA_SOURCE]: item?.[NEBIUS.SKU_NAME],
     // If we could not identify cloud_type by the raw_data -> place it in the default group - "Total expenses"
-    [NOT_SET_CLOUD_TYPE]: intl.formatMessage({ id: "totalExpenses" }),
+    [NOT_SET_CLOUD_TYPE]: intl.formatMessage({ id: "totalExpenses" })
   })[cloudType];
 
 const getUsage = (cloudType, item) =>
@@ -77,14 +77,14 @@ const getUsage = (cloudType, item) =>
         if (!lineItemBlendedRate || !pricingUnit) {
           return {
             usage: 0,
-            usageUnit: undefined,
+            usageUnit: undefined
           };
         }
         const cost = item.cost ?? 0;
         const usage = lineItemBlendedRate === 0 ? 0 : cost / lineItemBlendedRate;
         return {
           usage,
-          usageUnit: pricingUnit,
+          usageUnit: pricingUnit
         };
       },
       [NEBIUS_DATA_SOURCE]: () => ({
@@ -124,7 +124,7 @@ const buildData = (cloudType, item) => ({
   cloudType,
   date: formatISO(item.start_date),
   expense: item.cost ?? 0,
-  ...getUsage(cloudType, item),
+  ...getUsage(cloudType, item)
 });
 
 /**
@@ -158,9 +158,9 @@ const prepareTableData = (groupedExpenses) =>
       ...(categoryPayload.some(({ usage, usageUnit }) => !!usage && !!usageUnit)
         ? {
             usage: categoryPayload.reduce((usageSum, { usage = 0 }) => usageSum + usage, 0),
-            usageUnit: categoryPayload.find(({ usageUnit }) => Boolean(usageUnit)).usageUnit,
+            usageUnit: categoryPayload.find(({ usageUnit }) => Boolean(usageUnit)).usageUnit
           }
-        : {}),
+        : {})
     }))
     .filter(({ expenses: expensesSum }) => expensesSum !== 0);
 
@@ -179,7 +179,7 @@ const prepareChartData = (groupedData, expenses) => {
     const diff = getDifference(uniqueDays, xValues);
     diff.forEach((missingXValue) => {
       pointsMap.set(missingXValue, {
-        y: 0,
+        y: 0
       });
     });
 
@@ -196,7 +196,7 @@ const prepareChartData = (groupedData, expenses) => {
 
     return {
       ...result,
-      [groupName]: data,
+      [groupName]: data
     };
   }, {});
 
@@ -228,7 +228,7 @@ export const getData = (expenses) => {
 
     return {
       ...result,
-      [category]: [...(result[category] ?? []), data],
+      [category]: [...(result[category] ?? []), data]
     };
   }, {});
 
