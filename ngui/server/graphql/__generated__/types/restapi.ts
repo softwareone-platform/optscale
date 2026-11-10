@@ -119,6 +119,8 @@ export type AwsDataSource = DataSourceInterface & {
   last_import_at: Scalars["Int"]["output"];
   last_import_attempt_at: Scalars["Int"]["output"];
   last_import_attempt_error?: Maybe<Scalars["String"]["output"]>;
+  last_import_source_account_id?: Maybe<Scalars["String"]["output"]>;
+  last_import_source_id?: Maybe<Scalars["String"]["output"]>;
   name: Scalars["String"]["output"];
   parent_id?: Maybe<Scalars["String"]["output"]>;
   type: DataSourceType;
@@ -656,6 +658,7 @@ export type Mutation = {
   createStripeCheckoutSession?: Maybe<StripeSession>;
   deleteDataSource?: Maybe<Scalars["String"]["output"]>;
   deleteOrganization?: Maybe<Scalars["String"]["output"]>;
+  scheduleDataSourceReimport?: Maybe<Scalars["Boolean"]["output"]>;
   scheduleGeminiDataPreparation?: Maybe<ScheduleGeminiDataPreparation>;
   updateDataSource?: Maybe<DataSourceInterface>;
   updateEmployeeEmail?: Maybe<EmployeeEmail>;
@@ -690,6 +693,11 @@ export type MutationDeleteDataSourceArgs = {
 
 export type MutationDeleteOrganizationArgs = {
   organizationId: Scalars["ID"]["input"];
+};
+
+export type MutationScheduleDataSourceReimportArgs = {
+  dataSourceId: Scalars["ID"]["input"];
+  importFrom: Scalars["Int"]["input"];
 };
 
 export type MutationScheduleGeminiDataPreparationArgs = {
@@ -1002,7 +1010,6 @@ export type UpdateDataSourceInput = {
   gcpTenantConfig?: InputMaybe<GcpTenantConfigInput>;
   k8sConfig?: InputMaybe<K8sConfigInput>;
   lastImportAt?: InputMaybe<Scalars["Int"]["input"]>;
-  lastImportModifiedAt?: InputMaybe<Scalars["Int"]["input"]>;
   name?: InputMaybe<Scalars["String"]["input"]>;
   nebiusConfig?: InputMaybe<NebiusConfigInput>;
 };
@@ -1357,6 +1364,8 @@ export type AwsDataSourceResolvers<
   last_import_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   last_import_attempt_at?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   last_import_attempt_error?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  last_import_source_account_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  last_import_source_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   parent_id?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   type?: Resolver<ResolversTypes["DataSourceType"], ParentType, ContextType>;
@@ -1811,6 +1820,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationDeleteOrganizationArgs, "organizationId">
+  >;
+  scheduleDataSourceReimport?: Resolver<
+    Maybe<ResolversTypes["Boolean"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationScheduleDataSourceReimportArgs, "dataSourceId" | "importFrom">
   >;
   scheduleGeminiDataPreparation?: Resolver<
     Maybe<ResolversTypes["ScheduleGeminiDataPreparation"]>,

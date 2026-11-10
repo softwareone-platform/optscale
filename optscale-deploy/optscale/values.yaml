@@ -63,6 +63,7 @@ rabbitmq:
   replicaCount: 1
   mnesiaSize: 10Gi
   memory_limit: 512
+  consumer_timeout_ms: 3600000 # 1 hour to acknowledge a delivered message
   enableClassicMirroring: false # MUST be false on 4.x
   enableQuorumDefaults: true # optional: default policy for quorum queues
   quorum:
@@ -270,6 +271,24 @@ minio:
 
 diworker:
   name: &diworker_name diworker
+  replicaCount: 1
+  image:
+    id:
+    repository: *diworker_name
+    tag: *tag
+    pullPolicy: Never
+
+diworker_raw:
+  name: diworker-raw
+  replicaCount: 1
+  image:
+    id:
+    repository: *diworker_name
+    tag: *tag
+    pullPolicy: Never
+
+diworker_clean:
+  name: diworker-clean
   replicaCount: 1
   image:
     id:
@@ -1040,6 +1059,7 @@ optscale_error_emails:
 # filled from optscale overlay
 # Optscale email domains blacklists
 domains_blacklists:
+  marketing:
   registration:
   new_employee_email:
   failed_import_email:
@@ -1106,6 +1126,7 @@ encryption_salt:
 encryption_salt_auth:
 disable_email_verification:
 force_aws_edp_strip:
+product_tracking_id: optscale_tracking_id
 
 # settings for bi_scheduler
 bi_settings:

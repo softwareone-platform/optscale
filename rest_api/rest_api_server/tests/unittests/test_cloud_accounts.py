@@ -6,7 +6,7 @@ from copy import deepcopy
 
 from freezegun import freeze_time
 from sqlalchemy import and_
-from unittest.mock import patch, ANY, call
+from unittest.mock import patch, ANY, call, PropertyMock, MagicMock
 from rest_api.rest_api_server.models.models import (
     CloudAccount, DiscoveryInfo, OrganizationLimitHit, Organization)
 from rest_api.rest_api_server.models.db_base import BaseDB
@@ -931,21 +931,14 @@ class TestCloudAccountApi(TestApiBase):
         self.assertEqual(code, 201)
         now = int(datetime.datetime.now(tz=datetime.timezone.utc).timestamp())
         code, resp = self.client.cloud_account_update(
-            cloud_acc['id'], {'last_import_at': now,
-                              'last_import_modified_at': now})
+            cloud_acc['id'], {'last_import_at': now})
         self.assertEqual(code, 200)
         self.assertEqual(resp['last_import_at'], now)
-        self.assertEqual(resp['last_import_modified_at'], now)
 
         patch('rest_api.rest_api_server.handlers.v1.base.BaseAuthHandler.'
               'check_cluster_secret', return_value=False).start()
         code, resp = self.client.cloud_account_update(
             cloud_acc['id'], {'last_import_at': 456})
-        self.assertEqual(code, 400)
-        self.assertEqual(resp['error']['error_code'], 'OE0559')
-
-        code, resp = self.client.cloud_account_update(
-            cloud_acc['id'], {'last_import_modified_at': 789})
         self.assertEqual(code, 400)
         self.assertEqual(resp['error']['error_code'], 'OE0559')
 
@@ -1464,7 +1457,7 @@ class TestCloudAccountApi(TestApiBase):
         self.assertEqual(code, 201)
         now = int(datetime.datetime.now(
             tz=datetime.timezone.utc).timestamp()) - 31 * 24 * 60 * 60
-        for param in ['last_import_at', 'last_import_modified_at']:
+        for param in ['last_import_at']:
             params = {param: 1}
             patch('rest_api.rest_api_server.handlers.v1.base.BaseAuthHandler.'
                   'check_cluster_secret', return_value=True).start()
@@ -1550,7 +1543,6 @@ class TestCloudAccountApi(TestApiBase):
             'secret_access_key': 'new_secret',
             'config_scheme': 'create_report'},
             'last_import_at': now,
-            'last_import_modified_at': now,
             'last_import_attempt_at': now,
             'last_import_attempt_error': 'error'
         }
@@ -1576,13 +1568,8 @@ class TestCloudAccountApi(TestApiBase):
         self.assertEqual(code, 200)
         p_publish_activities2.assert_not_called()
 
-        code, cloud_acc = self.client.cloud_account_update(
-            cloud_acc['id'], {'last_import_modified_at': 1})
-        self.assertEqual(code, 200)
-        p_publish_activities2.assert_not_called()
-
         code, cloud_acc = self.client.cloud_account_update(cloud_acc['id'], {
-            'last_import_modified_at': 1, 'last_import_at': 1})
+            'last_import_at': 1})
         self.assertEqual(code, 200)
         p_publish_activities2.assert_not_called()
 
@@ -1600,6 +1587,48 @@ class TestCloudAccountApi(TestApiBase):
             'last_import_attempt_at': 1, 'last_import_attempt_error': 'error'})
         self.assertEqual(code, 200)
         p_publish_activities2.assert_not_called()
+
+    def test_update_last_import_source(self):
+        code, root = self.create_cloud_account(
+            self.org_id, self.valid_aws_cloud_acc)
+        self.assertEqual(code, 201)
+        self.assertIsNone(root['last_import_source_id'])
+        self.assertIsNone(root['last_import_source_account_id'])
+        params = {
+            'last_import_source_id': root['id'],
+            'last_import_source_account_id': root['account_id']
+        }
+        code, resp = self.client.cloud_account_update(root['id'], params)
+        self.assertEqual(code, 200)
+        for k, v in params.items():
+            self.assertEqual(resp[k], v)
+        code, resp = self.client.cloud_account_get(root['id'])
+        self.assertEqual(code, 200)
+        for k, v in params.items():
+            self.assertEqual(resp[k], v)
+        code, resp = self.client.cloud_account_list(self.org_id)
+        self.assertEqual(code, 200)
+        for k, v in params.items():
+            self.assertEqual(resp['cloud_accounts'][0][k], v)
+
+        code, resp = self.client.cloud_account_update(
+            root['id'], {'last_import_source_id': 'not_uuid'})
+        self.assertEqual(code, 400)
+
+        patch('rest_api.rest_api_server.handlers.v1.base.BaseAuthHandler.'
+              'check_cluster_secret', return_value=False).start()
+        for k, v in params.items():
+            code, resp = self.client.cloud_account_update(root['id'], {k: v})
+            self.assertEqual(code, 400)
+            self.verify_error_code(resp, 'OE0449')
+
+    def test_create_with_last_import_source(self):
+        for param in ['last_import_source_id',
+                      'last_import_source_account_id']:
+            body = self.valid_aws_cloud_acc.copy()
+            body[param] = str(uuid.uuid4())
+            code, resp = self.create_cloud_account(self.org_id, body)
+            self.assertEqual(code, 400)
 
     def test_create_linked_aws_cloud_acc(self):
         self.p_configure_aws.stop()
@@ -2193,10 +2222,58 @@ class TestCloudAccountApi(TestApiBase):
     def test_create_gcp_non_standard_billing(self):
         ca_config = copy.deepcopy(self.valid_gcp_cloud_acc)
         ca_config['config']['billing_data']['table_name'] = "bad_table_name"
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._billing_table_schema',
+              new_callable=PropertyMock, return_value={}).start()
         code, resp = self.client.cloud_account_create(
             self.org_id, ca_config)
         self.assertEqual(code, 400)
         self.verify_error_code(resp, 'OE0455')
+
+    def test_create_gcp_billing_view_with_standard_prefix_name(self):
+        # view named with standard prefix is accepted when it has partition_time
+        ca_config = copy.deepcopy(self.valid_gcp_cloud_acc)
+        ca_config['config']['billing_data']['table_name'] = "gcp_billing_export_v1_filtered"
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._billing_table_schema',
+              new_callable=PropertyMock,
+              return_value={'partition_time': 'TIMESTAMP'}).start()
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._test_bigquery_connection').start()
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._validate_cloud_connection').start()
+        code, resp = self.client.cloud_account_verify(ca_config)
+        self.assertEqual(code, 200)
+
+    def test_create_gcp_billing_view_with_standard_prefix_no_partition_time(self):
+        # standard-prefix view without partition_time — detected via failed _PARTITIONTIME query
+        ca_config = copy.deepcopy(self.valid_gcp_cloud_acc)
+        ca_config['config']['billing_data']['table_name'] = "gcp_billing_export_v1_filtered"
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._billing_table_schema',
+              new_callable=PropertyMock, return_value={}).start()
+        patch('tools.cloud_adapter.clouds.gcp.Gcp.bigquery_client').start().query\
+            .return_value.result.side_effect = Exception(
+                "Unrecognized name: _PARTITIONTIME")
+        code, resp = self.client.cloud_account_verify(ca_config)
+        self.assertEqual(code, 400)
+        self.assertIn("partition_time", resp['error']['reason'])
+
+    def test_create_gcp_billing_view_with_partition_time(self):
+        # view exposing _PARTITIONTIME AS partition_time — uses partition pruning
+        ca_config = copy.deepcopy(self.valid_gcp_cloud_acc)
+        ca_config['config']['billing_data']['table_name'] = "dev_project_view"
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._billing_table_schema',
+              new_callable=PropertyMock,
+              return_value={'partition_time': 'TIMESTAMP'}).start()
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._test_bigquery_connection').start()
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._validate_cloud_connection').start()
+        code, resp = self.client.cloud_account_verify(ca_config)
+        self.assertEqual(code, 200)
+
+    def test_create_gcp_billing_view_without_partition_time(self):
+        ca_config = copy.deepcopy(self.valid_gcp_cloud_acc)
+        ca_config['config']['billing_data']['table_name'] = "dev_project_view"
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._billing_table_schema',
+              new_callable=PropertyMock, return_value={}).start()
+        code, resp = self.client.cloud_account_verify(ca_config)
+        self.assertEqual(code, 400)
+        self.assertIn("partition_time", resp['error']['reason'])
 
     def test_create_gcp_incorrect_table_name(self):
         ca_config = copy.deepcopy(self.valid_gcp_cloud_acc)
@@ -2628,6 +2705,10 @@ class TestCloudAccountApi(TestApiBase):
         }
         patch('tools.cloud_adapter.clouds.gcp_tenant.GcpTenant'
               '._test_bigquery_connection').start()
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._billing_table_schema',
+              new_callable=PropertyMock, return_value={}).start()
+        patch('tools.cloud_adapter.clouds.gcp.Gcp._validate_standard_partition_time'
+              ).start()
         code, resp = self.create_cloud_account(self.org_id, body)
         self.assertEqual(code, 400)
         self.verify_error_code(resp, 'OE0455')

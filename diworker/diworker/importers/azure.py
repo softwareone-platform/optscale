@@ -85,7 +85,7 @@ class AzureImporterBase(BaseReportImporter):
 
     def get_update_fields(self):
         custom_fields = {
-            'end_date', 'usage_quantity', 'cost', 'report_identity', '_rec_n'}
+            'end_date', 'usage_quantity', 'cost'}
         legacy_fields = {
             'cost', 'effective_price'}
         modern_fields = {
@@ -472,7 +472,6 @@ class AzureApiImporter(AzureImporterBase):
             self.generate_reservations_expenses(self.period_start)
         except Exception as exc:
             LOG.exception("Failed getting reservations info: %s", str(exc))
-        self.clear_rudiments()
 
     @retry_backoff(AzureConsumptionException,
                    raise_errors=[
@@ -480,7 +479,8 @@ class AzureApiImporter(AzureImporterBase):
                    ], raise_codes=[403])
     def _load_usage_data(self):
         chunk = []
-        usages = self.cloud_adapter.get_usage(self.period_start) or []
+        usages = self.cloud_adapter.get_usage(
+            self.period_start, range_end=self.period_end) or []
         record_number = 0
         for usage_dict in usages:
             if len(chunk) == CHUNK_SIZE:
@@ -492,9 +492,7 @@ class AzureApiImporter(AzureImporterBase):
             usage_dict['_rec_n'] = record_number
             self._fill_custom_fields(usage_dict)
             self._clean_tree(usage_dict)
-            if usage_dict['start_date'] >= self.period_start.replace(
-                    tzinfo=timezone.utc):
-                chunk.append(usage_dict)
+            chunk.append(usage_dict)
         if chunk:
             self.update_raw_records(chunk)
 
@@ -513,6 +511,9 @@ class AzureApiImporter(AzureImporterBase):
             hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc)
         last_day = opttime.utcnow().replace(
             hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc)
+        period_end_day = self.period_end.replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc)
+        last_day = min(last_day, period_end_day + timedelta(days=1))
         while current_day < last_day:
             LOG.info('Processing raw expenses for %s', current_day)
 
