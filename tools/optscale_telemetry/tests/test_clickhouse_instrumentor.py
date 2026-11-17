@@ -3,9 +3,8 @@ import sys
 import types
 from types import SimpleNamespace
 
-from pytest_mock import MockerFixture
-
 import tools.optscale_telemetry.clickhouse_instrumentor as clickhouse_instrumentor_module
+from pytest_mock import MockerFixture
 from tools.optscale_telemetry.clickhouse_instrumentor import ClickHouseInstrumentor
 
 

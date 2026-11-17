@@ -22,7 +22,7 @@ import {
   SHOW_POLICY_QUERY_PARAM,
   USER_EMAIL_QUERY_PARAMETER_NAME,
   NEXT_QUERY_PARAMETER_NAME,
-  OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME,
+  OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME
 } from "urls";
 import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
 import { processGraphQLErrorData } from "utils/apollo";
@@ -89,13 +89,13 @@ const AuthorizationContainer = () => {
     await sendEmailVerificationCode(email, {
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: Object.values(OPTSCALE_CAPABILITY).includes(capability)
         ? capability
-        : undefined,
+        : undefined
     });
 
     return navigate(
       `${EMAIL_VERIFICATION}?${stringifySearchParams({
         email,
-        [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability,
+        [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
       })}`
     );
   };
@@ -144,7 +144,7 @@ const AuthorizationContainer = () => {
           disabled={loginLoading || signInLoading || isSendEmailVerificationCodeLoading}
           isInvited={isInvited}
         />
-      ),
+      )
     }[pathname] || (() => null);
 
   // TODO: get back to the force redirect
@@ -157,7 +157,7 @@ const AuthorizationContainer = () => {
       [NEXT_QUERY_PARAMETER_NAME]: next,
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability,
       [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
-      [SHOW_POLICY_QUERY_PARAM]: showPolicy,
+      [SHOW_POLICY_QUERY_PARAM]: showPolicy
     } = getSearchParams() as {
       [NEXT_QUERY_PARAMETER_NAME]: string;
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: string;
@@ -169,7 +169,7 @@ const AuthorizationContainer = () => {
       [NEXT_QUERY_PARAMETER_NAME]: next,
       [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability,
       [USER_EMAIL_QUERY_PARAMETER_NAME]: email,
-      [SHOW_POLICY_QUERY_PARAM]: showPolicy,
+      [SHOW_POLICY_QUERY_PARAM]: showPolicy
     })}`;
   };
 

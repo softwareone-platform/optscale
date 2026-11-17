@@ -16,7 +16,7 @@ import {
   GCP_CNR,
   GCP_TENANT,
   KUBERNETES_CNR,
-  NEBIUS,
+  NEBIUS
 } from "utils/constants";
 import type { Config, Params } from "./types";
 
@@ -71,7 +71,7 @@ const ConnectCloudAccountContainer = () => {
           autoImport,
         },
       },
-      refetchQueries: [DataSourcesDocument],
+      refetchQueries: [DataSourcesDocument]
     }).then(() => {
       refetch([GET_AVAILABLE_FILTERS]);
       redirectToCloudsOverview();

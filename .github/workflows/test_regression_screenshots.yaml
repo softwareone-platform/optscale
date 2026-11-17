@@ -1,0 +1,79 @@
+name: Screenshot regression tests
+run-name: Screenshot regression tests - started by ${{ github.actor }}
+permissions: read-all
+
+# Manual runs only for now: the pull_request trigger is temporarily removed so this doesn't gate PRs.
+on:
+  workflow_dispatch:
+
+env:
+  # The cluster the built UI proxies to, and the one the test account is minted on. Must stay in
+  # step with the `local` preset in regression-tests/env.config.ts, which decides both the
+  # baseline folder (snapshots/dev/docker/) and the token variable (TEST_ACCOUNT_TOKEN_DEV).
+  API_ENDPOINT: https://api.finops.s1.today
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: screenshot-regression-${{ github.head_ref || github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      # run_pw.sh reads the pinned Playwright version out of package.json to build the image with.
+      # Only the container's Node renders anything, so the version here is not a screenshot input —
+      # this is just so the script doesn't depend on whatever the runner image happens to ship.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Fails in seconds rather than after a multi-minute image build.
+      - name: Verify the test-account token is configured
+        env:
+          TEST_ACCOUNT_TOKEN_DEV: ${{ secrets.TEST_ACCOUNT_TOKEN_DEV }}
+        run: |
+          if [ -z "$TEST_ACCOUNT_TOKEN_DEV" ]; then
+            echo "::error::Secret TEST_ACCOUNT_TOKEN_DEV is not set, so the suite cannot mint a session."
+            exit 1
+          fi
+
+      - name: Login to Docker Hub (optional)
+        env:
+          username: ${{ secrets.EXT_DOCKER_LOGIN }}
+          password: ${{ secrets.EXT_DOCKER_TOKEN }}
+        if: ${{ env.username != '' && env.password != '' }}
+        uses: docker/login-action@v4
+        with:
+          username: ${{ env.username }}
+          password: ${{ env.password }}
+
+      # The suite reads its token through dotenv from regression-tests/.env, which is mounted into
+      # the test container. Nothing else is needed: env.config.ts supplies the URLs.
+      - name: Write .env for the run
+        working-directory: regression-tests
+        run: echo "TEST_ACCOUNT_TOKEN_DEV=${{ secrets.TEST_ACCOUNT_TOKEN_DEV }}" > .env
+
+      # -a builds the UI from *this checkout*, so the gate tests the pull request rather than
+      # whatever is currently deployed. -i sets CI=true inside the container, which turns on
+      # forbidOnly, one retry and PW_WORKERS workers.
+      #
+      # A missing baseline fails here by design: the committed set only grows through a reviewed
+      # `./run_pw.sh -E <env> -u`, never as a side effect of CI.
+      - name: Build the UI and compare screenshots
+        working-directory: regression-tests
+        run: ./run_pw.sh -a "$API_ENDPOINT" -i
+
+      - name: Upload report and diffs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-results
+          path: |
+            regression-tests/results/html
+            regression-tests/results/test-results
+          retention-days: 14
+          if-no-files-found: ignore

@@ -57,7 +57,7 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
           display: "flex",
           alignItems: "center",
           flexWrap: "wrap",
-          ...sx,
+          ...sx
         }}
       >
         <Box
@@ -66,7 +66,7 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
             display: "flex",
             flexWrap: "nowrap",
             whiteSpace: "normal",
-            overflowWrap: "anywhere",
+            overflowWrap: "anywhere"
           }}
         >
           {renderKey()}
@@ -76,7 +76,7 @@ const KeyValueLabel = forwardRef<HTMLDivElement, KeyValueLabelProps>(
           sx={{
             fontWeight: isBoldValue ? "bold" : undefined,
             whiteSpace: "normal",
-            overflowWrap: "anywhere",
+            overflowWrap: "anywhere"
           }}
           data-test-id={valueDataTestId}
         >

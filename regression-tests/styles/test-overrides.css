@@ -1,0 +1,33 @@
+/* Styles injected into pages during regression tests to stabilize visuals. */
+
+[data-test-id='alert_error'] {
+  display: none !important;
+}
+
+/*
+ * Hide the MUI top-right snackbar (e.g. the "pending invitation" info banner)
+ * for any spec that opts in by adding the `e2e-test` class to <body> via
+ * `page.evaluate`. Tests that screenshot the snackbar itself simply don't
+ * add the class.
+ */
+body.e2e-hide-snackbar .MuiSnackbar-anchorOriginTopRight {
+  display: none !important;
+}
+
+/*
+ * Hide every native scrollbar (root + nested containers).
+ *
+ * Must be present BEFORE `fitViewportToFullPage` measures `scrollHeight`,
+ * otherwise platform scrollbar widths (Linux ~15 px, Windows ~17 px, macOS
+ * overlay 0 px) leak into the measured height and screenshots drift across
+ * machines.
+ */
+::-webkit-scrollbar {
+  display: none !important;
+}
+
+* {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+

@@ -12,7 +12,7 @@ import {
   GCP_CNR,
   GCP_TENANT,
   KUBERNETES_CNR,
-  NEBIUS,
+  NEBIUS
 } from "utils/constants";
 import type { Config, Params, UpdateDataSourceCredentialsContainerProps } from "./types";
 
@@ -20,7 +20,7 @@ const UpdateDataSourceCredentialsContainer = ({
   id,
   type,
   config,
-  closeSideModal,
+  closeSideModal
 }: UpdateDataSourceCredentialsContainerProps) => {
   const refetch = useRefetchApis();
 

@@ -9,7 +9,7 @@ import {
   DatabricksCredentials,
   FocusConnection,
   KubernetesCredentials,
-  NebiusCredentials,
+  NebiusCredentials
 } from "components/DataSourceCredentialFields";
 import {
   BillingReportBucketDescription,
@@ -17,7 +17,7 @@ import {
   CloudName,
   ReportBucketName,
   ReportBucketPathPrefix,
-  ServiceAccountCredentialsDescription,
+  ServiceAccountCredentialsDescription
 } from "components/NebiusConfigFormElements";
 import { CONNECTION_TYPES } from "utils/constants";
 import { ObjectValues } from "utils/types";
@@ -53,7 +53,7 @@ const renderAwsInputs = (connectionType: ConnectionType, authenticationType: Aut
 
 const ConnectionInputs = ({
   connectionType,
-  authenticationType,
+  authenticationType
 }: {
   connectionType: ConnectionType;
   authenticationType: AuthenticationType | null;

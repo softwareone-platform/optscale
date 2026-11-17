@@ -4,7 +4,12 @@ import { FormattedMessage } from "react-intl";
 import CircleLabel from "components/CircleLabel";
 import { CLOUD_ACCOUNT_TYPE } from "utils/constants";
 
-const MapLegend = ({ markers }) => {
+type MapLegendMarker = {
+  type: keyof typeof CLOUD_ACCOUNT_TYPE;
+  color: string;
+};
+
+const MapLegend = ({ markers }: { markers: MapLegendMarker[] }) => {
   const uniqueTypes = [...new Map(markers.map((item) => [item.type, item])).values()].filter((item) => item.type);
 
   return (

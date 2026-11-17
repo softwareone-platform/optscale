@@ -27,7 +27,7 @@ import {
   GCP_CNR,
   CLOUD_ACCOUNT_TYPE,
   NEBIUS,
-  GCP_TENANT,
+  GCP_TENANT
 } from "utils/constants";
 
 export const getSettings = (type) =>
@@ -36,25 +36,25 @@ export const getSettings = (type) =>
       icon: AwsLogoIcon,
       logo: awsLogo,
       disconnectQuestionId: "disconnectAWSQuestion",
-      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[AWS_CNR],
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[AWS_CNR]
     },
     [AZURE_CNR]: {
       icon: AzureLogoIcon,
       logo: azureLogo,
       disconnectQuestionId: "disconnectAzureQuestion",
-      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[AZURE_CNR],
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[AZURE_CNR]
     },
     [AZURE_TENANT]: {
       icon: AzureLogoIcon,
       logo: azureLogo,
       disconnectQuestionId: "disconnectAzureQuestion",
-      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[AZURE_TENANT],
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[AZURE_TENANT]
     },
     [DATABRICKS]: {
       icon: DatabricksLogoIcon,
       logo: databricksLogo,
       disconnectQuestionId: "disconnectDatabricksQuestion",
-      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[DATABRICKS],
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[DATABRICKS]
     },
     [FOCUS]: {
       icon: FocusLogoIcon,
@@ -66,36 +66,36 @@ export const getSettings = (type) =>
       icon: K8sLogoIcon,
       logo: k8sLogo,
       disconnectQuestionId: "disconnectKubernetesQuestion",
-      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[KUBERNETES_CNR],
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[KUBERNETES_CNR]
     },
     [ALIBABA_CNR]: {
       icon: AlibabaLogoIcon,
       logo: alibabaLogo,
       disconnectQuestionId: "disconnectAlibabaQuestion",
-      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[ALIBABA_CNR],
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[ALIBABA_CNR]
     },
     [ENVIRONMENT]: {
       icon: CloudOutlinedIcon,
-      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[ENVIRONMENT],
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[ENVIRONMENT]
     },
     [GCP_CNR]: {
       icon: GcpLogoIcon,
       logo: gcpLogo,
       disconnectQuestionId: "disconnectGcpQuestion",
-      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[GCP_CNR],
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[GCP_CNR]
     },
     [GCP_TENANT]: {
       icon: GcpLogoIcon,
       logo: gcpLogo,
       disconnectQuestionId: "disconnectGcpQuestion",
-      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[GCP_TENANT],
+      cloudTypeMessageId: CLOUD_ACCOUNT_TYPE[GCP_TENANT]
     },
     [NEBIUS]: {
       icon: NebiusLogoIcon,
       logo: nebiusLogo,
       disconnectQuestionId: "disconnectNebiusQuestion",
-      cloudTypeMessageId: "nebius",
-    },
+      cloudTypeMessageId: "nebius"
+    }
   })[type] || {};
 
 export const useDataSources = (type) => {
@@ -104,7 +104,7 @@ export const useDataSources = (type) => {
     logo = null,
     cloudIdMessageId = "",
     disconnectQuestionId = "disconnectQuestion",
-    cloudTypeMessageId = "",
+    cloudTypeMessageId = ""
   } = getSettings(type);
 
   return {
@@ -112,6 +112,6 @@ export const useDataSources = (type) => {
     logo,
     cloudIdMessageId,
     disconnectQuestionId,
-    cloudTypeMessageId,
+    cloudTypeMessageId
   };
 };

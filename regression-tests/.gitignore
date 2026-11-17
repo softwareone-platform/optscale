@@ -1,0 +1,13 @@
+node_modules/
+.cache/
+test-results/
+playwright-report/
+.env*
+!.env.example
+results.json
+results/
+
+# Screenshots live at snapshots/<env>/<renderer>/. Only the container's output is
+# shared; every other renderer is a developer's own set.
+snapshots/*/*
+!snapshots/*/docker/

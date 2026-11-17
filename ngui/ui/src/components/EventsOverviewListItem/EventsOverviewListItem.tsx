@@ -26,7 +26,7 @@ const EventsOverviewListItem = (props) => {
                 <FormattedMessage
                   id="valueAgo"
                   values={{
-                    value: getTimeDistance(time),
+                    value: getTimeDistance(time)
                   }}
                 />
               </Typography>

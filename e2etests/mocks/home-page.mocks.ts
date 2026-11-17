@@ -1,0 +1,277 @@
+export const OrganisationConstraintsMock = {
+  organization_constraints: [
+    {
+      deleted_at: 0,
+      id: '0d1f8fd4-16d9-4e6d-9d67-f0474fd2b850',
+      created_at: 1771926579,
+      name: 'Tagging required policy',
+      organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+      type: 'tagging_policy',
+      definition: {
+        start_date: 1771926434,
+        conditions: {
+          without_tag: 'AccountId',
+        },
+      },
+      filters: {},
+      last_run: 1771926602,
+      last_run_result: {
+        value: 3119,
+      },
+      limit_hits: [
+        {
+          deleted_at: 0,
+          id: 'cc7fcf83-0db7-4295-920c-fe2f7dca24c5',
+          organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+          constraint_id: '0d1f8fd4-16d9-4e6d-9d67-f0474fd2b850',
+          constraint_limit: 0.0,
+          value: 3119.0,
+          created_at: 1771926602,
+          run_result: {
+            value: 3119,
+          },
+        },
+      ],
+    },
+    {
+      deleted_at: 0,
+      id: '33b09374-c7b3-43ed-8909-a404bb8098b5',
+      created_at: 1771926729,
+      name: 'Prohibited tagging policy',
+      organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+      type: 'tagging_policy',
+      definition: {
+        start_date: 1771926629,
+        conditions: {
+          tag: '__department',
+        },
+      },
+      filters: {
+        active: [true],
+      },
+      last_run: 1771926902,
+      last_run_result: {
+        value: 2,
+      },
+      limit_hits: [
+        {
+          deleted_at: 0,
+          id: '3c122ecd-5227-421b-9eb2-93a2cce24a92',
+          organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+          constraint_id: '33b09374-c7b3-43ed-8909-a404bb8098b5',
+          constraint_limit: 0.0,
+          value: 2.0,
+          created_at: 1771926902,
+          run_result: {
+            value: 2,
+          },
+        },
+      ],
+    },
+    {
+      deleted_at: 0,
+      id: '7b419326-06f5-4bfa-bb38-78e612c78d24',
+      created_at: 1771926369,
+      name: 'Recurring budget',
+      organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+      type: 'recurring_budget',
+      definition: {
+        monthly_budget: 100,
+      },
+      filters: {},
+      last_run: 1771926602,
+      last_run_result: {
+        limit: 100,
+        current: 234445.8851078514,
+      },
+      limit_hits: [
+        {
+          deleted_at: 0,
+          id: 'c927d737-e472-428c-b621-8884c529b129',
+          organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+          constraint_id: '7b419326-06f5-4bfa-bb38-78e612c78d24',
+          constraint_limit: 100.0,
+          value: 234446.0,
+          created_at: 1771926602,
+          run_result: {
+            limit: 100,
+            current: 234445.8851078514,
+          },
+        },
+      ],
+    },
+    {
+      deleted_at: 0,
+      id: '89bd9421-6dc7-44bb-93c9-ff2e763be6fe',
+      created_at: 1771926308,
+      name: 'Resource quota',
+      organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+      type: 'resource_quota',
+      definition: {
+        max_value: 100,
+      },
+      filters: {
+        active: [true],
+      },
+      last_run: 1771926602,
+      last_run_result: {
+        limit: 100,
+        current: 478,
+      },
+      limit_hits: [
+        {
+          deleted_at: 0,
+          id: '374b794a-f7b4-4d6a-9e6e-015ba022f8ab',
+          organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+          constraint_id: '89bd9421-6dc7-44bb-93c9-ff2e763be6fe',
+          constraint_limit: 100.0,
+          value: 478.0,
+          created_at: 1771926602,
+          run_result: {
+            limit: 100,
+            current: 478,
+          },
+        },
+      ],
+    },
+    {
+      deleted_at: 0,
+      id: '8c3f83ca-c772-41ac-a3fa-cce8d54a1f16',
+      created_at: 1771926622,
+      name: 'Correlated tagging policy',
+      organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+      type: 'tagging_policy',
+      definition: {
+        start_date: 1771926584,
+        conditions: {
+          tag: 'CostCenter',
+          without_tag: 'Environment',
+        },
+      },
+      filters: {},
+      last_run: 1771926902,
+      last_run_result: {
+        value: 1,
+      },
+      limit_hits: [
+        {
+          deleted_at: 0,
+          id: '34a26573-33ca-4055-a21f-52403f1d68f5',
+          organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+          constraint_id: '8c3f83ca-c772-41ac-a3fa-cce8d54a1f16',
+          constraint_limit: 0.0,
+          value: 1.0,
+          created_at: 1771926902,
+          run_result: {
+            value: 1,
+          },
+        },
+      ],
+    },
+    {
+      deleted_at: 0,
+      id: '9f16e4d0-16d6-4ec8-adb8-fde69fdebafd',
+      created_at: 1744898002,
+      name: 'Default - resource count anomaly',
+      organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+      type: 'resource_count_anomaly',
+      definition: {
+        threshold_days: 7,
+        threshold: 30,
+      },
+      filters: {},
+      last_run: 1771923003,
+      last_run_result: {
+        average: 3385.714285714286,
+        today: 3202,
+        breakdown: {
+          '1767657600': 3399,
+          '1767744000': 3392,
+          '1767830400': 3407,
+          '1767916800': 3408,
+          '1768003200': 3376,
+          '1768089600': 3352,
+          '1768176000': 3366,
+        },
+      },
+      limit_hits: [],
+    },
+    {
+      deleted_at: 0,
+      id: 'ac9073f8-712d-46ee-9632-9694e999b777',
+      created_at: 1744898002,
+      name: 'Default - expense anomaly',
+      organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+      type: 'expense_anomaly',
+      definition: {
+        threshold_days: 7,
+        threshold: 30,
+      },
+      filters: {},
+      last_run: 1771923902,
+      last_run_result: {
+        average: 7621.639588907393,
+        today: 63376.15244631838,
+        breakdown: {
+          '1770595200': 7566.475845989279,
+          '1770249600': 7581.231650058954,
+          '1770681600': 7670.8199591838975,
+          '1770336000': 7546.220103338065,
+          '1770422400': 7674.9010295840135,
+          '1770508800': 7406.122633114845,
+          '1770768000': 7905.705901082702,
+        },
+      },
+      limit_hits: [],
+    },
+    {
+      deleted_at: 0,
+      id: 'e43668ee-d1ff-4a94-b772-b85186728165',
+      created_at: 1771926430,
+      name: 'Expiring budget',
+      organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+      type: 'expiring_budget',
+      definition: {
+        total_budget: 10,
+        start_date: 1771926378,
+      },
+      filters: {},
+      last_run: 1771926602,
+      last_run_result: {
+        limit: 10,
+        current: 1175.8189694743335,
+      },
+      limit_hits: [
+        {
+          deleted_at: 0,
+          id: '4e52b0d2-05e9-49e8-aa06-6f987b212e68',
+          organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+          constraint_id: 'e43668ee-d1ff-4a94-b772-b85186728165',
+          constraint_limit: 10.0,
+          value: 1175.82,
+          created_at: 1771926602,
+          run_result: {
+            limit: 10,
+            current: 1175.8189694743335,
+          },
+        },
+      ],
+    },
+    {
+      deleted_at: 0,
+      id: 'fb5d60b4-a196-493a-8ad0-b21071ad55a7',
+      created_at: 1771926104,
+      name: 'Resource Count',
+      organization_id: '4eae08f8-9b40-4094-a11c-f9ee2dc76a12',
+      type: 'resource_count_anomaly',
+      definition: {
+        threshold_days: 7,
+        threshold: 10,
+      },
+      filters: {},
+      last_run: 1771926303,
+      last_run_result: {},
+      limit_hits: [],
+    },
+  ],
+};
