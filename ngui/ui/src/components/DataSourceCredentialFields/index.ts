@@ -17,6 +17,15 @@ import AzureSubscriptionCredentials, {
 } from "./AzureSubscriptionCredentials";
 import AzureTenantCredentials, { FIELD_NAMES as AZURE_TENANT_CREDENTIALS_FIELD_NAMES } from "./AzureTenantCredentials";
 import DatabricksCredentials, { FIELD_NAMES as DATABRICKS_CREDENTIALS_FIELD_NAMES } from "./DatabricksCredentials";
+import FocusConnection, {
+  FIELD_NAMES as FOCUS_CONNECTION_FIELD_NAMES,
+  CONNECTION_MODES as FOCUS_CONNECTION_MODES,
+  getFocusAccessKeyId,
+  getFocusConfigParams,
+  getFocusDefaultValues,
+  getFocusUpdateConfigParams,
+  isFocusAutoImport,
+} from "./FocusConnection";
 import GcpCredentials, { FIELD_NAMES as GCP_CREDENTIALS_FIELD_NAMES } from "./GcpCredentials";
 import GcpTenantCredentials, { FIELD_NAMES as GCP_TENANT_CREDENTIALS_FIELD_NAMES } from "./GcpTenantCredentials";
 import KubernetesCredentials, { FIELD_NAMES as KUBERNETES_CREDENTIALS_FIELD_NAMES } from "./KubernetesCredentials";
@@ -55,5 +64,13 @@ export {
   ALIBABA_CREDENTIALS_FIELD_NAMES,
   NebiusCredentials,
   DatabricksCredentials,
-  DATABRICKS_CREDENTIALS_FIELD_NAMES
+  DATABRICKS_CREDENTIALS_FIELD_NAMES,
+  FocusConnection,
+  FOCUS_CONNECTION_FIELD_NAMES,
+  FOCUS_CONNECTION_MODES,
+  getFocusAccessKeyId,
+  getFocusConfigParams,
+  getFocusDefaultValues,
+  getFocusUpdateConfigParams,
+  isFocusAutoImport,
 };
