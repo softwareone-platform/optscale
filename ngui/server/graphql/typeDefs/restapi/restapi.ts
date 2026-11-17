@@ -85,6 +85,8 @@ export default gql`
     last_getting_metrics_at: Int!
     last_getting_metric_attempt_at: Int!
     last_getting_metric_attempt_error: String
+    last_import_source_id: String
+    last_import_source_account_id: String
     details: DataSourceDetails
     config: AwsConfig
   }
@@ -461,7 +463,6 @@ export default gql`
   input UpdateDataSourceInput {
     name: String
     lastImportAt: Int
-    lastImportModifiedAt: Int
     awsRootConfig: AwsRootConfigInput
     awsLinkedConfig: AwsLinkedConfigInput
     awsAssumedRoleConfig: AwsAssumedRoleConfigInput
@@ -828,6 +829,7 @@ export default gql`
   type Mutation {
     createDataSource(organizationId: ID!, params: CreateDataSourceInput!): DataSourceInterface
     updateDataSource(dataSourceId: ID!, params: UpdateDataSourceInput!): DataSourceInterface
+    scheduleDataSourceReimport(dataSourceId: ID!, importFrom: Int!): Boolean
     updateEmployeeEmails(employeeId: ID!, params: UpdateEmployeeEmailsInput!): [EmployeeEmail]
     updateEmployeeEmail(employeeId: ID!, params: UpdateEmployeeEmailInput!): EmployeeEmail
     deleteDataSource(dataSourceId: ID!): String

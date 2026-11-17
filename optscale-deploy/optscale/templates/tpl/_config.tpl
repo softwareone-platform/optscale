@@ -27,6 +27,7 @@ etcd:
   release: {{ .Values.release }}
   katara_scheduler_timeout: {{ .Values.katara_scheduler_timeout }}
   bumi_scheduler_timeout: {{ .Values.bumi_scheduler_timeout }}
+  product_tracking_id: {{ .Values.product_tracking_id }}
   bumi_worker:
     max_retries: {{ .Values.bumi_worker.max_retries }}
     wait_timeout: {{ .Values.bumi_worker.wait_timeout }}
@@ -52,6 +53,10 @@ etcd:
         {{ $key }}: {{ $value | quote }}
     {{- end }}
   domains_blacklists:
+    marketing:
+      {{- range .Values.domains_blacklists.marketing }}
+        - {{ . | quote }}
+      {{- end}}
     new_employee_email:
       {{- range .Values.domains_blacklists.new_employee_email }}
         - {{ . | quote }}
