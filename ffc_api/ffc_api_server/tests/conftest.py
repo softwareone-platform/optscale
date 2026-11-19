@@ -282,7 +282,6 @@ def datasource_factory(faker: Faker, db_session: AsyncSession) -> ModelFactory[D
         process_recommendations: bool = True,
         deleted_at: int = 0,
         last_import_at: int = 0,
-        last_import_modified_at: int = 0,
         last_import_attempt_at: int = 0,
         last_import_attempt_error: str | None = None,
     ) -> DataSource:
@@ -298,7 +297,6 @@ def datasource_factory(faker: Faker, db_session: AsyncSession) -> ModelFactory[D
             parent_id=parent.id if parent else None,
             deleted_at=deleted_at,
             last_import_at=last_import_at,
-            last_import_modified_at=last_import_modified_at,
             last_import_attempt_at=last_import_attempt_at,
             last_import_attempt_error=last_import_attempt_error,
         )

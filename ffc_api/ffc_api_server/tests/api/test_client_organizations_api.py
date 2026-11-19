@@ -163,7 +163,6 @@ REST_API_CLOUD_ACCOUNT = {
     "process_recommendations": True,
     "import_period": 1,
     "last_import_at": 0,
-    "last_import_modified_at": 0,
     "last_import_attempt_at": 0,
     "last_import_attempt_error": None,
     "cleaned_at": 0,
@@ -197,6 +196,46 @@ async def test_link_cloud_account(
     rest_api_client.cloud_account_create.assert_called_once_with(
         organization.id,
         {**CLOUD_ACCOUNT_REQUEST, "auto_import": True, "process_recommendations": True},
+    )
+
+
+async def test_link_focus_cloud_account(
+    client_api_client: AsyncClient,
+    organization: Organization,
+    mock_rest_api_client,
+):
+    rest_api_client = mock_rest_api_client.return_value
+    request = {
+        "name": "FOCUS export",
+        "type": CloudTypes.FOCUS.value,
+        "config": {
+            "bucket_name": "focus-bucket",
+            "access_key_id": "key",
+            "secret_access_key": "key",
+        },
+    }
+    rest_api_client.cloud_account_create.return_value = (
+        201,
+        {
+            **REST_API_CLOUD_ACCOUNT,
+            "id": "ca-focus",
+            "name": "FOCUS export",
+            "type": CloudTypes.FOCUS.value,
+            "config": {"bucket_name": "focus-bucket", "access_key_id": "key"},
+        },
+    )
+
+    response = await client_api_client.post(
+        f"/client/organizations/{organization.id}/cloud_accounts", json=request
+    )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["id"] == "ca-focus"
+    assert data["type"] == CloudTypes.FOCUS.value
+    rest_api_client.cloud_account_create.assert_called_once_with(
+        organization.id,
+        {**request, "auto_import": True, "process_recommendations": True},
     )
 
 

@@ -105,7 +105,6 @@ def _build_billing(cloud_account: dict[str, Any]) -> BillingInfo:
     return BillingInfo(
         last_report_processed_at=_to_datetime(at),
         last_attempt_at=_to_datetime(attempt_at),
-        last_report_updated_at=_to_datetime(cloud_account.get("last_import_modified_at")),
         status=status,
         error=error if status == ImportStatus.FAILED else None,
     )
