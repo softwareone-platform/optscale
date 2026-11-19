@@ -36,7 +36,6 @@ class DataSourceRead(DataSourceBase):
     parent: DataSourceBase | None = None
     tags: list[TagRef] = []
     last_import_at: int
-    last_import_modified_at: int
     last_import_attempt_at: int
     last_import_attempt_error: str | None
 
@@ -128,7 +127,6 @@ DataSourceDetails = AzureSubscriptionDetails | AzureTenantDetails | AwsDetails |
 class BillingInfo(BaseSchema):
     last_report_processed_at: datetime | None = None
     last_attempt_at: datetime | None = None
-    last_report_updated_at: datetime | None = None
     status: ImportStatus
     error: Annotated[str | None, Field(examples=["Bucket not found"])] = None
 

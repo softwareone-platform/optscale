@@ -134,7 +134,6 @@ def datasource_payload(**overrides) -> dict:
         "type": CloudTypes.AWS_CNR,
         "account_id": "123456789012",
         "last_import_at": 0,
-        "last_import_modified_at": 0,
         "last_import_attempt_at": 0,
         "last_import_attempt_error": None,
     }
