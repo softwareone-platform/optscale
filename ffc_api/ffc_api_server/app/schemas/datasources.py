@@ -22,6 +22,7 @@ ALLOWED_TYPES = [
     CloudTypes.GCP_CNR,
     CloudTypes.AZURE_CNR,
     CloudTypes.AZURE_TENANT,
+    CloudTypes.FOCUS,
 ]
 
 
