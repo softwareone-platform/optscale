@@ -57,7 +57,6 @@ def cloud_account_response(datasource: DataSource, config: dict, **overrides) ->
         "deleted_at": 0,
         "config": config,
         "last_import_at": 0,
-        "last_import_modified_at": 0,
         "last_import_attempt_at": 0,
         "last_import_attempt_error": None,
         "last_getting_metrics_at": 0,
@@ -398,7 +397,6 @@ async def test_get_datasource_successful_imports(
             AWS_ROOT_CONFIG,
             last_import_at=IMPORT_AT,
             last_import_attempt_at=IMPORT_AT,
-            last_import_modified_at=LATER,
             last_getting_metrics_at=IMPORT_AT,
             last_getting_metric_attempt_at=IMPORT_AT,
             details={
@@ -424,7 +422,6 @@ async def test_get_datasource_successful_imports(
     assert body["billing"] == {
         "last_report_processed_at": IMPORT_AT_ISO,
         "last_attempt_at": IMPORT_AT_ISO,
-        "last_report_updated_at": LATER_ISO,
         "status": "completed",
     }
     assert body["metrics"] == {
