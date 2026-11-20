@@ -39,6 +39,18 @@ describe("postAuth", () => {
     });
   });
 
+  it("keeps the envelope's params, which carry values such as the attempts left", async () => {
+    respondWith(403, { error: { error_code: AUTH_ERROR_CODE.INVALID_MFA_CODE, reason: "Invalid code", params: [2] } });
+
+    await expect(postAuth("/tokens", {})).rejects.toMatchObject({ params: [2] });
+  });
+
+  it("drops params it cannot read rather than pass on a shifted list", async () => {
+    respondWith(403, { error: { error_code: AUTH_ERROR_CODE.INVALID_MFA_CODE, reason: "Invalid code", params: [{}, 2] } });
+
+    await expect(postAuth("/tokens", {})).rejects.toMatchObject({ params: [] });
+  });
+
   it("still rejects with an AuthApiError when a gateway answers without the envelope", async () => {
     respondWith(502, null);
 

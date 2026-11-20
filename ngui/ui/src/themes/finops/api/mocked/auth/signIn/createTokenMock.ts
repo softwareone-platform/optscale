@@ -1,96 +1,60 @@
-import { v4 as uuidv4 } from "uuid";
-import { AUTH_ERROR_CODE, CREATE_TOKEN_STATUS, LOGIN_CHALLENGE_STATE } from "@theme/api/auth/signIn/constants";
-import { AuthApiError } from "@theme/api/auth/signIn/errors";
-import { CreateToken, LoginChallenge, LoginChallengeState } from "@theme/api/auth/signIn/types";
-import { delay, MOCK_LATENCY_MS } from "@theme/api/mocked/mockDelay";
-import { getAuthToken, getConfirmedMethods, TOTP_METHOD_ID } from "./fixtures";
+import { CREATE_TOKEN_STATUS } from "@theme/api/auth/signIn/constants";
+import { CreateToken, LoginChallenge } from "@theme/api/auth/signIn/types";
+import { MOCK_LATENCY_MS, MOCK_LOGIN_CHALLENGE, MOCK_SIGN_IN_CREDENTIALS } from "@theme/api/mocked/config";
+import { delay } from "@theme/api/mocked/mockDelay";
+import { storeChallenge } from "./challengeStore";
+import { authError, CHALLENGE_BODY, ERROR_BODY, issueChallenge, issueToken } from "./fixtures";
+import { DEFAULT_SIGN_IN_SCENARIO, SIGN_IN_SCENARIO, SignInScenario } from "./scenarios";
 
-/** The only password the mock accepts — anything else answers like invalid credentials. */
-export const MOCK_PASSWORD = "password";
+type ChallengeScenario = Exclude<
+  SignInScenario,
+  typeof SIGN_IN_SCENARIO.TOKEN_ISSUED | typeof SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED | typeof SIGN_IN_SCENARIO.INTERNAL_ERROR
+>;
 
-/**
- * Outcome is selected from the email local part so every branch is reachable by typing an
- * address into the login form. See the README next to this file.
- */
-export const MOCK_EMAIL_PREFIX = Object.freeze({
-  MFA_REQUIRED: "mfa",
-  ENROLLMENT_REQUIRED: "enroll",
-  EMAIL_NOT_VERIFIED: "unverified",
-  INTERNAL_ERROR: "error"
-} as const);
-
-const CHALLENGE_TTL_SECONDS = 5 * 60;
-
-const MAX_ATTEMPTS = 5;
-
-const getLocalPart = (email: string) => email.trim().toLowerCase().split("@")[0] ?? "";
-
-const buildChallenge = (email: string, state: LoginChallengeState): LoginChallenge => {
-  const requiresEnrollment = state === LOGIN_CHALLENGE_STATE.ENROLLMENT_REQUIRED;
-
-  return {
-    challenge_id: uuidv4(),
-    state,
-    expires_at: Math.floor(Date.now() / 1000) + CHALLENGE_TTL_SECONDS,
-    user_email: email,
-    methods: requiresEnrollment ? [] : getConfirmedMethods(email),
-    default_method_id: requiresEnrollment ? null : TOTP_METHOD_ID,
-    // The default method is the authenticator app, which generates its code locally.
-    code_sent: false,
-    attempts_left: MAX_ATTEMPTS
-  };
+// Keyed by every challenge scenario, so a new one fails to compile until it names its response.
+const CHALLENGE_RESPONSE: Record<ChallengeScenario, { body: LoginChallenge; ttlSeconds?: number; attemptsLeft?: number }> = {
+  [SIGN_IN_SCENARIO.MFA_TOTP_DEFAULT]: { body: CHALLENGE_BODY.MFA_TOTP_DEFAULT },
+  [SIGN_IN_SCENARIO.MFA_EMAIL_DEFAULT]: { body: CHALLENGE_BODY.MFA_EMAIL_DEFAULT },
+  [SIGN_IN_SCENARIO.MFA_NO_DEFAULT]: { body: CHALLENGE_BODY.MFA_NO_DEFAULT },
+  [SIGN_IN_SCENARIO.MFA_NO_CONFIRMED_METHODS]: { body: CHALLENGE_BODY.MFA_NO_CONFIRMED_METHODS },
+  [SIGN_IN_SCENARIO.MFA_LAST_ATTEMPT]: { body: CHALLENGE_BODY.MFA_TOTP_DEFAULT, attemptsLeft: 1 },
+  [SIGN_IN_SCENARIO.MFA_EXPIRING]: {
+    body: CHALLENGE_BODY.MFA_TOTP_DEFAULT,
+    ttlSeconds: MOCK_LOGIN_CHALLENGE.SHORT_TTL_SECONDS
+  },
+  [SIGN_IN_SCENARIO.ENROLLMENT_REQUIRED]: { body: CHALLENGE_BODY.ENROLLMENT_REQUIRED }
 };
 
 /**
  * Stands in for `POST /auth/v2/tokens` until the auth service grows the challenge branch.
- * Resolves with the status and body the real endpoint would return, and rejects with an
- * {@link AuthApiError} carrying the optscale error envelope.
+ * Resolves with the status and body the real endpoint would return for `scenario`, and rejects
+ * with an `AuthApiError` built from the matching error response. Typed off `CreateToken`, so a
+ * contract change breaks the mock at compile time.
  */
-export const createTokenMock: CreateToken = async ({ email, password }) => {
+export const createTokenMock = async (
+  { email, password }: Parameters<CreateToken>[0],
+  scenario: SignInScenario = DEFAULT_SIGN_IN_SCENARIO
+): ReturnType<CreateToken> => {
   await delay(MOCK_LATENCY_MS);
 
-  const localPart = getLocalPart(email);
-
-  if (password !== MOCK_PASSWORD) {
-    throw new AuthApiError({
-      status: 403,
-      errorCode: AUTH_ERROR_CODE.INVALID_CREDENTIALS,
-      reason: "Email or password is invalid"
-    });
+  if (password !== MOCK_SIGN_IN_CREDENTIALS.password) {
+    throw authError(ERROR_BODY.INVALID_CREDENTIALS);
   }
 
-  if (localPart.startsWith(MOCK_EMAIL_PREFIX.EMAIL_NOT_VERIFIED)) {
-    throw new AuthApiError({
-      status: 403,
-      errorCode: AUTH_ERROR_CODE.EMAIL_NOT_VERIFIED,
-      reason: "Email is not verified"
-    });
-  }
+  switch (scenario) {
+    case SIGN_IN_SCENARIO.TOKEN_ISSUED:
+      return { status: CREATE_TOKEN_STATUS.TOKEN_ISSUED, data: issueToken(email) };
+    case SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED:
+      throw authError(ERROR_BODY.EMAIL_NOT_VERIFIED);
+    case SIGN_IN_SCENARIO.INTERNAL_ERROR:
+      throw authError(ERROR_BODY.INTERNAL_ERROR);
+    default: {
+      const { body, ...fill } = CHALLENGE_RESPONSE[scenario];
+      const challenge = issueChallenge(body, email, fill);
 
-  if (localPart.startsWith(MOCK_EMAIL_PREFIX.INTERNAL_ERROR)) {
-    throw new AuthApiError({
-      status: 500,
-      errorCode: AUTH_ERROR_CODE.INTERNAL_ERROR,
-      reason: "Database error"
-    });
-  }
+      storeChallenge(challenge);
 
-  if (localPart.startsWith(MOCK_EMAIL_PREFIX.ENROLLMENT_REQUIRED)) {
-    return {
-      status: CREATE_TOKEN_STATUS.CHALLENGE_REQUIRED,
-      data: buildChallenge(email, LOGIN_CHALLENGE_STATE.ENROLLMENT_REQUIRED)
-    };
+      return { status: CREATE_TOKEN_STATUS.CHALLENGE_REQUIRED, data: challenge };
+    }
   }
-
-  if (localPart.startsWith(MOCK_EMAIL_PREFIX.MFA_REQUIRED)) {
-    return {
-      status: CREATE_TOKEN_STATUS.CHALLENGE_REQUIRED,
-      data: buildChallenge(email, LOGIN_CHALLENGE_STATE.MFA_REQUIRED)
-    };
-  }
-
-  return {
-    status: CREATE_TOKEN_STATUS.TOKEN_ISSUED,
-    data: getAuthToken(email)
-  };
 };

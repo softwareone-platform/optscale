@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 403,
+    "error_code": "OA0075",
+    "reason": "Invalid verification code. %s attempts left",
+    "params": []
+  }
+}

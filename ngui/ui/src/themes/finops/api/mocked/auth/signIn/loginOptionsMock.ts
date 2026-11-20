@@ -1,6 +1,7 @@
-import { LOGIN_METHOD } from "@theme/api/auth/signIn/constants";
 import { ResolveLoginOptions } from "@theme/api/auth/signIn/types";
-import { delay, MOCK_LATENCY_MS } from "@theme/api/mocked/mockDelay";
+import { MOCK_LATENCY_MS } from "@theme/api/mocked/config";
+import { delay } from "@theme/api/mocked/mockDelay";
+import { LOGIN_OPTIONS_BODY } from "./fixtures";
 
 /**
  * Stands in for `POST /auth/v2/login_options` — step 1 of the two-step login.
@@ -12,8 +13,5 @@ import { delay, MOCK_LATENCY_MS } from "@theme/api/mocked/mockDelay";
 export const resolveLoginOptionsMock: ResolveLoginOptions = async () => {
   await delay(MOCK_LATENCY_MS);
 
-  return {
-    methods: [LOGIN_METHOD.PASSWORD],
-    sso: { state: "not_configured" }
-  };
+  return LOGIN_OPTIONS_BODY;
 };

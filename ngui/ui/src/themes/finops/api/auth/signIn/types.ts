@@ -1,5 +1,14 @@
 import { ObjectValues } from "utils/types";
-import { CREATE_TOKEN_STATUS, LOGIN_CHALLENGE_STATE, LOGIN_METHOD, MFA_METHOD_TYPE } from "./constants";
+import {
+  CREATE_TOKEN_STATUS,
+  LOGIN_CHALLENGE_STATE,
+  LOGIN_METHOD,
+  MFA_METHOD_TYPE,
+  MFA_VERIFICATION_FAILURE
+} from "./constants";
+
+/** A value filling a `%s` in an error's `reason` — the auth service passes strings and numbers. */
+export type AuthErrorParam = string | number;
 
 export type MfaMethodType = ObjectValues<typeof MFA_METHOD_TYPE>;
 
@@ -59,3 +68,22 @@ export type CreateTokenResponse =
   | { status: typeof CREATE_TOKEN_STATUS.CHALLENGE_REQUIRED; data: LoginChallenge };
 
 export type CreateToken = (params: CreateTokenParams) => Promise<CreateTokenResponse>;
+
+export type CompleteLoginChallengeParams = {
+  challenge_id: string;
+  method_id: string;
+  code: string;
+};
+
+export type CompleteLoginChallenge = (params: CompleteLoginChallengeParams) => Promise<AuthToken>;
+
+export type MfaVerificationFailure =
+  | { kind: typeof MFA_VERIFICATION_FAILURE.INVALID_CODE; attemptsLeft: number | null }
+  | { kind: typeof MFA_VERIFICATION_FAILURE.CHALLENGE_EXPIRED }
+  | { kind: typeof MFA_VERIFICATION_FAILURE.CHALLENGE_LOCKED }
+  | { kind: typeof MFA_VERIFICATION_FAILURE.UNEXPECTED };
+
+/** The failures after which this challenge can never succeed — sign-in has to start over. */
+export type MfaTerminalFailureReason =
+  | typeof MFA_VERIFICATION_FAILURE.CHALLENGE_EXPIRED
+  | typeof MFA_VERIFICATION_FAILURE.CHALLENGE_LOCKED;

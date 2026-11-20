@@ -1,14 +1,21 @@
 import { getApiUrl } from "api/utils";
 import { AuthApiError } from "./errors";
+import { AuthErrorParam } from "./types";
 
 const AUTH_API_URL = getApiUrl("auth");
 
+// Parsed JSON is unchecked, so `params` stays `unknown` until `isAuthErrorParams` narrows it.
 type AuthErrorEnvelope = {
   error?: {
     error_code?: string;
     reason?: string;
+    params?: unknown;
   };
 };
+
+// All or nothing: params are positional (`params[0]` is the attempts left), so dropping one would shift the rest.
+const isAuthErrorParams = (value: unknown): value is AuthErrorParam[] =>
+  Array.isArray(value) && value.every((param) => typeof param === "string" || typeof param === "number");
 
 /**
  * `POST` against the auth service.
@@ -33,7 +40,8 @@ export const postAuth = async <TData>(path: string, body: unknown): Promise<{ st
     throw new AuthApiError({
       status: response.status,
       errorCode: error?.error_code ?? "",
-      reason: error?.reason ?? response.statusText
+      reason: error?.reason ?? response.statusText,
+      params: isAuthErrorParams(error?.params) ? error.params : []
     });
   }
 

@@ -1,4 +1,8 @@
 import type { Connect, Plugin } from "vite";
+// vite.config.mts loads this file without path aliases: config.ts imports nothing, and the
+// handlers import is type-only, so it is erased.
+import { MOCKED_HANDLERS_MODULE, MOCKED_PATH_PREFIX } from "../config";
+import type { MockedHandler } from "./handlers";
 
 /**
  * Serves the mocked endpoints over real HTTP on the dev server, so a call the backend cannot
@@ -8,17 +12,10 @@ import type { Connect, Plugin } from "vite";
  * which adds the `/api` prefix in dev. This middleware is registered before Vite's proxy, so a
  * route listed in `handlers.ts` is answered here and everything else falls through upstream.
  *
- * Opt out with `VITE_MOCKED_API=false` once the real endpoints ship.
+ * On while the `mfa_login` theme flag is; `VITE_MOCKED_API=false` opts out — see `isMockedApiEnabled`.
  */
 
-/** Only requests under this prefix are inspected; the rest skip the handler lookup entirely. */
-const MOCKED_PATH_PREFIX = "/api/auth/v2/";
-
-const HANDLERS_MODULE = "/src/themes/finops/api/mocked/http/handlers.ts";
-
-type MockedResponse = { status: number; body: unknown };
-
-type MockedHandlers = Record<string, (body: Record<string, string>) => Promise<MockedResponse>>;
+type MockedHandlers = Record<string, MockedHandler>;
 
 const readJsonBody = (request: Connect.IncomingMessage) =>
   new Promise<Record<string, string>>((resolve) => {
@@ -57,7 +54,7 @@ export const MockedApi = (enabled: boolean): Plugin => ({
 
       // Loaded through Vite so the handlers can keep using the app's aliases and TypeScript.
       server
-        .ssrLoadModule(HANDLERS_MODULE)
+        .ssrLoadModule(MOCKED_HANDLERS_MODULE)
         .then(async (module) => {
           const { MOCKED_ROUTES } = module as { MOCKED_ROUTES: MockedHandlers };
           const handler = MOCKED_ROUTES[route];
@@ -67,7 +64,7 @@ export const MockedApi = (enabled: boolean): Plugin => ({
             return;
           }
 
-          const { status, body } = await handler(await readJsonBody(request));
+          const { status, body } = await handler(await readJsonBody(request), { cookie: request.headers.cookie ?? "" });
 
           server.config.logger.info(`[mocked-api] ${route} → ${status}`);
 

@@ -1,25 +1,86 @@
+import { v4 as uuidv4 } from "uuid";
 import { MFA_METHOD_TYPE } from "@theme/api/auth/signIn/constants";
-import { AuthToken, MfaMethod } from "@theme/api/auth/signIn/types";
+import { AuthApiError } from "@theme/api/auth/signIn/errors";
+import {
+  AuthErrorParam,
+  AuthToken,
+  LoginChallenge,
+  LoginOptions,
+  MfaMethod,
+  MfaMethodType
+} from "@theme/api/auth/signIn/types";
+import { MOCK_LOGIN_CHALLENGE } from "@theme/api/mocked/config";
+import loginOptions from "@theme/api/mocked/responses/auth/v2/login_options/200.json";
+import token from "@theme/api/mocked/responses/auth/v2/tokens/201-token.json";
+import enrollmentRequired from "@theme/api/mocked/responses/auth/v2/tokens/202-enrollment-required.json";
+import mfaEmailDefault from "@theme/api/mocked/responses/auth/v2/tokens/202-mfa-email-default.json";
+import mfaNoConfirmedMethods from "@theme/api/mocked/responses/auth/v2/tokens/202-mfa-no-confirmed-methods.json";
+import mfaNoDefault from "@theme/api/mocked/responses/auth/v2/tokens/202-mfa-no-default.json";
+import mfaTotpDefault from "@theme/api/mocked/responses/auth/v2/tokens/202-mfa-totp-default.json";
+import emailNotVerified from "@theme/api/mocked/responses/auth/v2/tokens/403-email-not-verified.json";
+import invalidCredentials from "@theme/api/mocked/responses/auth/v2/tokens/403-invalid-credentials.json";
+import invalidMfaCode from "@theme/api/mocked/responses/auth/v2/tokens/403-invalid-mfa-code.json";
+import mfaAttemptsExceeded from "@theme/api/mocked/responses/auth/v2/tokens/403-mfa-attempts-exceeded.json";
+import loginChallengeNotFound from "@theme/api/mocked/responses/auth/v2/tokens/404-login-challenge-not-found.json";
+import internalError from "@theme/api/mocked/responses/auth/v2/tokens/500-internal-error.json";
+import { getCurrentUTCTimeInSec } from "utils/datetime";
 
 /**
- * Response bodies taken from the "FFC: TDR FinOps for Cloud MFA" design record
- * (Obtain token / Complete MFA challenge). Kept verbatim so they can be diffed against the
- * real endpoint once the auth service ships the challenge branch.
+ * The typed side of `api/mocked/responses/` — the bodies themselves are JSON, copied from the
+ * "FFC: TDR FinOps for Cloud MFA" design record.
+ *
+ * A JSON import widens `"totp"` to `string`, so a body cannot be declared as its contract type. A plain
+ * `as` would also accept a file that lost a field, so these first demand every contract key: a renamed
+ * or deleted field fails `tsc`. Enum values are checked in `fixtures.test.ts`.
  */
 
-export const MOCK_USER_ID = "9c2a1f3e-5b47-4a21-8f0c-1d6e8b3a7c42";
+type ErrorBody = { error: { status_code: number; error_code: string; reason: string; params: AuthErrorParam[] } };
 
-/**
- * A real serialized macaroon: location "optscale", identifier MOCK_USER_ID, caveat "mfa:none".
- * Minted once with node-macaroons and pasted here so the mock stays a plain data module while
- * `utils/macaroons` can still deserialize it exactly like a token from the auth service.
- */
-export const MOCK_TOKEN =
-  "MDAxNmxvY2F0aW9uIG9wdHNjYWxlCjAwMzRpZGVudGlmaWVyIDljMmExZjNlLTViNDctNGEyMS04ZjBjLTFkNmU4YjNhN2M0MgowMDExY2lkIG1mYTpub25lCjAwMmZzaWduYXR1cmUgrrkLrCmb0VcdYWsrr-lUxd9rs-V-iq_yANUMhSBaeHIK";
+const asLoginChallenge = (body: Record<keyof LoginChallenge, unknown> & { methods: Record<keyof MfaMethod, unknown>[] }) =>
+  body as LoginChallenge;
 
-export const TOTP_METHOD_ID = "a1d3f7c0-2e18-4c9b-9a55-7b0d1c4e6f32";
+const asErrorBody = (body: { error: Record<keyof ErrorBody["error"], unknown> }) => body as ErrorBody;
 
-export const EMAIL_METHOD_ID = "b2e47d91-6c03-4f8a-b1d2-5e9a3c7f0481";
+const asLoginOptions = (body: Record<keyof LoginOptions, unknown>) => body as LoginOptions;
+
+export const LOGIN_OPTIONS_BODY = asLoginOptions(loginOptions);
+
+export const TOKEN_BODY: AuthToken = token;
+
+export const CHALLENGE_BODY = Object.freeze({
+  MFA_TOTP_DEFAULT: asLoginChallenge(mfaTotpDefault),
+  MFA_EMAIL_DEFAULT: asLoginChallenge(mfaEmailDefault),
+  MFA_NO_DEFAULT: asLoginChallenge(mfaNoDefault),
+  // Breaks the contract on purpose — the service lists confirmed methods only — to reach the UI's guard.
+  MFA_NO_CONFIRMED_METHODS: asLoginChallenge(mfaNoConfirmedMethods),
+  ENROLLMENT_REQUIRED: asLoginChallenge(enrollmentRequired)
+});
+
+// Keys match `AUTH_ERROR_CODE`'s, so `fixtures.test.ts` can pair each file with its code.
+export const ERROR_BODY = Object.freeze({
+  INVALID_CREDENTIALS: asErrorBody(invalidCredentials),
+  EMAIL_NOT_VERIFIED: asErrorBody(emailNotVerified),
+  INTERNAL_ERROR: asErrorBody(internalError),
+  INVALID_MFA_CODE: asErrorBody(invalidMfaCode),
+  MFA_ATTEMPTS_EXCEEDED: asErrorBody(mfaAttemptsExceeded),
+  LOGIN_CHALLENGE_NOT_FOUND: asErrorBody(loginChallengeNotFound)
+});
+
+export const { user_id: MOCK_USER_ID } = TOKEN_BODY;
+
+const getMethodId = (type: MfaMethodType) => {
+  const method = CHALLENGE_BODY.MFA_TOTP_DEFAULT.methods.find((candidate) => candidate.type === type);
+
+  if (!method) {
+    throw new Error(`202-mfa-totp-default.json has no ${type} method`);
+  }
+
+  return method.id;
+};
+
+export const TOTP_METHOD_ID = getMethodId(MFA_METHOD_TYPE.TOTP);
+
+export const EMAIL_METHOD_ID = getMethodId(MFA_METHOD_TYPE.EMAIL);
 
 const maskEmail = (email: string) => {
   const [localPart = "", domain = ""] = email.split("@");
@@ -27,29 +88,33 @@ const maskEmail = (email: string) => {
   return `${localPart.slice(0, 2)}***@${domain}`;
 };
 
-export const getConfirmedMethods = (email: string): MfaMethod[] => [
-  {
-    id: TOTP_METHOD_ID,
-    type: MFA_METHOD_TYPE.TOTP,
-    label: "Configured on Google Pixel 10 Pro",
-    is_default: true,
-    confirmed: true
-  },
-  {
-    id: EMAIL_METHOD_ID,
-    type: MFA_METHOD_TYPE.EMAIL,
-    label: maskEmail(email),
-    is_default: false,
-    confirmed: true
-  }
-];
-
-export const getAuthToken = (email: string): AuthToken => ({
-  token: MOCK_TOKEN,
-  user_id: MOCK_USER_ID,
+/** The fields the service fills per request: a fresh id, an expiry from now, the address that signed in. */
+export const issueChallenge = (
+  body: LoginChallenge,
+  email: string,
+  { ttlSeconds = MOCK_LOGIN_CHALLENGE.TTL_SECONDS, attemptsLeft = body.attempts_left } = {}
+): LoginChallenge => ({
+  ...body,
+  challenge_id: uuidv4(),
+  expires_at: getCurrentUTCTimeInSec() + ttlSeconds,
   user_email: email,
-  created_at: "2026-09-22T09:00:00",
-  valid_until: "2026-09-29T09:00:00",
-  ip: "127.0.0.1",
-  digest: "f0a1b2c3d4e5f60718293a4b5c6d7e8f"
+  attempts_left: attemptsLeft,
+  // The service labels an e-mail method with the masked address it sends to.
+  methods: body.methods.map((method) =>
+    method.type === MFA_METHOD_TYPE.EMAIL ? { ...method, label: maskEmail(email) } : method
+  )
 });
+
+export const issueToken = (email: string): AuthToken => ({ ...TOKEN_BODY, user_email: email });
+
+/** Fills each `%s` in `reason` with the next param, the way the auth service's exceptions do. */
+const formatReason = (reason: string, params: AuthErrorParam[]) =>
+  params.reduce<string>((formatted, param) => formatted.replace("%s", String(param)), reason);
+
+export const authError = ({ error }: ErrorBody, params: AuthErrorParam[] = error.params) =>
+  new AuthApiError({
+    status: error.status_code,
+    errorCode: error.error_code,
+    reason: formatReason(error.reason, params),
+    params
+  });

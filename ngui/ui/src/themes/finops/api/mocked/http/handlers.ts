@@ -1,28 +1,39 @@
 import { AuthApiError } from "@theme/api/auth/signIn/errors";
-import { createTokenMock, resolveLoginOptionsMock } from "@theme/api/mocked/auth/signIn";
+import { completeLoginChallengeMock, createTokenMock, resolveLoginOptionsMock } from "@theme/api/mocked/auth/signIn";
+import { readSignInScenarioCookie } from "./signInScenarioCookie";
 
 export type MockedResponse = {
   status: number;
   body: unknown;
 };
 
-type MockedHandler = (body: Record<string, string>) => Promise<MockedResponse>;
+/** What the plugin passes on from the incoming request besides its JSON body. */
+export type MockedRequestContext = {
+  cookie: string;
+};
+
+export type MockedHandler = (body: Record<string, string>, context: MockedRequestContext) => Promise<MockedResponse>;
 
 /** Rebuilds the optscale error envelope the real service would have sent over the wire. */
 const toErrorResponse = (error: unknown): MockedResponse => {
   if (error instanceof AuthApiError) {
     return {
       status: error.status,
-      body: { error: { error_code: error.errorCode, reason: error.message } }
+      body: { error: { status_code: error.status, error_code: error.errorCode, reason: error.message, params: error.params } }
     };
   }
 
   throw error;
 };
 
-const createToken: MockedHandler = async ({ email, password }) => {
+// One route, two requests: the password step sends credentials, the MFA step a challenge.
+const createToken: MockedHandler = async ({ email, password, challenge_id, method_id, code }, { cookie }) => {
   try {
-    const { status, data } = await createTokenMock({ email, password });
+    if (challenge_id) {
+      return { status: 201, body: await completeLoginChallengeMock({ challenge_id, method_id, code }) };
+    }
+
+    const { status, data } = await createTokenMock({ email, password }, readSignInScenarioCookie(cookie));
 
     return { status, body: data };
   } catch (error) {
