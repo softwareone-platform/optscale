@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 403,
+    "error_code": "OA0071",
+    "reason": "Email or verification_code is invalid",
+    "params": []
+  }
+}

@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
-import { AUTH_ERROR_CODE, CREATE_TOKEN_STATUS, LOGIN_CHALLENGE_STATE } from "@theme/api/auth/signIn/constants";
-import { AuthApiError } from "@theme/api/auth/signIn/errors";
+import { describe, expect, it } from "vitest";
+import { AUTH_ERROR_CODE, AuthApiError } from "@theme/api/auth/errors";
+import { CREATE_TOKEN_STATUS, LOGIN_CHALLENGE_STATE } from "@theme/api/auth/signIn/constants";
 import { AuthToken, LoginChallenge } from "@theme/api/auth/signIn/types";
 import { MOCK_SIGN_IN_CREDENTIALS } from "@theme/api/mocked/config";
 import { getCurrentUTCTimeInSec } from "utils/datetime";
@@ -11,7 +11,6 @@ import { SIGN_IN_SCENARIO, SignInScenario } from "./scenarios";
 
 // The latency only exists to make pending states visible in the browser; waiting it out here
 // would add ~600 ms per test for nothing.
-vi.mock("@theme/api/mocked/mockDelay", () => ({ delay: () => Promise.resolve() }));
 
 const { email, password } = MOCK_SIGN_IN_CREDENTIALS;
 
@@ -108,6 +107,30 @@ describe("createTokenMock", () => {
       status: 500,
       errorCode: AUTH_ERROR_CODE.INTERNAL_ERROR
     });
+  });
+
+  it("puts a recovery or verification code through the challenge the scenario names, like a password", async () => {
+    const { status } = await createTokenMock(
+      { email, verification_code: MOCK_SIGN_IN_CREDENTIALS.verificationCode },
+      SIGN_IN_SCENARIO.MFA_EMAIL_DEFAULT
+    );
+
+    expect(status).toBe(CREATE_TOKEN_STATUS.CHALLENGE_REQUIRED);
+  });
+
+  it("rejects a wrong code with OA0071, the service's own error for it", async () => {
+    await expect(
+      createTokenMock({ email, verification_code: "000000" }, SIGN_IN_SCENARIO.MFA_TOTP_DEFAULT)
+    ).rejects.toMatchObject({ status: 403, errorCode: AUTH_ERROR_CODE.INVALID_VERIFICATION_CODE });
+  });
+
+  it("issues a token to a code sign-in under email_not_verified, since the code is what verifies the address", async () => {
+    const { status } = await createTokenMock(
+      { email, verification_code: MOCK_SIGN_IN_CREDENTIALS.verificationCode },
+      SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED
+    );
+
+    expect(status).toBe(CREATE_TOKEN_STATUS.TOKEN_ISSUED);
   });
 
   it("rejects a wrong password as invalid credentials whatever the scenario", async () => {

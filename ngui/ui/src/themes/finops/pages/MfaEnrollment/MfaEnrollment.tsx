@@ -1,10 +1,5 @@
-import LoginChallengeStep from "@theme/components/LoginChallengeStep";
+import MfaEnrollmentStep from "@theme/components/MfaEnrollmentStep";
 
-const MfaEnrollment = () => (
-  <LoginChallengeStep
-    titleMessageId="signIn:enrollmentRequiredTitle"
-    descriptionMessageId="signIn:enrollmentRequiredDescription"
-  />
-);
+const MfaEnrollment = () => <MfaEnrollmentStep />;
 
 export default MfaEnrollment;

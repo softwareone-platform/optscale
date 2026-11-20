@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
-import { formatCountdown } from "./utils";
+import { formatCountdown } from "@theme/components/LoginChallenge";
 
 const COUNTDOWN_ATTEMPTS_SEPARATOR = " · ";
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { AUTH_ERROR_CODE, MFA_VERIFICATION_FAILURE } from "./constants";
-import { AuthApiError, getMfaVerificationFailure, isEmailNotVerifiedError, isInvalidCredentialsError } from "./errors";
+import { AUTH_ERROR_CODE, AuthApiError } from "../errors";
+import { MFA_VERIFICATION_FAILURE } from "./constants";
+import { getAttemptsLeft, getMfaVerificationFailure, isEmailNotVerifiedError, isInvalidCredentialsError } from "./errors";
 
 const authError = (errorCode: string) => new AuthApiError({ status: 403, errorCode, reason: "nope" });
 
@@ -59,6 +60,12 @@ describe("getMfaVerificationFailure", () => {
     expect(getMfaVerificationFailure(error).kind).toBe(MFA_VERIFICATION_FAILURE.CHALLENGE_LOCKED);
   });
 
+  it("reads the user's limit of wrong codes across challenges as terminal", () => {
+    expect(getMfaVerificationFailure(authError(AUTH_ERROR_CODE.TOO_MANY_FAILED_ATTEMPTS)).kind).toBe(
+      MFA_VERIFICATION_FAILURE.TOO_MANY_FAILED_ATTEMPTS
+    );
+  });
+
   it("reads any 404 as an expired challenge, whatever code it carries", () => {
     const error = new AuthApiError({ status: 404, errorCode: "OA0053", reason: "Not found" });
 
@@ -70,5 +77,21 @@ describe("getMfaVerificationFailure", () => {
     expect(getMfaVerificationFailure(authError(AUTH_ERROR_CODE.INVALID_CREDENTIALS)).kind).toBe(
       MFA_VERIFICATION_FAILURE.UNEXPECTED
     );
+  });
+});
+
+describe("getAttemptsLeft", () => {
+  it("reads the count a wrong code under a challenge carries", () => {
+    const error = new AuthApiError({ status: 403, errorCode: AUTH_ERROR_CODE.INVALID_MFA_CODE, reason: "nope", params: [4] });
+
+    expect(getAttemptsLeft(error)).toBe(4);
+  });
+
+  it.each([
+    ["a wrong code without a challenge, which counts nothing", authError(AUTH_ERROR_CODE.INVALID_AUTHENTICATION_CODE)],
+    ["a wrong code under a challenge without a count", authError(AUTH_ERROR_CODE.INVALID_MFA_CODE)],
+    ["a transport failure", new TypeError("Failed to fetch")]
+  ])("has no count for %s", (_, error) => {
+    expect(getAttemptsLeft(error)).toBeNull();
   });
 });

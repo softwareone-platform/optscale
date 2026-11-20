@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 403,
+    "error_code": "OA0083",
+    "reason": "Invalid authentication code",
+    "params": []
+  }
+}

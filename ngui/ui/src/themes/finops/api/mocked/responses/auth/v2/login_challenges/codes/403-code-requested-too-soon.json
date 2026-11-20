@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 403,
+    "error_code": "OA0072",
+    "reason": "The verification code can be generated once in a minute",
+    "params": []
+  }
+}

@@ -1,56 +1,52 @@
-import { AuthApiError } from "@theme/api/auth/signIn/errors";
-import { completeLoginChallengeMock, createTokenMock, resolveLoginOptionsMock } from "@theme/api/mocked/auth/signIn";
-import { readSignInScenarioCookie } from "./signInScenarioCookie";
+import { AUTH_POLICIES_ROUTES } from "@theme/api/mocked/auth/authPolicies/routes";
+import { MFA_METHODS_ROUTES } from "@theme/api/mocked/auth/mfaMethods/routes";
+import { SESSION_ROUTES } from "@theme/api/mocked/auth/session/routes";
+import { SIGN_IN_ROUTES } from "@theme/api/mocked/auth/signIn/routes";
+import { SIGN_IN_SCENARIO } from "@theme/api/mocked/auth/signIn/scenarios";
+import { USERS_ROUTES } from "@theme/api/mocked/auth/users/routes";
+import { MOCK_LATENCY_MS } from "@theme/api/mocked/config";
+import { delay } from "@theme/api/mocked/mockDelay";
+import { matchRoute, MockedRequest, MockedResponse, MockedRoute, toErrorResponse } from "./router";
+import { readSecurityScenarioCookie, readSignInScenarioCookie } from "./scenarioCookies";
 
-export type MockedResponse = {
-  status: number;
-  body: unknown;
-};
+export type { MockedRequest };
 
-/** What the plugin passes on from the incoming request besides its JSON body. */
-export type MockedRequestContext = {
-  cookie: string;
-};
-
-export type MockedHandler = (body: Record<string, string>, context: MockedRequestContext) => Promise<MockedResponse>;
-
-/** Rebuilds the optscale error envelope the real service would have sent over the wire. */
-const toErrorResponse = (error: unknown): MockedResponse => {
-  if (error instanceof AuthApiError) {
-    return {
-      status: error.status,
-      body: { error: { status_code: error.status, error_code: error.errorCode, reason: error.message, params: error.params } }
-    };
-  }
-
-  throw error;
-};
-
-// One route, two requests: the password step sends credentials, the MFA step a challenge.
-const createToken: MockedHandler = async ({ email, password, challenge_id, method_id, code }, { cookie }) => {
-  try {
-    if (challenge_id) {
-      return { status: 201, body: await completeLoginChallengeMock({ challenge_id, method_id, code }) };
-    }
-
-    const { status, data } = await createTokenMock({ email, password }, readSignInScenarioCookie(cookie));
-
-    return { status, body: data };
-  } catch (error) {
-    return toErrorResponse(error);
-  }
-};
-
-const loginOptions: MockedHandler = async ({ email }) => ({
-  status: 200,
-  body: await resolveLoginOptionsMock({ email })
-});
+const MOCKED_ROUTES: MockedRoute[] = [
+  ...SESSION_ROUTES,
+  ...SIGN_IN_ROUTES,
+  ...USERS_ROUTES,
+  ...MFA_METHODS_ROUTES,
+  ...AUTH_POLICIES_ROUTES
+];
 
 /**
- * Routes the dev-server plugin answers instead of forwarding them upstream. Keyed by
- * `"<METHOD> <path>"` with the path as the auth service sees it, without the dev `/api` prefix.
+ * The handler the dev-server plugin answers a request with, or `undefined` to let it through to the real backend
+ * — no mocked route, or the real sign-in scenario, decided from the cookie before the body is read. Every answer
+ * waits `MOCK_LATENCY_MS`, so the pending states show; errors a mock throws come back as the service's envelope.
  */
-export const MOCKED_ROUTES: Record<string, MockedHandler> = {
-  "POST /auth/v2/login_options": loginOptions,
-  "POST /auth/v2/tokens": createToken
+export const findMockedHandler = ({ method, path, cookie }: { method: string; path: string; cookie: string }) => {
+  const match = matchRoute(MOCKED_ROUTES, { method, path });
+
+  if (!match) {
+    return undefined;
+  }
+
+  const { route, params } = match;
+  const scenarios = { signIn: readSignInScenarioCookie(cookie), security: readSecurityScenarioCookie(cookie) };
+
+  if (scenarios.signIn === SIGN_IN_SCENARIO.REAL_SIGN_IN && !route.answersRealSignIn) {
+    return undefined;
+  }
+
+  return async (request: MockedRequest): Promise<MockedResponse> => {
+    if (!route.skipsLatency) {
+      await delay(MOCK_LATENCY_MS);
+    }
+
+    try {
+      return await route.handle({ ...request, params, scenarios });
+    } catch (error) {
+      return toErrorResponse(error);
+    }
+  };
 };

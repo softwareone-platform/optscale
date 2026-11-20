@@ -1,17 +1,14 @@
 import { FormEvent, useState } from "react";
-import Chip from "@mui/material/Chip";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
-import { MfaMethod } from "@theme/api/auth/signIn";
-import Button from "components/Button";
-import { SPACING_1, SPACING_2, SPACING_3 } from "utils/layouts";
-import { MFA_METHOD_NAME_MESSAGE_ID } from "./constants";
-import useStyles from "./MfaChallengeStep.styles";
-import MfaMethodIcon from "./MfaMethodIcon";
+import { MfaMethod } from "@theme/api/auth/mfaMethod";
+import MfaMethodTile from "@theme/components/MfaMethodTile";
+import FullWidthButton from "@theme/shared/components/FullWidthButton";
+import InfoChip from "@theme/shared/components/InfoChip";
+import { SPACING_2, SPACING_3 } from "utils/layouts";
 
 type MfaMethodPickerProps = {
   methods: MfaMethod[];
@@ -23,8 +20,6 @@ type MfaMethodPickerProps = {
 const TITLE_ID = "mfa_method_picker_title";
 
 const MfaMethodPicker = ({ methods, initiallySelectedMethodId, onUseSelectedMethod, onBack }: MfaMethodPickerProps) => {
-  const { classes, cx } = useStyles();
-
   const [selectedMethodId, setSelectedMethodId] = useState(initiallySelectedMethodId ?? "");
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -48,60 +43,27 @@ const MfaMethodPicker = ({ methods, initiallySelectedMethodId, onUseSelectedMeth
           sx={{ gap: SPACING_2 }}
         >
           {methods.map((method) => (
-            <FormControlLabel
+            <MfaMethodTile
               key={method.id}
-              value={method.id}
-              className={cx(
-                classes.methodCard,
-                classes.selectableMethodCard,
-                method.id === selectedMethodId && classes.selectedMethodCard
-              )}
-              control={<Radio />}
-              data-test-id={`mfa_method_option_${method.id}`}
-              label={
-                <Stack direction="row" spacing={SPACING_2} alignItems="center">
-                  <MfaMethodIcon type={method.type} />
-                  <div>
-                    <Stack direction="row" spacing={SPACING_1} alignItems="center">
-                      <Typography className={classes.methodName}>
-                        <FormattedMessage id={MFA_METHOD_NAME_MESSAGE_ID[method.type]} />
-                      </Typography>
-                      {method.is_default && (
-                        <Chip
-                          size="small"
-                          className={classes.defaultMethodChip}
-                          label={<FormattedMessage id="default" />}
-                          data-test-id="chip_default_method"
-                        />
-                      )}
-                    </Stack>
-                    <Typography variant="body2">{method.label}</Typography>
-                  </div>
-                </Stack>
+              type={method.type}
+              description={method.label}
+              chip={
+                method.is_default && <InfoChip label={<FormattedMessage id="default" />} data-test-id="chip_default_method" />
               }
+              start={<Radio value={method.id} />}
+              isSelected={method.id === selectedMethodId}
+              testId={`mfa_method_option_${method.id}`}
             />
           ))}
         </RadioGroup>
         <Stack spacing={SPACING_2}>
-          <Button
+          <FullWidthButton
             type="submit"
-            variant="contained"
-            color="primary"
-            size="large"
-            fullWidth
             disabled={!selectedMethodId}
             messageId="signIn:useSelectedMethod"
             dataTestId="btn_use_selected_method"
           />
-          <Button
-            variant="contained"
-            color="secondary"
-            size="large"
-            fullWidth
-            onClick={onBack}
-            messageId="back"
-            dataTestId="btn_back_from_method_picker"
-          />
+          <FullWidthButton color="secondary" onClick={onBack} messageId="back" dataTestId="btn_back_from_method_picker" />
         </Stack>
       </Stack>
     </form>

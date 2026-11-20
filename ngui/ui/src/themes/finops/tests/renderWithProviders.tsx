@@ -6,6 +6,7 @@ import { IntlProvider } from "react-intl";
 import { Provider } from "react-redux";
 import { MemoryRouter, MemoryRouterProps, Routes } from "react-router-dom";
 import { legacy_createStore as createStore } from "redux";
+import SideModalManager from "components/SideModalManager";
 import ThemeProviderWrapper from "components/ThemeProviderWrapper";
 import { ALERTS } from "components/TopAlertWrapper/reducer";
 import intlConfig from "translations/react-intl-config";
@@ -24,7 +25,7 @@ type RenderWithProvidersOptions = {
 };
 
 /**
- * Renders theme components that reach `Greeter` or `ThemeProviderWrapper`, which upstream's
+ * Renders theme components that reach `Greeter`, `ThemeProviderWrapper` or a side modal, which upstream's
  * `TestProvider` cannot: it supplies no Apollo client, no alerts slice and no way to seed route state.
  */
 export const renderWithProviders = ({ initialEntry, routes }: RenderWithProvidersOptions) => {
@@ -40,7 +41,9 @@ export const renderWithProviders = ({ initialEntry, routes }: RenderWithProvider
           <ThemeProviderWrapper>
             <IntlProvider {...intlConfig}>
               <MemoryRouter initialEntries={[initialEntry]}>
-                <Routes>{routes}</Routes>
+                <SideModalManager>
+                  <Routes>{routes}</Routes>
+                </SideModalManager>
               </MemoryRouter>
             </IntlProvider>
           </ThemeProviderWrapper>

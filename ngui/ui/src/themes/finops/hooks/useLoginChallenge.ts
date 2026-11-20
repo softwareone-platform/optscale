@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LOGIN_CHALLENGE_STATE, LoginChallenge, MfaTerminalFailureReason } from "@theme/api/auth/signIn";
+import { AuthToken, LOGIN_CHALLENGE_STATE, LoginChallenge, MfaTerminalFailureReason } from "@theme/api/auth/signIn";
 import { MFA_CHALLENGE, MFA_ENROLLMENT } from "@theme/urls";
 
 export type MfaTerminalFailure = {
@@ -8,10 +8,23 @@ export type MfaTerminalFailure = {
   userEmail: string;
 };
 
+/**
+ * Where a passed challenge leads; without one the app opens. `search` keeps the starting page's query (capability,
+ * `showPolicy`), which the challenge URL drops.
+ */
+export type ChallengeContinuation = {
+  /** Recovery still has to set the new password with the token, so it goes back there instead of signing in. */
+  returnsToPasswordRecovery?: boolean;
+  search: string;
+};
+
 /** What the sign-in steps hand each other in router state — no token exists yet to fetch it with. */
 export type SignInRouterState = {
   challenge?: LoginChallenge;
+  continuation?: ChallengeContinuation;
   mfaTerminalFailure?: MfaTerminalFailure;
+  /** Back on the recovery page after its challenge; the new password is set with this token. */
+  recoveryToken?: AuthToken;
 };
 
 const getLoginChallengeUrl = ({ state }: Pick<LoginChallenge, "state">) =>
@@ -19,21 +32,24 @@ const getLoginChallengeUrl = ({ state }: Pick<LoginChallenge, "state">) =>
 
 const useSignInRouterState = (): SignInRouterState => (useLocation().state as SignInRouterState | null) ?? {};
 
-/**
- * Reads the challenge handed over by the password step. It travels in router state because no
- * token exists yet, so there is nothing to re-fetch it with.
- */
 export const useLoginChallenge = (): LoginChallenge | null => useSignInRouterState().challenge ?? null;
 
 export const useMfaTerminalFailure = (): MfaTerminalFailure | null => useSignInRouterState().mfaTerminalFailure ?? null;
+
+export const useChallengeContinuation = (): ChallengeContinuation | null => useSignInRouterState().continuation ?? null;
+
+export const useRecoveryToken = (): AuthToken | null => useSignInRouterState().recoveryToken ?? null;
 
 /** Opens the MFA or enrollment step for a `202` challenge. */
 export const useStartLoginChallenge = () => {
   const navigate = useNavigate();
 
   return useCallback(
-    (challenge: LoginChallenge, { replace = false }: { replace?: boolean } = {}) => {
-      const state: SignInRouterState = { challenge };
+    (
+      challenge: LoginChallenge,
+      { replace = false, continuation }: { replace?: boolean; continuation?: ChallengeContinuation } = {}
+    ) => {
+      const state: SignInRouterState = { challenge, continuation };
 
       navigate(getLoginChallengeUrl(challenge), { replace, state });
     },

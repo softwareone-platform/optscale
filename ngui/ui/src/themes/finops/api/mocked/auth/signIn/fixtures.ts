@@ -1,15 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
-import { MFA_METHOD_TYPE } from "@theme/api/auth/signIn/constants";
-import { AuthApiError } from "@theme/api/auth/signIn/errors";
-import {
-  AuthErrorParam,
-  AuthToken,
-  LoginChallenge,
-  LoginOptions,
-  MfaMethod,
-  MfaMethodType
-} from "@theme/api/auth/signIn/types";
+import { MFA_METHOD_TYPE, MfaMethod, MfaMethodType } from "@theme/api/auth/mfaMethod";
+import { AuthToken, LoginChallenge, LoginOptions } from "@theme/api/auth/signIn/types";
 import { MOCK_LOGIN_CHALLENGE } from "@theme/api/mocked/config";
+import { asErrorBody } from "@theme/api/mocked/errorBodies";
+import codeRequestedTooSoon from "@theme/api/mocked/responses/auth/v2/login_challenges/codes/403-code-requested-too-soon.json";
+import codeChallengeNotFound from "@theme/api/mocked/responses/auth/v2/login_challenges/codes/404-login-challenge-not-found.json";
 import loginOptions from "@theme/api/mocked/responses/auth/v2/login_options/200.json";
 import token from "@theme/api/mocked/responses/auth/v2/tokens/201-token.json";
 import enrollmentRequired from "@theme/api/mocked/responses/auth/v2/tokens/202-enrollment-required.json";
@@ -20,9 +15,13 @@ import mfaTotpDefault from "@theme/api/mocked/responses/auth/v2/tokens/202-mfa-t
 import emailNotVerified from "@theme/api/mocked/responses/auth/v2/tokens/403-email-not-verified.json";
 import invalidCredentials from "@theme/api/mocked/responses/auth/v2/tokens/403-invalid-credentials.json";
 import invalidMfaCode from "@theme/api/mocked/responses/auth/v2/tokens/403-invalid-mfa-code.json";
+import invalidVerificationCode from "@theme/api/mocked/responses/auth/v2/tokens/403-invalid-verification-code.json";
 import mfaAttemptsExceeded from "@theme/api/mocked/responses/auth/v2/tokens/403-mfa-attempts-exceeded.json";
+import mfaEnrollmentRequired from "@theme/api/mocked/responses/auth/v2/tokens/403-mfa-enrollment-required.json";
+import tooManyFailedAttempts from "@theme/api/mocked/responses/auth/v2/tokens/403-too-many-failed-attempts.json";
 import loginChallengeNotFound from "@theme/api/mocked/responses/auth/v2/tokens/404-login-challenge-not-found.json";
 import internalError from "@theme/api/mocked/responses/auth/v2/tokens/500-internal-error.json";
+import { findRealSession } from "@theme/api/mocked/state/realSession";
 import { getCurrentUTCTimeInSec } from "utils/datetime";
 
 /**
@@ -34,12 +33,8 @@ import { getCurrentUTCTimeInSec } from "utils/datetime";
  * or deleted field fails `tsc`. Enum values are checked in `fixtures.test.ts`.
  */
 
-type ErrorBody = { error: { status_code: number; error_code: string; reason: string; params: AuthErrorParam[] } };
-
 const asLoginChallenge = (body: Record<keyof LoginChallenge, unknown> & { methods: Record<keyof MfaMethod, unknown>[] }) =>
   body as LoginChallenge;
-
-const asErrorBody = (body: { error: Record<keyof ErrorBody["error"], unknown> }) => body as ErrorBody;
 
 const asLoginOptions = (body: Record<keyof LoginOptions, unknown>) => body as LoginOptions;
 
@@ -59,11 +54,21 @@ export const CHALLENGE_BODY = Object.freeze({
 // Keys match `AUTH_ERROR_CODE`'s, so `fixtures.test.ts` can pair each file with its code.
 export const ERROR_BODY = Object.freeze({
   INVALID_CREDENTIALS: asErrorBody(invalidCredentials),
+  INVALID_VERIFICATION_CODE: asErrorBody(invalidVerificationCode),
   EMAIL_NOT_VERIFIED: asErrorBody(emailNotVerified),
   INTERNAL_ERROR: asErrorBody(internalError),
   INVALID_MFA_CODE: asErrorBody(invalidMfaCode),
   MFA_ATTEMPTS_EXCEEDED: asErrorBody(mfaAttemptsExceeded),
+  TOO_MANY_FAILED_ATTEMPTS: asErrorBody(tooManyFailedAttempts),
+  // Our proposal, in no spec yet: an `enrollment_required` challenge has no method to check a code against.
+  MFA_ENROLLMENT_REQUIRED: asErrorBody(mfaEnrollmentRequired),
   LOGIN_CHALLENGE_NOT_FOUND: asErrorBody(loginChallengeNotFound)
+});
+
+// `POST /login_challenges/{challenge_id}/codes`; keyed like `ERROR_BODY`.
+export const CHALLENGE_CODE_ERROR_BODY = Object.freeze({
+  CODE_REQUESTED_TOO_SOON: asErrorBody(codeRequestedTooSoon),
+  LOGIN_CHALLENGE_NOT_FOUND: asErrorBody(codeChallengeNotFound)
 });
 
 export const { user_id: MOCK_USER_ID } = TOKEN_BODY;
@@ -96,6 +101,8 @@ export const issueChallenge = (
 ): LoginChallenge => ({
   ...body,
   challenge_id: uuidv4(),
+  // The user the mocked sign-in hands out, so enrolling under the challenge and the later session are one user.
+  user_id: issueToken(email).user_id,
   expires_at: getCurrentUTCTimeInSec() + ttlSeconds,
   user_email: email,
   attempts_left: attemptsLeft,
@@ -105,16 +112,18 @@ export const issueChallenge = (
   )
 });
 
-export const issueToken = (email: string): AuthToken => ({ ...TOKEN_BODY, user_email: email });
+/**
+ * The real session captured in the dev panel when there is one, so the app's real API calls work after a mocked
+ * sign-in; otherwise the file's macaroon, which no backend accepts.
+ */
+export const issueToken = (email: string): AuthToken => {
+  const realSession = findRealSession();
 
-/** Fills each `%s` in `reason` with the next param, the way the auth service's exceptions do. */
-const formatReason = (reason: string, params: AuthErrorParam[]) =>
-  params.reduce<string>((formatted, param) => formatted.replace("%s", String(param)), reason);
+  if (realSession) {
+    const { token: realToken, user_id, user_email } = realSession;
 
-export const authError = ({ error }: ErrorBody, params: AuthErrorParam[] = error.params) =>
-  new AuthApiError({
-    status: error.status_code,
-    errorCode: error.error_code,
-    reason: formatReason(error.reason, params),
-    params
-  });
+    return { ...TOKEN_BODY, token: realToken, user_id, user_email };
+  }
+
+  return { ...TOKEN_BODY, user_email: email };
+};

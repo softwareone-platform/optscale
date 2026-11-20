@@ -8,13 +8,13 @@ import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import { FormattedMessage } from "react-intl";
+import ProfileMenuContainer from "@theme/containers/ProfileMenuContainer/ProfileMenuContainer";
 import { MPT_BRAND_TYPE } from "@theme/utils/layouts";
 import IconButton from "components/IconButton";
 import LanguageSwitcher from "components/LanguageSwitcher";
 import Popover from "components/Popover";
 import { PRODUCT_TOUR, useStartTour } from "components/Tour";
 import { useIsTourAvailableForCurrentBreakpoint } from "components/Tour/hooks";
-import ProfileMenuContainer from "containers/ProfileMenuContainer";
 import { useCommunityDocsContext } from "contexts/CommunityDocsContext";
 import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { useMainMenuState } from "hooks/useMainMenuState";
@@ -86,7 +86,7 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
               }}
             />
           }
-          menu={<ProfileMenuContainer />}
+          renderMenu={({ closeHandler }: { closeHandler: () => void }) => <ProfileMenuContainer onItemClick={closeHandler} />}
         />
       </Box>
       <Box component="div" className={classes.sectionMobile}>
@@ -129,7 +129,9 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
                   }}
                 />
               }
-              menu={<ProfileMenuContainer />}
+              renderMenu={({ closeHandler }: { closeHandler: () => void }) => (
+                <ProfileMenuContainer onItemClick={closeHandler} />
+              )}
             />
           </Box>
         </Menu>

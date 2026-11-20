@@ -1,5 +1,6 @@
 {
   "challenge_id": "6d2f4c0e-3b1a-4b7e-9d1e-0f4c2a6b8e91",
+  "user_id": "9c2a1f3e-5b47-4a21-8f0c-1d6e8b3a7c42",
   "state": "mfa_required",
   "expires_at": 1758480300,
   "user_email": "finops.ffc@example.com",

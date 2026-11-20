@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 400,
+    "error_code": "OA0060",
+    "reason": "Invalid %s",
+    "params": []
+  }
+}

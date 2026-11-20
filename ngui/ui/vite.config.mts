@@ -3,7 +3,7 @@ import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { isMockedApiEnabled } from "./src/themes/finops/api/mocked/config";
 import { MockedApi } from "./src/themes/finops/api/mocked/http/mockedApiPlugin";
-import { featureFlags } from "./src/themes/finops/theme.features";
+import { isMfaLoginEnabled } from "./src/themes/finops/theme.features";
 import { ThemeResolver } from "./src/utils/themeResolver";
 
 const parseViteHost = (value?: string): string | boolean => {
@@ -52,6 +52,7 @@ export default defineConfig(({ mode }) => {
     VITE_HOST,
     VITE_ALLOWED_HOSTS,
     VITE_APP_THEME,
+    VITE_MFA_LOGIN,
     VITE_MOCKED_API
   } = env;
 
@@ -100,7 +101,7 @@ export default defineConfig(({ mode }) => {
       ThemeResolver(VITE_APP_THEME || ""),
       tsconfigPaths(),
       // Answers the endpoints the backend has not shipped yet, while the mfa_login theme flag is on.
-      MockedApi(isMockedApiEnabled({ mfaLogin: featureFlags.mfa_login, mockedApiEnv: VITE_MOCKED_API }))
+      MockedApi(isMockedApiEnabled({ mfaLogin: isMfaLoginEnabled(VITE_MFA_LOGIN), mockedApiEnv: VITE_MOCKED_API }))
     ],
     // TODO: Some of the tests are still failing
     test: {

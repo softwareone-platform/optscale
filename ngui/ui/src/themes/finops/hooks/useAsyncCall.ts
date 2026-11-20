@@ -1,10 +1,8 @@
 import { useCallback, useState } from "react";
 
 /**
- * Wraps a one-shot API call with its own pending flag.
- *
- * Rejections are left to propagate — the caller is the one that can tell an expected failure
- * from an unexpected one. Only `isLoading` is owned here.
+ * Wraps a one-shot API call with its own pending flag. Rejections propagate: the caller is the one that can tell an
+ * expected failure from an unexpected one.
  */
 export const useAsyncCall = <TParams, TResult>(call: (params: TParams) => Promise<TResult>) => {
   const [isLoading, setIsLoading] = useState(false);

@@ -1,19 +1,10 @@
-import { ReactNode } from "react";
-import { MockedProvider } from "@apollo/client/testing";
-import { createRoot } from "react-dom/client";
+import { ComponentProps, useState } from "react";
 import { act } from "react-dom/test-utils";
-import { IntlProvider } from "react-intl";
-import { Provider } from "react-redux";
-import { MemoryRouter } from "react-router-dom";
-import { legacy_createStore as createStore } from "redux";
+import { Route } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
-import ThemeProviderWrapper from "components/ThemeProviderWrapper";
-import { ALERTS } from "components/TopAlertWrapper/reducer";
-import intlConfig from "translations/react-intl-config";
+import { renderWithProviders } from "@theme/tests/renderWithProviders";
+import { typeInto } from "@theme/tests/typeInto";
 import TwoStepLoginForm from "./TwoStepLoginForm";
-
-// Opts this file into React 18's act() environment so state updates are flushed, not warned about.
-(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 // Stubbed at the transport boundary only — LOGIN_METHOD stays real, so the form is still checked
 // against the value the contract actually uses.
@@ -22,47 +13,41 @@ vi.mock("@theme/api/auth/signIn", async (importOriginal) => ({
   resolveLoginOptions: () => Promise.resolve({ methods: ["password"], sso: { state: "not_configured" } })
 }));
 
-const store = createStore(() => ({ [ALERTS]: {} }));
+type FormProps = Partial<ComponentProps<typeof TwoStepLoginForm>>;
 
-const render = (props: Partial<Parameters<typeof TwoStepLoginForm>[0]> = {}) => {
-  const container = document.createElement("div");
-  const root = createRoot(container);
+const render = () => {
+  let passProps: (props: FormProps) => void = () => {};
 
-  const wrap = (children: ReactNode) => (
-    <Provider store={store}>
-      <MockedProvider>
-        <ThemeProviderWrapper>
-          <IntlProvider {...intlConfig}>
-            <MemoryRouter>{children}</MemoryRouter>
-          </IntlProvider>
-        </ThemeProviderWrapper>
-      </MockedProvider>
-    </Provider>
-  );
+  // Stands in for the container: it holds the props the form gets, so a spec can pass new ones later.
+  const FormOwner = () => {
+    const [props, setProps] = useState<FormProps>({});
+    passProps = setProps;
 
-  act(() => {
-    root.render(wrap(<TwoStepLoginForm onSubmit={vi.fn()} {...props} />));
+    return <TwoStepLoginForm onSubmit={vi.fn()} {...props} />;
+  };
+
+  const { container, unmount } = renderWithProviders({
+    initialEntry: "/",
+    routes: <Route path="/" element={<FormOwner />} />
   });
 
   const find = (testId: string) => container.querySelector<HTMLInputElement>(`[data-test-id='${testId}']`);
 
   const type = async (testId: string, value: string) => {
-    const input = find(testId)!;
-    const { set } = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!;
+    const input = find(testId) as HTMLInputElement;
 
     await act(async () => {
-      set!.call(input, value);
-      input.dispatchEvent(new Event("input", { bubbles: true }));
+      typeInto(input, value);
     });
   };
 
   return {
     find,
     type,
-    unmount: () => act(() => root.unmount()),
-    rerender: async (nextProps: Partial<Parameters<typeof TwoStepLoginForm>[0]>) => {
+    unmount,
+    rerender: async (nextProps: FormProps) => {
       await act(async () => {
-        root.render(wrap(<TwoStepLoginForm onSubmit={vi.fn()} {...props} {...nextProps} />));
+        passProps(nextProps);
       });
     },
     typeEmail: (value: string) => type("input_email", value),

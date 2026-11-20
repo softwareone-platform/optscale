@@ -3,11 +3,6 @@ export const LOGIN_CHALLENGE_STATE = Object.freeze({
   ENROLLMENT_REQUIRED: "enrollment_required"
 } as const);
 
-export const MFA_METHOD_TYPE = Object.freeze({
-  TOTP: "totp",
-  EMAIL: "email"
-} as const);
-
 /** Authentication methods `login_options` can offer for an address. `sso` joins them later. */
 export const LOGIN_METHOD = Object.freeze({
   PASSWORD: "password"
@@ -18,19 +13,12 @@ export const CREATE_TOKEN_STATUS = Object.freeze({
   CHALLENGE_REQUIRED: 202
 } as const);
 
-export const AUTH_ERROR_CODE = Object.freeze({
-  INVALID_CREDENTIALS: "OA0037",
-  INTERNAL_ERROR: "OA0061",
-  EMAIL_NOT_VERIFIED: "OA0073",
-  // Our proposal, not in the auth service yet.
-  INVALID_MFA_CODE: "OA0075",
-  MFA_ATTEMPTS_EXCEEDED: "OA0076",
-  LOGIN_CHALLENGE_NOT_FOUND: "OA0077"
-} as const);
-
 export const MFA_VERIFICATION_FAILURE = Object.freeze({
   INVALID_CODE: "invalid_code",
   CHALLENGE_EXPIRED: "challenge_expired",
   CHALLENGE_LOCKED: "challenge_locked",
+  TOO_MANY_FAILED_ATTEMPTS: "too_many_failed_attempts",
+  // Only ever a terminal reason: an enrollment under the challenge ran into another sign-in's.
+  MFA_ALREADY_SET_UP: "mfa_already_set_up",
   UNEXPECTED: "unexpected"
 } as const);

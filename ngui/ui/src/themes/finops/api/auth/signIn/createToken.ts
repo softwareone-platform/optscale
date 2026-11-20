@@ -1,12 +1,10 @@
-import { postAuth } from "./request";
+import { postAuth } from "../request";
 import { CreateToken, CreateTokenResponse } from "./types";
 
 /**
- * `POST /auth/v2/tokens` — the password step of sign-in.
- *
- * `201` carries a token, `202` a login challenge. The auth service does not return the `202`
- * branch yet; in dev the mocked API plugin in `api/mocked/` answers this route instead.
+ * `POST /auth/v2/tokens` — the password step of sign-in, and the code step of password recovery and e-mail
+ * verification. `201` carries a token, `202` a login challenge.
  */
-export const createToken: CreateToken = async ({ email, password }) =>
+export const createToken: CreateToken = async (params) =>
   // The service's contract is not something TypeScript can verify — this is the one cast.
-  (await postAuth("/tokens", { email, password })) as CreateTokenResponse;
+  (await postAuth("/tokens", params)) as CreateTokenResponse;

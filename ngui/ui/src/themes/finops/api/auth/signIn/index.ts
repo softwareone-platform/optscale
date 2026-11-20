@@ -1,17 +1,16 @@
-export {
-  AUTH_ERROR_CODE,
-  CREATE_TOKEN_STATUS,
-  LOGIN_CHALLENGE_STATE,
-  LOGIN_METHOD,
-  MFA_METHOD_TYPE,
-  MFA_VERIFICATION_FAILURE
-} from "./constants";
+export { CREATE_TOKEN_STATUS, LOGIN_CHALLENGE_STATE, LOGIN_METHOD, MFA_VERIFICATION_FAILURE } from "./constants";
 export { completeLoginChallenge } from "./completeLoginChallenge";
 export { createToken } from "./createToken";
-export { AuthApiError, getMfaVerificationFailure, isEmailNotVerifiedError, isInvalidCredentialsError } from "./errors";
+export {
+  getAttemptsLeft,
+  getMfaVerificationFailure,
+  isEmailNotVerifiedError,
+  isInvalidCredentialsError,
+  isInvalidVerificationCodeError
+} from "./errors";
 export { resolveLoginOptions } from "./loginOptions";
+export { requestChallengeCode } from "./requestChallengeCode";
 export type {
-  AuthErrorParam,
   AuthToken,
   CompleteLoginChallenge,
   CompleteLoginChallengeParams,
@@ -23,9 +22,9 @@ export type {
   LoginMethod,
   LoginOptions,
   LoginOptionsParams,
-  MfaMethod,
-  MfaMethodType,
   MfaTerminalFailureReason,
   MfaVerificationFailure,
+  RequestChallengeCode,
+  RequestChallengeCodeParams,
   ResolveLoginOptions
 } from "./types";

@@ -51,7 +51,7 @@ const AuthorizationContainer = () => {
 
   const { onSend: sendEmailVerificationCode, isLoading: isSendEmailVerificationCodeLoading } = useSendEmailVerificationCode();
 
-  // Flip `mfa_login` in theme.features.ts to exercise the two-step login against the mocked
+  // Set VITE_MFA_LOGIN=true in `.env` to exercise the two-step login against the mocked
   // transport; with the flag off the original single-step login runs untouched.
   const isMfaLoginEnabled = useIsFeatureEnabled("mfa_login");
 

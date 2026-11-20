@@ -1,9 +1,10 @@
-import { MFA_METHOD_TYPE, MfaMethodType } from "@theme/api/auth/signIn";
+// The service sends one e-mail code per address and purpose a minute.
+export const RESEND_EMAIL_CODE_AFTER_SECONDS = 60;
 
-export const MFA_METHOD_NAME_MESSAGE_ID: Record<MfaMethodType, string> = {
-  [MFA_METHOD_TYPE.TOTP]: "signIn:authenticatorApp",
-  [MFA_METHOD_TYPE.EMAIL]: "signIn:emailVerificationCode"
-};
+export const EMAIL_CODE_FAILURE = Object.freeze({
+  TOO_SOON: "too_soon",
+  UNEXPECTED: "unexpected"
+} as const);
 
 export const MFA_CHALLENGE_VIEW = Object.freeze({
   NO_SELECTABLE_METHODS: "no_selectable_methods",

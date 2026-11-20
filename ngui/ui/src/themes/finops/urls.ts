@@ -9,6 +9,8 @@ export const PENDING_INVITATIONS = "/pending-invitations";
 export const MFA_CHALLENGE = "/mfa";
 export const MFA_ENROLLMENT = "/mfa-enrollment";
 
+export const PROFILE = "/profile";
+
 /** The login page with the address already filled in, for starting sign-in over. */
 export const getLoginUrl = (email: string) => `${LOGIN}?${stringifySearchParams({ email })}`;
 

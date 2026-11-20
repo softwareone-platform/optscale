@@ -33,13 +33,13 @@ Repo-local docs that are authoritative on their own topic:
 
 Read these before trusting any prose, here or elsewhere:
 
-| File                                              | Generates                                                            |
-| ------------------------------------------------- | -------------------------------------------------------------------- |
-| [`tsconfig.json`](../../../tsconfig.json)         | `baseUrl: "src"` and the alias table                                 |
-| [`vite.config.mts`](../../../vite.config.mts)     | `ThemeResolver(VITE_APP_THEME)`, `tsconfigPaths()`, Vitest config    |
-| [`eslint.config.mjs`](../../../eslint.config.mjs) | The `src/` vs `src/themes/finops` lint boundary, **with the reason** |
-| [`.prettierrc.cjs`](../../../.prettierrc.cjs)     | `trailingComma: "none"`, `printWidth: 128`, double quotes            |
-| `.env`                                            | `VITE_APP_THEME=finops`, `VITE_PROXY`, ports (gitignored)            |
+| File                                              | Generates                                                                                                 |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| [`tsconfig.json`](../../../tsconfig.json)         | `baseUrl: "src"` and the alias table                                                                      |
+| [`vite.config.mts`](../../../vite.config.mts)     | `ThemeResolver(VITE_APP_THEME)`, `tsconfigPaths()`, Vitest config                                         |
+| [`eslint.config.mjs`](../../../eslint.config.mjs) | The `src/` vs `src/themes/finops` lint boundary, **with the reason**                                      |
+| [`.prettierrc.cjs`](../../../.prettierrc.cjs)     | `trailingComma: "none"`, `printWidth: 128`, double quotes                                                 |
+| `.env`                                            | `VITE_APP_THEME=finops`, `VITE_PROXY`, `VITE_MFA_LOGIN`, ports (gitignored); `.env.sample` documents each |
 
 Two prettier configs exist and differ: [`ngui/.prettierrc.cjs`](../../../../.prettierrc.cjs) sets
 `trailingComma: "es5"`, the nested [`.prettierrc.cjs`](../../../.prettierrc.cjs) sets `"none"`. The
@@ -65,17 +65,17 @@ Declared in **two** places that must stay in step:
 
 Run from `ngui/ui/`:
 
-| Command                   | Does                                                      |
-| ------------------------- | --------------------------------------------------------- |
-| `pnpm start` / `pnpm dev` | Vite dev server on :3000, proxying `/api` to `VITE_PROXY` |
-| `pnpm build`              | Production build (**the real gate** — see below)          |
-| `pnpm test`               | Vitest watch                                              |
-| `pnpm lint`               | ESLint, `--max-warnings=0`                                |
-| `pnpm type:check`         | `tsc --noEmit` (**already red** — see below)              |
-| `pnpm prettier:check`     | Prettier over `src/themes/finops/**`                      |
-| `pnpm translate:validate` | ICU validation + coverage gate + missing-key report       |
-| `pnpm fix`                | `lint:fix` + `translate:sort` + `translate:fix`           |
-| `pnpm check:all`          | `lint` + `translate:check` + `prettier:check` + `build`   |
+| Command                   | Does                                                                    |
+| ------------------------- | ----------------------------------------------------------------------- |
+| `pnpm start` / `pnpm dev` | Vite dev server on :3000, proxying `/api` to `VITE_PROXY`               |
+| `pnpm build`              | Production build (**the real gate** — see below)                        |
+| `pnpm test`               | Vitest watch                                                            |
+| `pnpm lint`               | ESLint, `--max-warnings=0`                                              |
+| `pnpm type:check`         | `tsc --noEmit` (**already red** — see below)                            |
+| `pnpm prettier:check`     | Prettier over `src/themes/finops/**`                                    |
+| `pnpm translate:validate` | ICU validation + coverage gate + missing-key report                     |
+| `pnpm fix`                | `lint:fix` + `translate:sort` + `translate:fix` (**don't** — see below) |
+| `pnpm check:all`          | `lint` + `translate:check` + `prettier:check` + `build`                 |
 
 ### Handoff chain before calling anything done
 
@@ -122,6 +122,13 @@ git diff --cached --name-only --relative --diff-filter=d -- src | grep -E '\.(ts
 `xargs -r` skips prettier when nothing is staged — a bare `npx prettier --write` with no files waits on
 stdin forever. In zsh an unquoted `$FILES` is one argument, so don't collect the list in a variable.
 
+### `translate:sort` rewrites upstream
+
+`pnpm translate:sort` — and `pnpm fix`, which runs it — re-sorts **every** locale file, upstream
+`src/translations/**` included, breaking the `src/` boundary in one go. Don't run either; if it happened,
+`git checkout -- src/translations`. Add keys by hand instead: the theme locale files don't share one sort
+order, so put a new key next to its namespace neighbours in each file and check the file still parses.
+
 ### Seeing the mocked API answer
 
 The mocks run inside the dev server's Node SSR loader, which neither Vitest nor `pnpm build` touches —
@@ -138,6 +145,9 @@ pkill -f "vite --port 3123"
 Each answer is also logged as `[mocked-api] POST /auth/v2/tokens → 202`. `vite.config.mts` loads
 `mockedApiPlugin.ts` without the path aliases, so the plugin may only `import type` from `handlers.ts`,
 plus the import-free `api/mocked/config.ts` that holds every mock setting.
+
+The mocks answer only while `VITE_MFA_LOGIN=true`; `VITE_MOCKED_API=false` sends the same routes to
+`VITE_PROXY` instead. Both are read when the dev server starts — restart it after changing `.env`.
 
 ## Repo layout
 
@@ -157,6 +167,7 @@ ngui/
         └── themes/finops/   # THIS FORK'S CODE — everything you write
             ├── api/ components/ containers/ contexts/ hooks/
             ├── icons/ layouts/ pages/ shared/ tests/ translations/ utils/
+            ├── vendor/      # third-party code copied verbatim, ESLint-ignored
             ├── theme.ts theme.features.ts urls.ts
 ```
 
@@ -168,8 +179,27 @@ counterpart (new work) are reachable only through an explicit `@theme/…` impor
 `DividerHorizontal`, `LabelColon`, `DataSourceTagCell`.
 
 `themes/finops/api/mocked/` holds every endpoint stand-in, plus `devPanel/` — the dev-only scenario
-panel. The theme `Greeter` lazy-loads it in development and is the only app code that reaches into
-`api/mocked/`.
+panel. `components/MockedApiDevPanelSlot` lazy-loads it in development (rendered by `Greeter` and the
+signed-in layout) and is the only app code that reaches into `api/mocked/`.
+
+`themes/finops/api/auth/` is the REST client for the auth service the MFA work talks to directly
+(`request.ts`, `errors.ts` with `AuthApiError` and `AUTH_ERROR_CODE`, one folder per resource).
+
+`themes/finops/vendor/` holds packages that could not be installed — `qrcode-generator`, because
+`pnpm add` fails `trustPolicy: no-downgrade` on `chokidar@4.0.3`. Each has a README with its source and
+version; swap it for the package once installing works.
+
+### Overriding a component behind a flag
+
+An override that must stay upstream's while a flag is off renders upstream's own file, imported by its
+`@main/…` path (a theme importer is never redirected), and puts the new version in a sibling file:
+
+```tsx
+const PasswordRecovery = () => (useIsFeatureEnabled("mfa_login") ? <PasswordRecoveryWithMfa /> : <UpstreamPasswordRecovery />);
+```
+
+A bare import of an upstream component _from a theme file_ gets upstream's barrel, which is what still
+redirects to a theme override (trap 1 below) — import the folder, not the file, when you want that.
 
 ### Adding a page + route
 
@@ -201,6 +231,29 @@ before hand-rolling:
 | `components/Redirector`          | Conditional `<Navigate>`                                                                                         |
 | `components/PageContentWrapper`  | Signed-in page chrome, paired with `components/ActionBar`                                                        |
 
+Theme components the MFA work built, meant for reuse (`@theme/components/…`):
+
+| Component                           | Use for                                                                                                                                            |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AddMfaMethod`                      | Choose, set up and confirm a method — the content of the `AddMfaMethodModal` side modal; the caller passes its `MfaEnrollmentCalls`                |
+| `MfaMethodIcon`                     | A method type's icon, plus `MFA_METHOD_NAME_MESSAGE_ID`                                                                                            |
+| `MfaChallengeStep`                  | The sign-in MFA screen (`/mfa`); `MfaEnrollmentStep` is the enforced setup (`/mfa-enrollment`)                                                     |
+| `LoginChallenge`                    | What `/mfa` and `/mfa-enrollment` share: `LoginChallengeScreen`, `useChallengeEnding`, `BackToLoginButton`, `MfaChallengeEnded`, `formatCountdown` |
+| `SignInCard`                        | A pre-app step as one card on the page background (the invitation screen's look)                                                                   |
+| `Button` (theme override)           | Adds `isLoading`: disabled, spinner in place of the start icon — import it as `@theme/components/Button/Button`                                    |
+| `shared/components/InfoChip`        | The info-coloured chip: "Default", "Already set up"                                                                                                |
+| `shared/components/FullWidthButton` | The sign-in screens' large, full-width, filled button                                                                                              |
+| `MfaMethodTile`                     | A method as one bordered tile: picker (radio), code entry, add dialog (button), Security (menu)                                                    |
+| `CodeSignIn`                        | E-mailed-code sign-in step, success step and `useProceedToApp` for recovery and verification                                                       |
+| `MfaSecuritySettings`               | Profile → Security: the methods list, set default, remove                                                                                          |
+| `MfaSetupPrompt`                    | Dismissable home-page nudge for users without MFA                                                                                                  |
+| `MockedApiDevPanelSlot`             | The dev panel's mount point — see above                                                                                                            |
+
+OptScale has no centred modals: an extra step opens a **side modal**. A class in
+`components/SideModalManager/SideModals/` (theme ones extend `sideModalBase<Payload>()` for a typed payload) is
+opened with `@theme/hooks/useOpenSideModal` — the typed wrapper of upstream's. The manager lives in `index.tsx`, so it
+works on signed-out pages too, and closes on a route change only. `renderWithProviders` mounts it for specs.
+
 Styling is **tss-react `makeStyles`** in a sibling `*.styles.ts` — not CSS modules, not `styled`.
 Use the `sx` prop for one-offs.
 
@@ -212,18 +265,23 @@ None. There is no shared class namespace — tss-react generates scoped class na
 
 In `themes/finops/hooks/` — browse the folder for the current list:
 
-| Hook                         | Purpose                                                        |
-| ---------------------------- | -------------------------------------------------------------- |
-| `useIsFeatureEnabled`        | Theme flag first, then the organization's server-side features |
-| `useAllowedActions`          | Permission checks for a scope                                  |
-| `useFetchAndDownload`        | Authenticated file download                                    |
-| `useAsyncCall`               | One-shot API call + its pending flag; what endpoint hooks wrap |
-| `useLoginOptions`            | The sign-in email step — resolves an address's auth methods    |
-| `useCreateToken`             | The sign-in password step                                      |
-| `useLoginChallenge`          | MFA router state — read, start (`useStartLoginChallenge`), end |
-| `useCompleteSignIn`          | Stores an issued token; shared by every sign-in path           |
-| `useSecondsUntil`            | Countdown to a unix timestamp, ticking once a second           |
-| `coreData/useAllDataSources` | Data-source list from the core-data cache                      |
+| Hook                          | Purpose                                                         |
+| ----------------------------- | --------------------------------------------------------------- |
+| `useIsFeatureEnabled`         | Theme flag first, then the organization's server-side features  |
+| `useAllowedActions`           | Permission checks for a scope                                   |
+| `useFetchAndDownload`         | Authenticated file download                                     |
+| `useAsyncCall`                | One-shot API call + its pending flag; what endpoint hooks wrap  |
+| `useLoginOptions`             | The sign-in email step — resolves an address's auth methods     |
+| `useCreateToken`              | The sign-in password step                                       |
+| `useLoginChallenge`           | MFA router state — read, start (`useStartLoginChallenge`), end  |
+| `useCompleteSignIn`           | Stores an issued token; shared by every sign-in path            |
+| `useSecondsUntil`             | Countdown to a unix timestamp, ticking once a second            |
+| `useCompleteLoginChallenge`   | The MFA step's code check                                       |
+| `useFinishLoginChallenge`     | Where a passed challenge's token goes — app or back to recovery |
+| `useMfaStatus`                | The signed-in user's MFA status, with `refetch`                 |
+| `useSignedInMfaEnrollment`    | `AddMfaMethod` calls as the signed-in user                      |
+| `useSignedInMfaMethodActions` | Set default / remove a method as the signed-in user             |
+| `coreData/useAllDataSources`  | Data-source list from the core-data cache                       |
 
 Upstream hooks worth knowing before writing your own: `useOrganizationInfo`, `useGetToken`,
 `useApiState` / `useApiData` (the redux REST layer), `useRoutePath`.
@@ -252,6 +310,9 @@ query with `container.querySelector("[data-test-id='…']")`.
   slice, `MockedProvider`, `ThemeProviderWrapper`, `IntlProvider` and `MemoryRouter`, and sets
   `IS_REACT_ACT_ENVIRONMENT`. `ThemeProviderWrapper` pulls organization theme settings through
   Apollo; without `MockedProvider` you get an opaque Apollo `Invariant Violation`.
+- `@theme/tests/dom` finds and clicks by `data-test-id` across the whole document (portals, side modals);
+  `@theme/tests/typeInto` types into an input the way React sees it; `@theme/tests/LandingPage` and
+  `@theme/tests/signInFixtures` hold what the sign-in specs share.
 - No shared factory or `mockResponse` util ships. Keep fixtures beside the module under test and
   promote only on the second duplicate.
 - Specs are co-located `*.test.ts(x)`. Pure logic is by far the cheapest thing to cover here —
@@ -305,7 +366,7 @@ only that one).
 | Forms                            | react-hook-form via `components/forms/common/fields`                                                                                                                                                          |
 | Routing                          | react-router-dom 6; route classes in `utils/routes/`, rendered by `components/App`                                                                                                                            |
 | Mocking a not-yet-built endpoint | Served over HTTP by the dev server: `api/mocked/` mirroring the real path, bodies as JSON in `api/mocked/responses/`, on with `mfa_login`, off with `VITE_MOCKED_API=false`                                   |
-| Feature flags                    | [`theme.features.ts`](../../../src/themes/finops/theme.features.ts) + `useIsFeatureEnabled`                                                                                                                   |
+| Feature flags                    | [`theme.features.ts`](../../../src/themes/finops/theme.features.ts) + `useIsFeatureEnabled`. `mfa_login` comes from `VITE_MFA_LOGIN=true` (off when unset), so the work ships dark                            |
 | Generated GraphQL types          | Every field is nullable (`data?.token?.token`). Narrow once at the call site, never cast. Apollo runs with the default `errorPolicy: "none"`, so a failed mutation rejects and a resolved one carries `data`. |
 
 ## Git
@@ -328,6 +389,8 @@ only that one).
 | `src/themes/finops/translations/.missing/`   | Generated gap report, gitignored                                                 |
 | `build/`, `storybook/`, `node_modules/`      | Build output                                                                     |
 | `src/themes/finops/utils/features/README.md` | Already fails `prettier:check` on `main`; reformatting it is diff noise          |
+| `src/themes/finops/vendor/`                  | Verbatim third-party copies — replace with the package, don't edit               |
+| `src/themes/finops/api/mocked/responses/`    | Verbatim API captures and TDR bodies — copy new ones in, never generate them     |
 | `regression-tests/snapshots/*/docker/`       | Reviewed screenshots — regenerate only via `./run_pw.sh -E <env> -u`             |
 
 ## Keeping this file honest

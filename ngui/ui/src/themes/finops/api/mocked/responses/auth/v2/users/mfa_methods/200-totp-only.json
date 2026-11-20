@@ -1,0 +1,18 @@
+{
+  "methods": [
+    {
+      "id": "a1d3f7c0-2e18-4c9b-9a55-7b0d1c4e6f32",
+      "user_id": "9c2a1f3e-5b47-4a21-8f0c-1d6e8b3a7c42",
+      "type": "totp",
+      "label": "Configured on Google Pixel 10 Pro",
+      "is_default": true,
+      "confirmed": true,
+      "confirmed_at": 1758480120,
+      "created_at": 1758480000,
+      "deleted_at": 0
+    }
+  ],
+  "mfa_enforced": false,
+  "enforcing_organizations": [],
+  "status": "configured"
+}

@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import MainLayout from "@theme/layouts/MainLayout/MainLayout";
 
 /** Pages that only exist in this theme and therefore resolve against the theme page directory. */
-const THEME_PAGES = new Set(["PendingInvitations", "MfaChallenge", "MfaEnrollment"]);
+const THEME_PAGES = new Set(["PendingInvitations", "MfaChallenge", "MfaEnrollment", "Profile"]);
 
 class BaseRoute {
   key = uuidv4();

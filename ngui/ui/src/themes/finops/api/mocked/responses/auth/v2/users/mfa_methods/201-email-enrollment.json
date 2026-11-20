@@ -1,0 +1,11 @@
+{
+  "id": "d7b2e5f1-3a6c-4f98-b2e4-8c0d9a1f6e35",
+  "user_id": "9c2a1f3e-5b47-4a21-8f0c-1d6e8b3a7c42",
+  "type": "email",
+  "label": "fi***@example.com",
+  "is_default": false,
+  "confirmed": false,
+  "confirmed_at": 0,
+  "created_at": 1758480000,
+  "deleted_at": 0
+}

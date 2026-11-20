@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { act } from "react-dom/test-utils";
 import { IntlProvider } from "react-intl";
 import { describe, expect, it } from "vitest";
+import { typeInto } from "@theme/tests/typeInto";
 import intlConfig from "translations/react-intl-config";
 import VerificationCodeInput from "./VerificationCodeInput";
 
@@ -40,9 +41,7 @@ const render = (initialValue = "") => {
     value: () => container.querySelector("[data-test-id='value']")!.textContent,
     type: (index: number, text: string) =>
       act(() => {
-        const { set } = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!;
-        set!.call(digit(index), text);
-        digit(index).dispatchEvent(new Event("input", { bubbles: true }));
+        typeInto(digit(index), text);
       }),
     paste: (index: number, text: string) =>
       act(() => {

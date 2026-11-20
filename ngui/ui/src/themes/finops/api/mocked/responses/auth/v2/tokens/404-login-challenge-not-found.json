@@ -1,7 +1,7 @@
 {
   "error": {
     "status_code": 404,
-    "error_code": "OA0077",
+    "error_code": "OA0085",
     "reason": "Login challenge not found, expired or consumed",
     "params": []
   }

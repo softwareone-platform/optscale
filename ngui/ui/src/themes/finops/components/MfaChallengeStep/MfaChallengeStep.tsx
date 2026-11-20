@@ -1,29 +1,19 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import { FormattedMessage } from "react-intl";
-import { Navigate, useNavigate } from "react-router-dom";
-import {
-  getMfaVerificationFailure,
-  LoginChallenge,
-  MFA_VERIFICATION_FAILURE,
-  MfaTerminalFailureReason
-} from "@theme/api/auth/signIn";
+import { useNavigate } from "react-router-dom";
+import { MFA_METHOD_TYPE } from "@theme/api/auth/mfaMethod";
+import { getMfaVerificationFailure, LoginChallenge, MFA_VERIFICATION_FAILURE } from "@theme/api/auth/signIn";
+import { BackToLoginButton, LoginChallengeScreen, useChallengeEnding } from "@theme/components/LoginChallenge";
 import { useCompleteLoginChallenge } from "@theme/hooks/useCompleteLoginChallenge";
-import { useCompleteSignIn } from "@theme/hooks/useCompleteSignIn";
-import { useEndLoginChallenge, useLoginChallenge, useMfaTerminalFailure } from "@theme/hooks/useLoginChallenge";
-import { useSecondsUntil } from "@theme/hooks/useSecondsUntil";
-import Greeter from "components/Greeter";
+import { useFinishLoginChallenge } from "@theme/hooks/useFinishLoginChallenge";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
-import { INITIALIZE, LOGIN } from "urls";
+import { LOGIN } from "urls";
 import { SPACING_3 } from "utils/layouts";
-import BackToLoginButton from "./BackToLoginButton";
 import { MFA_CHALLENGE_VIEW } from "./constants";
-import MfaChallengeEnded from "./MfaChallengeEnded";
-import useStyles from "./MfaChallengeStep.styles";
 import MfaCodeEntry from "./MfaCodeEntry";
 import MfaMethodPicker from "./MfaMethodPicker";
 import { MfaCodeError } from "./types";
+import { useChallengeEmailCode } from "./useChallengeEmailCode";
 import { getMfaChallengeStage, getPreselectedMethod, getSelectableMethods } from "./utils";
 
 const NoSelectableMethods = () => (
@@ -39,10 +29,9 @@ const NoSelectableMethods = () => (
 
 const MfaChallengeContent = ({ challenge }: { challenge: LoginChallenge }) => {
   const navigate = useNavigate();
-  const endLoginChallenge = useEndLoginChallenge();
-  const completeSignIn = useCompleteSignIn();
+  const finishLoginChallenge = useFinishLoginChallenge();
   const { onCompleteLoginChallenge, isLoading: isVerifying } = useCompleteLoginChallenge();
-  const secondsUntilExpiry = useSecondsUntil(challenge.expires_at);
+  const { secondsUntilExpiry, endChallenge, endExpiredChallenge } = useChallengeEnding(challenge);
 
   const selectableMethods = getSelectableMethods(challenge);
 
@@ -55,23 +44,24 @@ const MfaChallengeContent = ({ challenge }: { challenge: LoginChallenge }) => {
 
   const stage = getMfaChallengeStage(challenge, { selectedMethodId, isPickingMethod });
 
-  const endChallenge = useCallback(
-    (reason: MfaTerminalFailureReason) => endLoginChallenge({ reason, userEmail: challenge.user_email }),
-    [endLoginChallenge, challenge.user_email]
-  );
+  const emailCode = useChallengeEmailCode({ challenge, onChallengeGone: endExpiredChallenge });
+  const { isSent: isEmailCodeSent, isSending: isEmailCodeSending, failure: emailCodeFailure, send: sendEmailCode } = emailCode;
 
+  const emailMethodId =
+    stage.view === MFA_CHALLENGE_VIEW.CODE_ENTRY && stage.method.type === MFA_METHOD_TYPE.EMAIL ? stage.method.id : null;
+
+  // Opening an e-mail method that has no code yet sends one; a failed send waits for Resend instead of retrying.
   useEffect(() => {
-    if (secondsUntilExpiry === 0) {
-      endChallenge(MFA_VERIFICATION_FAILURE.CHALLENGE_EXPIRED);
+    if (emailMethodId && !isEmailCodeSent && !isEmailCodeSending && !emailCodeFailure) {
+      sendEmailCode(emailMethodId);
     }
-  }, [secondsUntilExpiry, endChallenge]);
+  }, [emailMethodId, isEmailCodeSent, isEmailCodeSending, emailCodeFailure, sendEmailCode]);
 
   const verifyCode = async (methodId: string, code: string) => {
     setCodeError(null);
 
     try {
-      completeSignIn(await onCompleteLoginChallenge({ challenge_id: challenge.challenge_id, method_id: methodId, code }));
-      navigate(INITIALIZE, { replace: true });
+      finishLoginChallenge(await onCompleteLoginChallenge({ challenge_id: challenge.challenge_id, method_id: methodId, code }));
     } catch (error) {
       const failure = getMfaVerificationFailure(error);
 
@@ -84,6 +74,7 @@ const MfaChallengeContent = ({ challenge }: { challenge: LoginChallenge }) => {
           return;
         case MFA_VERIFICATION_FAILURE.CHALLENGE_EXPIRED:
         case MFA_VERIFICATION_FAILURE.CHALLENGE_LOCKED:
+        case MFA_VERIFICATION_FAILURE.TOO_MANY_FAILED_ATTEMPTS:
           endChallenge(failure.kind);
           return;
         case MFA_VERIFICATION_FAILURE.UNEXPECTED:
@@ -115,7 +106,17 @@ const MfaChallengeContent = ({ challenge }: { challenge: LoginChallenge }) => {
           // A new method, or a rejected code, starts from an empty, focused code input.
           key={`${stage.method.id}:${rejectedCodeCount}`}
           method={stage.method}
-          isEmailCodeSent={stage.isEmailCodeSent}
+          emailCode={
+            emailMethodId
+              ? {
+                  isSent: isEmailCodeSent,
+                  isSending: isEmailCodeSending,
+                  failure: emailCodeFailure,
+                  secondsUntilResend: emailCode.secondsUntilResend,
+                  onResend: () => sendEmailCode(emailMethodId)
+                }
+              : undefined
+          }
           onVerify={(code) => verifyCode(stage.method.id, code)}
           isVerifying={isVerifying}
           error={codeError}
@@ -129,34 +130,11 @@ const MfaChallengeContent = ({ challenge }: { challenge: LoginChallenge }) => {
   }
 };
 
-const MfaChallengeStep = () => {
-  const { classes } = useStyles();
-
-  const challenge = useLoginChallenge();
-  const terminalFailure = useMfaTerminalFailure();
-
-  // Landing here with neither means the password was never verified in this session.
-  if (!challenge && !terminalFailure) {
-    return <Navigate replace to={LOGIN} />;
-  }
-
-  return (
-    <Greeter
-      content={
-        <Stack spacing={SPACING_3} className={classes.content}>
-          <Typography align="center" data-test-id="p_signing_in_as">
-            <FormattedMessage id="signIn:signingInAs" values={{ email: challenge?.user_email ?? terminalFailure?.userEmail }} />
-          </Typography>
-          {challenge ? (
-            // Keyed by challenge: a fresh challenge (e.g. re-run from the dev panel) starts from its own default.
-            <MfaChallengeContent key={challenge.challenge_id} challenge={challenge} />
-          ) : (
-            terminalFailure && <MfaChallengeEnded failure={terminalFailure} />
-          )}
-        </Stack>
-      }
-    />
-  );
-};
+const MfaChallengeStep = () => (
+  <LoginChallengeScreen
+    // Keyed by challenge: a fresh challenge (e.g. re-run from the dev panel) starts from its own default.
+    renderChallenge={(challenge) => <MfaChallengeContent key={challenge.challenge_id} challenge={challenge} />}
+  />
+);
 
 export default MfaChallengeStep;

@@ -9,6 +9,10 @@ export default [
     // lives in the theme, so that is what gets checked.
     ignores: ["src/*", "!src/themes", "src/themes/*", "!src/themes/finops"]
   },
+  {
+    // Third-party code copied verbatim; see src/themes/finops/vendor/qrcode-generator/README.md.
+    ignores: ["src/themes/finops/vendor/**"]
+  },
   ...hystaxConfig,
   {
     files: ["**/graphql/__generated__/**"],

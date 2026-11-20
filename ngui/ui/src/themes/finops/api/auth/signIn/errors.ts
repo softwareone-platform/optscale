@@ -1,44 +1,24 @@
-import { AUTH_ERROR_CODE, MFA_VERIFICATION_FAILURE } from "./constants";
-import { AuthErrorParam, MfaVerificationFailure } from "./types";
+import { AUTH_ERROR_CODE, AuthApiError } from "../errors";
+import { MFA_VERIFICATION_FAILURE } from "./constants";
+import { MfaVerificationFailure } from "./types";
 
-/**
- * Carries the optscale error envelope `{"error": {"error_code": "OA00xx", "reason": "…", "params": […]}}`
- * so callers can branch on the code instead of on a message. `params` fill the `%s` in `reason`.
- */
-export class AuthApiError extends Error {
-  readonly status: number;
-
-  readonly errorCode: string;
-
-  readonly params: AuthErrorParam[];
-
-  constructor({
-    status,
-    errorCode,
-    reason,
-    params = []
-  }: {
-    status: number;
-    errorCode: string;
-    reason: string;
-    params?: AuthErrorParam[];
-  }) {
-    super(reason);
-    this.name = "AuthApiError";
-    this.status = status;
-    this.errorCode = errorCode;
-    this.params = params;
-  }
-}
-
-const hasErrorCode = (error: unknown, errorCode: string) => error instanceof AuthApiError && error.errorCode === errorCode;
+const hasErrorCode = (error: unknown, errorCode: string): error is AuthApiError =>
+  error instanceof AuthApiError && error.errorCode === errorCode;
 
 export const isInvalidCredentialsError = (error: unknown): boolean => hasErrorCode(error, AUTH_ERROR_CODE.INVALID_CREDENTIALS);
 
+export const isInvalidVerificationCodeError = (error: unknown): boolean =>
+  hasErrorCode(error, AUTH_ERROR_CODE.INVALID_VERIFICATION_CODE);
+
 export const isEmailNotVerifiedError = (error: unknown): boolean => hasErrorCode(error, AUTH_ERROR_CODE.EMAIL_NOT_VERIFIED);
 
-const toAttemptsLeft = (value: unknown) => {
-  const attemptsLeft = Number(value);
+/** What a wrong code under a challenge leaves; `null` for any other error, or a count the service left out. */
+export const getAttemptsLeft = (error: unknown) => {
+  if (!hasErrorCode(error, AUTH_ERROR_CODE.INVALID_MFA_CODE)) {
+    return null;
+  }
+
+  const attemptsLeft = Number(error.params[0]);
 
   return Number.isInteger(attemptsLeft) && attemptsLeft >= 0 ? attemptsLeft : null;
 };
@@ -58,8 +38,12 @@ export const getMfaVerificationFailure = (error: unknown): MfaVerificationFailur
     return { kind: MFA_VERIFICATION_FAILURE.CHALLENGE_LOCKED };
   }
 
+  if (error.errorCode === AUTH_ERROR_CODE.TOO_MANY_FAILED_ATTEMPTS) {
+    return { kind: MFA_VERIFICATION_FAILURE.TOO_MANY_FAILED_ATTEMPTS };
+  }
+
   if (error.errorCode === AUTH_ERROR_CODE.INVALID_MFA_CODE) {
-    return { kind: MFA_VERIFICATION_FAILURE.INVALID_CODE, attemptsLeft: toAttemptsLeft(error.params[0]) };
+    return { kind: MFA_VERIFICATION_FAILURE.INVALID_CODE, attemptsLeft: getAttemptsLeft(error) };
   }
 
   return { kind: MFA_VERIFICATION_FAILURE.UNEXPECTED };

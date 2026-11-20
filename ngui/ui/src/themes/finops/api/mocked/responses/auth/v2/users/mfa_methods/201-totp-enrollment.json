@@ -1,0 +1,13 @@
+{
+  "id": "c3f6a2d8-9b41-4e7c-8d03-6a1f5e2b9c47",
+  "user_id": "9c2a1f3e-5b47-4a21-8f0c-1d6e8b3a7c42",
+  "type": "totp",
+  "label": null,
+  "is_default": false,
+  "confirmed": false,
+  "confirmed_at": 0,
+  "created_at": 1758480000,
+  "deleted_at": 0,
+  "secret": "JBSWY3DPEHPK3PXP",
+  "otpauth_uri": "otpauth://totp/FinOps%20for%20Cloud:reto.mayer%40example.com?secret=JBSWY3DPEHPK3PXP&issuer=FinOps%20for%20Cloud&digits=6&period=30"
+}

@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 409,
+    "error_code": "OA0081",
+    "reason": "Authentication policy already exists",
+    "params": []
+  }
+}

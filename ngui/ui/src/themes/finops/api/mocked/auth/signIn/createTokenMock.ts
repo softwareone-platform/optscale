@@ -1,14 +1,18 @@
 import { CREATE_TOKEN_STATUS } from "@theme/api/auth/signIn/constants";
 import { CreateToken, LoginChallenge } from "@theme/api/auth/signIn/types";
-import { MOCK_LATENCY_MS, MOCK_LOGIN_CHALLENGE, MOCK_SIGN_IN_CREDENTIALS } from "@theme/api/mocked/config";
-import { delay } from "@theme/api/mocked/mockDelay";
-import { storeChallenge } from "./challengeStore";
-import { authError, CHALLENGE_BODY, ERROR_BODY, issueChallenge, issueToken } from "./fixtures";
+import { MOCK_LOGIN_CHALLENGE, MOCK_SIGN_IN_CREDENTIALS } from "@theme/api/mocked/config";
+import { authError } from "@theme/api/mocked/errorBodies";
+import { storeChallenge } from "@theme/api/mocked/state/challenges";
+import { getMockPassword } from "@theme/api/mocked/state/password";
+import { CHALLENGE_BODY, ERROR_BODY, issueChallenge, issueToken } from "./fixtures";
 import { DEFAULT_SIGN_IN_SCENARIO, SIGN_IN_SCENARIO, SignInScenario } from "./scenarios";
 
 type ChallengeScenario = Exclude<
   SignInScenario,
-  typeof SIGN_IN_SCENARIO.TOKEN_ISSUED | typeof SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED | typeof SIGN_IN_SCENARIO.INTERNAL_ERROR
+  | typeof SIGN_IN_SCENARIO.TOKEN_ISSUED
+  | typeof SIGN_IN_SCENARIO.REAL_SIGN_IN
+  | typeof SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED
+  | typeof SIGN_IN_SCENARIO.INTERNAL_ERROR
 >;
 
 // Keyed by every challenge scenario, so a new one fails to compile until it names its response.
@@ -32,19 +36,31 @@ const CHALLENGE_RESPONSE: Record<ChallengeScenario, { body: LoginChallenge; ttlS
  * contract change breaks the mock at compile time.
  */
 export const createTokenMock = async (
-  { email, password }: Parameters<CreateToken>[0],
+  params: Parameters<CreateToken>[0],
   scenario: SignInScenario = DEFAULT_SIGN_IN_SCENARIO
 ): ReturnType<CreateToken> => {
-  await delay(MOCK_LATENCY_MS);
+  const { email } = params;
+  const isCodeSignIn = "verification_code" in params;
 
-  if (password !== MOCK_SIGN_IN_CREDENTIALS.password) {
+  if (isCodeSignIn && params.verification_code !== MOCK_SIGN_IN_CREDENTIALS.verificationCode) {
+    throw authError(ERROR_BODY.INVALID_VERIFICATION_CODE);
+  }
+
+  if (!isCodeSignIn && params.password !== getMockPassword()) {
     throw authError(ERROR_BODY.INVALID_CREDENTIALS);
   }
 
   switch (scenario) {
     case SIGN_IN_SCENARIO.TOKEN_ISSUED:
       return { status: CREATE_TOKEN_STATUS.TOKEN_ISSUED, data: issueToken(email) };
+    case SIGN_IN_SCENARIO.REAL_SIGN_IN:
+      throw new Error("real_sign_in is forwarded to the auth service before it reaches the mock");
     case SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED:
+      // The service marks the address verified on a code sign-in, before it would check.
+      if (isCodeSignIn) {
+        return { status: CREATE_TOKEN_STATUS.TOKEN_ISSUED, data: issueToken(email) };
+      }
+
       throw authError(ERROR_BODY.EMAIL_NOT_VERIFIED);
     case SIGN_IN_SCENARIO.INTERNAL_ERROR:
       throw authError(ERROR_BODY.INTERNAL_ERROR);

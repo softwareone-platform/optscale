@@ -9,7 +9,8 @@ export const useCompleteSignIn = () => {
   const dispatch = useDispatch();
 
   return useCallback(
-    (authToken: Pick<AuthToken, "token">) => {
+    // `useGetToken` reads the user's id and address from the session too, so a bare token is not enough.
+    (authToken: Pick<AuthToken, "token" | "user_id" | "user_email">) => {
       const caveats = macaroon.processCaveats(macaroon.deserialize(authToken.token).getCaveats());
 
       dispatch(initialize({ ...authToken, caveats }));

@@ -1,4 +1,4 @@
-import { postAuth } from "./request";
+import { postAuth } from "../request";
 import { AuthToken, CompleteLoginChallenge } from "./types";
 
 /**

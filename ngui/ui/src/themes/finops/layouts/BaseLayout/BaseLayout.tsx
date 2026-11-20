@@ -10,6 +10,7 @@ import { FormattedMessage } from "react-intl";
 import InlineSeverityAlert from "@main/components/InlineSeverityAlert";
 import useStyles from "@main/layouts/BaseLayout/BaseLayout.styles";
 import preloaderLogo from "@theme/assets/logo/swo-logo-animated.gif";
+import MockedApiDevPanelSlot from "@theme/components/MockedApiDevPanelSlot";
 import { MPT_BRAND_TYPE } from "@theme/utils/layouts";
 import CollapsableMenuDrawer from "components/CollapsableMenuDrawer";
 import DocsPanel from "components/DocsPanel";
@@ -167,6 +168,7 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
         return (
           <>
             <TopAlertWrapper />
+            <MockedApiDevPanelSlot />
             <Box className={cx(classes.wrapper, isCommunityDocsOpened ? classes.wrapperWithDocsOpened : "")}>
               <Box className={cx(classes.layoutWrapper, isCommunityDocsOpened ? classes.hideableLayoutWrapper : "")}>
                 {isLoadingProps.getInvitationsLoading ? null : <PendingInvitationsAlert />}

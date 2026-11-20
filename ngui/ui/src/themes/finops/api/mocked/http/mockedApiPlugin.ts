@@ -2,7 +2,7 @@ import type { Connect, Plugin } from "vite";
 // vite.config.mts loads this file without path aliases: config.ts imports nothing, and the
 // handlers import is type-only, so it is erased.
 import { MOCKED_HANDLERS_MODULE, MOCKED_PATH_PREFIX } from "../config";
-import type { MockedHandler } from "./handlers";
+import type { findMockedHandler } from "./handlers";
 
 /**
  * Serves the mocked endpoints over real HTTP on the dev server, so a call the backend cannot
@@ -10,15 +10,13 @@ import type { MockedHandler } from "./handlers";
  *
  * The app keeps calling `/api/auth/v2/…` exactly as it will in production — see `getApiUrl`,
  * which adds the `/api` prefix in dev. This middleware is registered before Vite's proxy, so a
- * route listed in `handlers.ts` is answered here and everything else falls through upstream.
+ * route `handlers.ts` answers is served here and everything else falls through upstream.
  *
  * On while the `mfa_login` theme flag is; `VITE_MOCKED_API=false` opts out — see `isMockedApiEnabled`.
  */
 
-type MockedHandlers = Record<string, MockedHandler>;
-
 const readJsonBody = (request: Connect.IncomingMessage) =>
-  new Promise<Record<string, string>>((resolve) => {
+  new Promise<Record<string, unknown>>((resolve) => {
     let raw = "";
 
     request.setEncoding("utf8");
@@ -43,30 +41,46 @@ export const MockedApi = (enabled: boolean): Plugin => ({
     }
 
     server.middlewares.use((request, response, next) => {
-      const path = request.url?.split("?")[0] ?? "";
+      const url = new URL(request.url ?? "", "http://localhost");
 
-      if (!path.startsWith(MOCKED_PATH_PREFIX)) {
+      if (!url.pathname.startsWith(MOCKED_PATH_PREFIX)) {
         next();
         return;
       }
 
-      const route = `${request.method} ${path.slice("/api".length)}`;
+      const method = request.method ?? "";
+      const path = url.pathname.slice("/api".length);
+      const cookie = request.headers.cookie ?? "";
 
       // Loaded through Vite so the handlers can keep using the app's aliases and TypeScript.
       server
         .ssrLoadModule(MOCKED_HANDLERS_MODULE)
         .then(async (module) => {
-          const { MOCKED_ROUTES } = module as { MOCKED_ROUTES: MockedHandlers };
-          const handler = MOCKED_ROUTES[route];
+          const handle = (module as { findMockedHandler: typeof findMockedHandler }).findMockedHandler({
+            method,
+            path,
+            cookie
+          });
 
-          if (!handler) {
+          // Decided before the body is read, so a request left to the proxy still has its body.
+          if (!handle) {
             next();
             return;
           }
 
-          const { status, body } = await handler(await readJsonBody(request), { cookie: request.headers.cookie ?? "" });
+          const { status, body } = await handle({
+            body: await readJsonBody(request),
+            query: Object.fromEntries(url.searchParams),
+            authorization: request.headers.authorization ?? ""
+          });
 
-          server.config.logger.info(`[mocked-api] ${route} → ${status}`);
+          server.config.logger.info(`[mocked-api] ${method} ${path} → ${status}`);
+
+          if (body === undefined) {
+            response.writeHead(status);
+            response.end();
+            return;
+          }
 
           response.writeHead(status, { "Content-Type": "application/json" });
           response.end(JSON.stringify(body));

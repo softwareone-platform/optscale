@@ -1,13 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { AUTH_ERROR_CODE } from "@theme/api/auth/signIn/constants";
+import { AUTH_ERROR_CODE } from "@theme/api/auth/errors";
 import { LoginChallenge } from "@theme/api/auth/signIn/types";
 import { MOCK_LOGIN_CHALLENGE, MOCK_SIGN_IN_CREDENTIALS } from "@theme/api/mocked/config";
 import { completeLoginChallengeMock } from "./completeLoginChallengeMock";
 import { createTokenMock } from "./createTokenMock";
 import { TOTP_METHOD_ID } from "./fixtures";
 import { SIGN_IN_SCENARIO, SignInScenario } from "./scenarios";
-
-vi.mock("@theme/api/mocked/mockDelay", () => ({ delay: () => Promise.resolve() }));
 
 const { email, password, mfaCode } = MOCK_SIGN_IN_CREDENTIALS;
 

@@ -1,6 +1,12 @@
-import { LoginChallenge, MFA_METHOD_TYPE, MfaMethod } from "@theme/api/auth/signIn";
-import { MFA_CHALLENGE_VIEW } from "./constants";
-import { MfaChallengeStage } from "./types";
+import { MfaMethod } from "@theme/api/auth/mfaMethod";
+import { LoginChallenge } from "@theme/api/auth/signIn";
+import { EMAIL_CODE_FAILURE, MFA_CHALLENGE_VIEW } from "./constants";
+import { EmailCodeFailure, MfaChallengeStage } from "./types";
+
+export const EMAIL_CODE_FAILURE_MESSAGE_ID: Record<EmailCodeFailure, string> = {
+  [EMAIL_CODE_FAILURE.TOO_SOON]: "mfaSetup:codeRequestedTooSoon",
+  [EMAIL_CODE_FAILURE.UNEXPECTED]: "somethingWentWrong"
+};
 
 export const getSelectableMethods = ({ methods }: Pick<LoginChallenge, "methods">): MfaMethod[] =>
   methods.filter(({ confirmed }) => confirmed);
@@ -18,14 +24,8 @@ export const getPreselectedMethod = (challenge: Pick<LoginChallenge, "methods" |
   return selectableMethods.length === 1 ? selectableMethods[0] : null;
 };
 
-/** `code_sent` describes the default method only: the service mails a code with the 202 when that method is email. */
-export const isEmailCodeAlreadySent = (
-  challenge: Pick<LoginChallenge, "code_sent" | "default_method_id">,
-  method: Pick<MfaMethod, "id" | "type">
-) => method.type === MFA_METHOD_TYPE.EMAIL && challenge.code_sent && method.id === challenge.default_method_id;
-
 export const getMfaChallengeStage = (
-  challenge: Pick<LoginChallenge, "methods" | "code_sent" | "default_method_id">,
+  challenge: Pick<LoginChallenge, "methods" | "default_method_id">,
   { selectedMethodId, isPickingMethod }: { selectedMethodId: string | null; isPickingMethod: boolean }
 ): MfaChallengeStage => {
   const selectableMethods = getSelectableMethods(challenge);
@@ -40,13 +40,5 @@ export const getMfaChallengeStage = (
     return { view: MFA_CHALLENGE_VIEW.METHOD_PICKER };
   }
 
-  return {
-    view: MFA_CHALLENGE_VIEW.CODE_ENTRY,
-    method: selectedMethod,
-    isEmailCodeSent: isEmailCodeAlreadySent(challenge, selectedMethod)
-  };
+  return { view: MFA_CHALLENGE_VIEW.CODE_ENTRY, method: selectedMethod };
 };
-
-/** `m:ss`, the way a countdown reads. */
-export const formatCountdown = (totalSeconds: number) =>
-  `${Math.floor(totalSeconds / 60)}:${String(totalSeconds % 60).padStart(2, "0")}`;

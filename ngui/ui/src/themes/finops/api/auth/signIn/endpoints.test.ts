@@ -2,10 +2,11 @@ import { describe, expect, it, vi } from "vitest";
 import { CREATE_TOKEN_STATUS, LOGIN_METHOD } from "./constants";
 import { createToken } from "./createToken";
 import { resolveLoginOptions } from "./loginOptions";
+import { requestChallengeCode } from "./requestChallengeCode";
 
 const mockPostAuth = vi.fn();
 
-vi.mock("./request", () => ({ postAuth: (path: string, body: unknown) => mockPostAuth(path, body) }));
+vi.mock("../request", () => ({ postAuth: (path: string, body: unknown) => mockPostAuth(path, body) }));
 
 /**
  * These two are one-liners, but they are where the wire contract is written down: a typo in the
@@ -21,6 +22,14 @@ describe("the sign-in endpoints", () => {
     expect(response).toEqual({ status: CREATE_TOKEN_STATUS.CHALLENGE_REQUIRED, data: { state: "mfa_required" } });
   });
 
+  it("posts an e-mailed code as verification_code, the field the service reads it from", async () => {
+    mockPostAuth.mockResolvedValue({ status: CREATE_TOKEN_STATUS.TOKEN_ISSUED, data: {} });
+
+    await createToken({ email: "finops.ffc@example.com", verification_code: "123456" });
+
+    expect(mockPostAuth).toHaveBeenCalledWith("/tokens", { email: "finops.ffc@example.com", verification_code: "123456" });
+  });
+
   it("posts only the address to /login_options and unwraps the body, since the status carries nothing", async () => {
     mockPostAuth.mockResolvedValue({ status: 200, data: { methods: [LOGIN_METHOD.PASSWORD], sso: { state: "x" } } });
 
@@ -28,6 +37,14 @@ describe("the sign-in endpoints", () => {
 
     expect(mockPostAuth).toHaveBeenCalledWith("/login_options", { email: "finops.ffc@example.com" });
     expect(options).toEqual({ methods: [LOGIN_METHOD.PASSWORD], sso: { state: "x" } });
+  });
+
+  it("posts the method to the challenge's codes path, escaping the challenge id", async () => {
+    mockPostAuth.mockResolvedValue({ status: 204, data: null });
+
+    await requestChallengeCode({ challengeId: "6d2f/x", method_id: "b2e4" });
+
+    expect(mockPostAuth).toHaveBeenCalledWith("/login_challenges/6d2f%2Fx/codes", { method_id: "b2e4" });
   });
 
   it("lets a rejection through untouched, so the caller still sees the AuthApiError", async () => {
