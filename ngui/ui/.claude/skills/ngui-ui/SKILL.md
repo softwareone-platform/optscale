@@ -246,6 +246,7 @@ Theme components the MFA work built, meant for reuse (`@theme/components/…`):
 | `MfaMethodTile`                     | A method as one bordered tile: picker (radio), code entry, add dialog (button), Security (menu)                                                    |
 | `CodeSignIn`                        | E-mailed-code sign-in step, success step and `useProceedToApp` for recovery and verification                                                       |
 | `MfaSecuritySettings`               | Profile → Security: the methods list, set default, remove                                                                                          |
+| `OrganizationMfaPolicy`             | Settings → Security: the organization's "Enforce MFA" switch, confirmed in `ChangeMfaEnforcementModal`                                             |
 | `MfaSetupPrompt`                    | Dismissable home-page nudge for users without MFA                                                                                                  |
 | `MockedApiDevPanelSlot`             | The dev panel's mount point — see above                                                                                                            |
 
@@ -278,7 +279,9 @@ In `themes/finops/hooks/` — browse the folder for the current list:
 | `useSecondsUntil`             | Countdown to a unix timestamp, ticking once a second            |
 | `useCompleteLoginChallenge`   | The MFA step's code check                                       |
 | `useFinishLoginChallenge`     | Where a passed challenge's token goes — app or back to recovery |
+| `useFetchedResource`          | Loading / error / loaded state of one fetch, with `refetch`     |
 | `useMfaStatus`                | The signed-in user's MFA status, with `refetch`                 |
+| `useOrganizationMfaPolicy`    | Whether the organization enforces MFA; enforce, stop enforcing  |
 | `useSignedInMfaEnrollment`    | `AddMfaMethod` calls as the signed-in user                      |
 | `useSignedInMfaMethodActions` | Set default / remove a method as the signed-in user             |
 | `coreData/useAllDataSources`  | Data-source list from the core-data cache                       |

@@ -1,5 +1,7 @@
 import { Box } from "@mui/material";
 import { useSearchParams } from "react-router-dom";
+import OrganizationMfaPolicy from "@theme/components/OrganizationMfaPolicy";
+import { SETTINGS_TABS } from "@theme/utils/constants";
 import ActionBar from "components/ActionBar";
 import BillingSubscription from "components/BillingSubscription";
 import OrganizationSettings from "components/OrganizationSettings";
@@ -7,8 +9,8 @@ import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
 import InvitationsContainer from "containers/InvitationsContainer";
 import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
+import { useIsFeatureEnabled } from "hooks/useIsFeatureEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { SETTINGS_TABS } from "utils/constants";
 import { getEnvironmentVariable } from "utils/env";
 
 const actionBarDefinition = {
@@ -26,11 +28,20 @@ const Settings = () => {
 
   const isBillingIntegrationEnabled = getEnvironmentVariable("VITE_BILLING_INTEGRATION") === "enabled";
 
+  const isMfaEnabled = useIsFeatureEnabled("mfa_login");
+
   const tabs = [
     {
       title: SETTINGS_TABS.ORGANIZATION,
       dataTestId: `tab_${SETTINGS_TABS.ORGANIZATION}`,
       node: <OrganizationSettings />
+    },
+    {
+      title: SETTINGS_TABS.SECURITY,
+      dataTestId: `tab_${SETTINGS_TABS.SECURITY}`,
+      node: <OrganizationMfaPolicy />,
+      // A link to this tab opens Organization while the flag is off.
+      renderCondition: () => isMfaEnabled
     },
     ...(isDemo || !isBillingIntegrationEnabled
       ? []

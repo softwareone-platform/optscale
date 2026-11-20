@@ -44,6 +44,7 @@ export const BREAKDOWN_BUTTON_GROUP_ITEMS = [
 
 export const SETTINGS_TABS = Object.freeze({
   ORGANIZATION: "organization",
+  SECURITY: "security",
   SUBSCRIPTION: "subscription",
   INVITATIONS: "invitations",
   EMAIL_NOTIFICATIONS: "emailNotifications"
