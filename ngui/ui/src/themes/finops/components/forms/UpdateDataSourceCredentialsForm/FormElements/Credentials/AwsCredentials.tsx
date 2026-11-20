@@ -42,13 +42,23 @@ const AwsCredentials = ({ config }) => {
   const getAwsInputs = (config) => {
     switch (fullAuthenticationType) {
       case "assumedRole":
-      case "assumedRoleLinked":
+      case "assumedRoleLinked": {
+        // The API treats the external ID as immutable once the data source exists: any value that differs
+        // from the stored one is rejected. Show a stored ID read-only, and hide the field when none is stored
+        // (legacy assumed-role sources, or switching from access keys), since nothing could be saved there.
+        const hasStoredExternalId = Boolean(config.assume_role_external_id);
+
         return (
           <AwsAssumedRoleInputs
-            readOnlyFields={[AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID]}
+            readOnlyFields={[
+              AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_ACCOUNT_ID,
+              AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID
+            ]}
+            hiddenFields={hasStoredExternalId ? [] : [AWS_ROLE_CREDENTIALS_FIELD_NAMES.ASSUME_ROLE_EXTERNAL_ID]}
             showAdvancedOptions={!config.linked}
           />
         );
+      }
       case "accessKeyLinked":
         return <AwsLinkedCredentials />;
       case "accessKey":
