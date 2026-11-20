@@ -11,6 +11,7 @@ import {
   AwsAssumedRoleInputs,
   AlibabaCredentials,
   DatabricksCredentials,
+  FocusConnection,
   KubernetesCredentials,
   NebiusCredentials
 } from "components/DataSourceCredentialFields";
@@ -46,7 +47,7 @@ const renderAwsInputs = (connectionType: ConnectionType, authenticationType: Aut
   const showAdvancedOptions = connectionType !== CONNECTION_TYPES.AWS_MEMBER;
 
   return authenticationType === AUTHENTICATION_TYPES.ASSUMED_ROLE ? (
-    <AwsAssumedRoleInputs showAssumedRoleCredentialsInModal showAdvancedOptions={showAdvancedOptions} />
+    <AwsAssumedRoleInputs showAssumedRoleCredentialsInModal showAdvancedOptions={showAdvancedOptions} showExternalIdToggle />
   ) : (
     <AwsConnectionAccessKeyInputs showAdvancesOptions={showAdvancedOptions} />
   );
@@ -78,6 +79,8 @@ const ConnectionInputs = ({
       return <NebiusInputs />;
     case CONNECTION_TYPES.DATABRICKS:
       return <DatabricksCredentials />;
+    case CONNECTION_TYPES.FOCUS:
+      return <FocusConnection />;
     case CONNECTION_TYPES.KUBERNETES:
       return <KubernetesCredentials />;
     default:
