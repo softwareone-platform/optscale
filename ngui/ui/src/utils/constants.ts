@@ -1052,6 +1052,7 @@ export const EMPTY_BREAKDOWN_KEY = Object.freeze({
 
 export const SETTINGS_TABS = Object.freeze({
   ORGANIZATION: "organization",
+  SECURITY: "security",
   SUBSCRIPTION: "subscription",
   INVITATIONS: "invitations",
   SSH: "sshKeys",

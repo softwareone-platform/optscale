@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 500,
+    "error_code": "OA0061",
+    "reason": "Database error",
+    "params": []
+  }
+}

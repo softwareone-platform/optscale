@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 503,
+    "error_code": "U0503",
+    "reason": "Service Unavailable",
+    "params": []
+  }
+}

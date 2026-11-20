@@ -1,3 +1,3 @@
-import PasswordRecovery from "./PasswordRecovery";
+import MfaAwarePasswordRecovery from "./MfaAwarePasswordRecovery";
 
-export default PasswordRecovery;
+export default MfaAwarePasswordRecovery;

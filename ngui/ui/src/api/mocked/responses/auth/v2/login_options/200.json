@@ -1,0 +1,6 @@
+{
+  "methods": ["password"],
+  "sso": {
+    "state": "not_configured"
+  }
+}

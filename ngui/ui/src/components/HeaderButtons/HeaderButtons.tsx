@@ -89,7 +89,7 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
               }}
             />
           }
-          menu={<ProfileMenuContainer />}
+          renderMenu={({ closeHandler }: { closeHandler: () => void }) => <ProfileMenuContainer onItemClick={closeHandler} />}
         />
       </Box>
       {/* TODO: Maybe we can make the Popup component more universal and include the case below */}
@@ -134,7 +134,9 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
                   }}
                 />
               }
-              menu={<ProfileMenuContainer />}
+              renderMenu={({ closeHandler }: { closeHandler: () => void }) => (
+                <ProfileMenuContainer onItemClick={closeHandler} />
+              )}
             />
           </Box>
         </Menu>

@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 409,
+    "error_code": "OA0082",
+    "reason": "Authentication method of type %s already exists",
+    "params": []
+  }
+}

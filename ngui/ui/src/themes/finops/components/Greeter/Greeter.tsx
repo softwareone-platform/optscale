@@ -3,6 +3,7 @@ import { Stack } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useTheme } from "@mui/material/styles";
 import Logo from "components/Logo";
+import MockedApiDevPanelSlot from "components/MockedApiDevPanelSlot";
 import TopAlertWrapper from "components/TopAlertWrapper";
 import { ALERT_TYPES } from "components/TopAlertWrapper/constants";
 import { SPACING_2, SPACING_1 } from "utils/layouts";
@@ -44,6 +45,7 @@ const Greeter = ({ content }: GreeterProps) => {
   return (
     <>
       <TopAlertWrapper blacklistIds={[ALERT_TYPES.DATA_SOURCES_ARE_PROCESSING, ALERT_TYPES.DATA_SOURCES_PROCEEDED]} />
+      <MockedApiDevPanelSlot />
       <div
         style={{
           padding: theme.spacing(halfSpacing)

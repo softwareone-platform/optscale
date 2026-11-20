@@ -1,5 +1,7 @@
 import Link from "@mui/material/Link";
 import { FormattedMessage } from "react-intl";
+import MfaSetupPrompt from "components/MfaSetupPrompt";
+import { useIsMfaLoginEnabled } from "hooks/useIsMfaLoginEnabled";
 import AlertDialog from "components/AlertDialog";
 import DashboardGridLayout from "components/DashboardGridLayout";
 import MailTo from "components/MailTo";
@@ -22,6 +24,8 @@ import DashboardMocked from "./DashboardMocked";
 
 const Dashboard = () => {
   const isUpMd = useIsUpMediaQuery("md");
+
+  const isMfaEnabled = useIsMfaLoginEnabled();
 
   const startTour = useStartTour();
 
@@ -57,6 +61,7 @@ const Dashboard = () => {
     <>
       <Mocked mock={<DashboardMocked />} backdropMessageType={MESSAGE_TYPES.DASHBOARD}>
         <PageContentWrapper>
+          {isMfaEnabled && <MfaSetupPrompt />}
           <DashboardGridLayout {...dashboardGridItems} />
         </PageContentWrapper>
       </Mocked>

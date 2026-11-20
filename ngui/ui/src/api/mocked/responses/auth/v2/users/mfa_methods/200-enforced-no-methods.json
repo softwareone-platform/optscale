@@ -1,0 +1,8 @@
+{
+  "methods": [],
+  "mfa_enforced": true,
+  "enforcing_organizations": [
+    "4f1e8c2a-7d3b-4a6e-9c15-2b8d0e6f3a71"
+  ],
+  "status": "enforced"
+}

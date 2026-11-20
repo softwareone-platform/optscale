@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 401,
+    "error_code": "OA0062",
+    "reason": "This resource requires an authorization token",
+    "params": []
+  }
+}

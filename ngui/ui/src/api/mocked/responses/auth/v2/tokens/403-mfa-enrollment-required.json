@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 403,
+    "error_code": "OA0078",
+    "reason": "MFA method enrollment is required",
+    "params": []
+  }
+}

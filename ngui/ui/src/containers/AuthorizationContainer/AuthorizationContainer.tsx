@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { ApolloError } from "@apollo/client";
 import { Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { CREATE_TOKEN_STATUS, isEmailNotVerifiedError, isInvalidCredentialsError } from "api/auth/signIn";
 import LoginForm from "components/forms/LoginForm";
 import RegistrationForm from "components/forms/RegistrationForm";
+import TwoStepLoginForm from "components/forms/TwoStepLoginForm";
+import { LoginFormError } from "components/forms/TwoStepLoginForm/types";
 import GoogleAuthButton from "components/GoogleAuthButton";
 import Greeter from "components/Greeter";
 import MicrosoftSignInButton from "components/MicrosoftSignInButton";
@@ -11,7 +15,11 @@ import OAuthSignIn from "components/OAuthSignIn";
 import Redirector from "components/Redirector";
 import { initialize } from "containers/InitializeContainer/redux";
 import { useCreateTokenMutation, useCreateUserMutation, useSignInMutation } from "graphql/__generated__/hooks/auth";
+import { useCompleteSignIn } from "hooks/useCompleteSignIn";
+import { useCreateToken } from "hooks/useCreateToken";
 import { useGetToken } from "hooks/useGetToken";
+import { useIsMfaLoginEnabled } from "hooks/useIsMfaLoginEnabled";
+import { useStartLoginChallenge } from "hooks/useLoginChallenge";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import VerifyEmailService from "services/VerifyEmailService";
 import {
@@ -22,7 +30,8 @@ import {
   SHOW_POLICY_QUERY_PARAM,
   USER_EMAIL_QUERY_PARAMETER_NAME,
   NEXT_QUERY_PARAMETER_NAME,
-  OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME
+  OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME,
+  getEmailVerificationUrl
 } from "urls";
 import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
 import { processGraphQLErrorData } from "utils/apollo";
@@ -51,7 +60,19 @@ const AuthorizationContainer = () => {
 
   const { onSend: sendEmailVerificationCode, isLoading: isSendEmailVerificationCodeLoading } = useSendEmailVerificationCode();
 
-  const [createToken, { loading: loginLoading }] = useCreateTokenMutation();
+  const isMfaLoginEnabled = useIsMfaLoginEnabled();
+
+  const [createToken, { loading: legacyLoginLoading }] = useCreateTokenMutation();
+
+  const { onCreateToken, isLoading: mfaLoginLoading } = useCreateToken();
+
+  const loginLoading = isMfaLoginEnabled ? mfaLoginLoading : legacyLoginLoading;
+
+  const [loginError, setLoginError] = useState<LoginFormError | null>(null);
+
+  const completeSignIn = useCompleteSignIn();
+
+  const startLoginChallenge = useStartLoginChallenge();
 
   const [createUser, { loading: registerLoading }] = useCreateUserMutation();
 
@@ -69,6 +90,31 @@ const AuthorizationContainer = () => {
           navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
         }
       }
+    }
+  };
+
+  const handleMfaLogin = async ({ email, password }: { email: string; password: string }) => {
+    setLoginError(null);
+
+    try {
+      const { status, data } = await onCreateToken({ email, password });
+
+      if (status === CREATE_TOKEN_STATUS.CHALLENGE_REQUIRED) {
+        startLoginChallenge(data);
+        return;
+      }
+
+      completeSignIn(data);
+    } catch (error) {
+      if (isEmailNotVerifiedError(error)) {
+        navigate(getEmailVerificationUrl(email));
+        return;
+      }
+
+      // Anything else keeps the visitor on the password step with a retryable message.
+      setLoginError({
+        messageId: isInvalidCredentialsError(error) ? "signIn:invalidCredentials" : "somethingWentWrong"
+      });
     }
   };
 
@@ -129,14 +175,23 @@ const AuthorizationContainer = () => {
 
   const createForm =
     {
-      [LOGIN]: () => (
-        <LoginForm
-          onSubmit={handleLogin}
-          isLoading={loginLoading}
-          disabled={registerLoading || signInLoading}
-          isInvited={isInvited}
-        />
-      ),
+      [LOGIN]: () =>
+        isMfaLoginEnabled ? (
+          <TwoStepLoginForm
+            onSubmit={handleMfaLogin}
+            isLoading={loginLoading}
+            disabled={registerLoading || signInLoading}
+            isInvited={isInvited}
+            error={loginError}
+          />
+        ) : (
+          <LoginForm
+            onSubmit={handleLogin}
+            isLoading={loginLoading}
+            disabled={registerLoading || signInLoading}
+            isInvited={isInvited}
+          />
+        ),
       [REGISTER]: () => (
         <RegistrationForm
           onSubmit={handleRegister}

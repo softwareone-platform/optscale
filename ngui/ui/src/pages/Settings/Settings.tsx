@@ -1,12 +1,14 @@
 import { useSearchParams } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import BillingSubscription from "components/BillingSubscription";
+import OrganizationMfaPolicy from "components/OrganizationMfaPolicy";
 import OrganizationSettings from "components/OrganizationSettings";
 import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
 import InvitationsContainer from "containers/InvitationsContainer";
 import SshSettingsContainer from "containers/SshSettingsContainer";
 import UserEmailNotificationSettingsContainer from "containers/UserEmailNotificationSettingsContainer";
+import { useIsMfaLoginEnabled } from "hooks/useIsMfaLoginEnabled";
 import { useIsOptScaleCapabilityEnabled } from "hooks/useIsOptScaleCapabilityEnabled";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import { OPTSCALE_CAPABILITY, SETTINGS_TABS } from "utils/constants";
@@ -29,11 +31,20 @@ const Settings = () => {
 
   const isBillingIntegrationEnabled = getEnvironmentVariable("VITE_BILLING_INTEGRATION") === "enabled";
 
+  const isMfaEnabled = useIsMfaLoginEnabled();
+
   const tabs = [
     {
       title: SETTINGS_TABS.ORGANIZATION,
       dataTestId: `tab_${SETTINGS_TABS.ORGANIZATION}`,
       node: <OrganizationSettings />
+    },
+    {
+      title: SETTINGS_TABS.SECURITY,
+      dataTestId: `tab_${SETTINGS_TABS.SECURITY}`,
+      node: <OrganizationMfaPolicy />,
+      // A link to this tab opens Organization while the flag is off.
+      renderCondition: () => isMfaEnabled
     },
     ...(isDemo || !isBillingIntegrationEnabled
       ? []

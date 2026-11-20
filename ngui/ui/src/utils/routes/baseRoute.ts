@@ -9,7 +9,8 @@ class BaseRoute {
 
   page = "";
 
-  layout = MainLayout;
+  // Pre-token pages (the login challenges) render without the main layout.
+  layout: typeof MainLayout | null = MainLayout;
 
   component = lazy(
     () =>

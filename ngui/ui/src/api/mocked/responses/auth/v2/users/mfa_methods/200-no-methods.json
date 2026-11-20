@@ -1,0 +1,6 @@
+{
+  "methods": [],
+  "mfa_enforced": false,
+  "enforcing_organizations": [],
+  "status": "not_configured"
+}

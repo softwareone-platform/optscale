@@ -19,6 +19,7 @@ import Hidden from "components/Hidden";
 import IconButton from "components/IconButton";
 import Logo from "components/Logo";
 import MainMenu from "components/MainMenu";
+import MockedApiDevPanelSlot from "components/MockedApiDevPanelSlot";
 import PageContentWrapper from "components/PageContentWrapper";
 import PendingInvitationsAlert from "components/PendingInvitationsAlert";
 import TopAlertWrapper from "components/TopAlertWrapper";
@@ -167,6 +168,7 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
         return (
           <>
             <TopAlertWrapper />
+            <MockedApiDevPanelSlot />
             <Box className={cx(classes.wrapper, isCommunityDocsOpened ? classes.wrapperWithDocsOpened : "")}>
               <Box className={cx(classes.layoutWrapper, isCommunityDocsOpened ? classes.hideableLayoutWrapper : "")}>
                 {isLoadingProps.getInvitationsLoading ? null : <PendingInvitationsAlert />}

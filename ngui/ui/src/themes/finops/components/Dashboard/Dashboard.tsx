@@ -3,6 +3,7 @@ import { FormattedMessage } from "react-intl";
 import AlertDialog from "components/AlertDialog";
 import DashboardGridLayout from "components/DashboardGridLayout";
 import MailTo from "components/MailTo";
+import MfaSetupPrompt from "components/MfaSetupPrompt";
 import Mocked, { MESSAGE_TYPES } from "components/Mocked";
 import PageContentWrapper from "components/PageContentWrapper";
 import { PRODUCT_TOUR, useProductTour, useStartTour } from "components/Tour";
@@ -12,6 +13,7 @@ import PoolsRequiringAttentionCardContainer from "containers/PoolsRequiringAtten
 import RecommendationsCardContainer from "containers/RecommendationsCardContainer";
 import TopResourcesExpensesCardContainer from "containers/TopResourcesExpensesCardContainer";
 import { useAllDataSources } from "hooks/coreData/useAllDataSources";
+import { useIsMfaLoginEnabled } from "hooks/useIsMfaLoginEnabled";
 import { useIsUpMediaQuery } from "hooks/useMediaQueries";
 import { EMAIL_SUPPORT, DOCS_HYSTAX_OPTSCALE, SHOW_POLICY_QUERY_PARAM } from "urls";
 import { ENVIRONMENT } from "utils/constants";
@@ -20,6 +22,8 @@ import DashboardMocked from "./DashboardMocked";
 
 const Dashboard = () => {
   const isUpMd = useIsUpMediaQuery("md");
+
+  const isMfaEnabled = useIsMfaLoginEnabled();
 
   const startTour = useStartTour();
 
@@ -52,6 +56,7 @@ const Dashboard = () => {
     <>
       <Mocked mock={<DashboardMocked />} backdropMessageType={MESSAGE_TYPES.DASHBOARD}>
         <PageContentWrapper>
+          {isMfaEnabled && <MfaSetupPrompt />}
           <DashboardGridLayout {...dashboardGridItems} />
         </PageContentWrapper>
       </Mocked>

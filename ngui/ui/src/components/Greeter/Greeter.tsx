@@ -18,6 +18,7 @@ import CustomersGallery from "components/CustomersGallery";
 import IconLabel from "components/IconLabel";
 import IntegrationsGallery from "components/IntegrationsGallery";
 import Logo from "components/Logo";
+import MockedApiDevPanelSlot from "components/MockedApiDevPanelSlot";
 import SubTitle from "components/SubTitle";
 import TopAlertWrapper from "components/TopAlertWrapper";
 import { ALERT_TYPES } from "components/TopAlertWrapper/constants";
@@ -210,6 +211,7 @@ const Greeter = ({ content }: GreeterProps) => {
   return (
     <>
       <TopAlertWrapper blacklistIds={[ALERT_TYPES.DATA_SOURCES_ARE_PROCESSING, ALERT_TYPES.DATA_SOURCES_PROCEEDED]} />
+      <MockedApiDevPanelSlot />
       <div
         style={{
           padding: theme.spacing(halfSpacing)

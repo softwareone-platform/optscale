@@ -86,7 +86,7 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
               }}
             />
           }
-          menu={<ProfileMenuContainer />}
+          renderMenu={({ closeHandler }: { closeHandler: () => void }) => <ProfileMenuContainer onItemClick={closeHandler} />}
         />
       </Box>
       <Box component="div" className={classes.sectionMobile}>
@@ -129,7 +129,9 @@ const HeaderButtons = ({ isProductTourAvailable = false }) => {
                   }}
                 />
               }
-              menu={<ProfileMenuContainer />}
+              renderMenu={({ closeHandler }: { closeHandler: () => void }) => (
+                <ProfileMenuContainer onItemClick={closeHandler} />
+              )}
             />
           </Box>
         </Menu>

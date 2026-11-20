@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 404,
+    "error_code": "OA0028",
+    "reason": "%s with id %s was not found",
+    "params": []
+  }
+}

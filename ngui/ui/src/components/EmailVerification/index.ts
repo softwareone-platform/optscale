@@ -1,3 +1,3 @@
-import EmailVerification from "./EmailVerification";
+import MfaAwareEmailVerification from "./MfaAwareEmailVerification";
 
-export default EmailVerification;
+export default MfaAwareEmailVerification;

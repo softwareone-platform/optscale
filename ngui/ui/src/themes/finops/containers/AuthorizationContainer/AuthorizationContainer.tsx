@@ -1,21 +1,27 @@
+import { useState } from "react";
 import { ApolloError } from "@apollo/client";
 import { Stack } from "@mui/material";
-import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getEmailVerificationUrl } from "@theme/urls";
+import { CREATE_TOKEN_STATUS, isEmailNotVerifiedError, isInvalidCredentialsError } from "api/auth/signIn";
 import LoginForm from "components/forms/LoginForm";
 import RegistrationForm from "components/forms/RegistrationForm";
+import TwoStepLoginForm from "components/forms/TwoStepLoginForm";
+import { LoginFormError } from "components/forms/TwoStepLoginForm/types";
 import Greeter from "components/Greeter";
 import Redirector from "components/Redirector";
-import { initialize } from "containers/InitializeContainer/redux";
 import { useCreateTokenMutation, useCreateUserMutation } from "graphql/__generated__/hooks/auth";
+import { useCompleteSignIn } from "hooks/useCompleteSignIn";
+import { useCreateToken } from "hooks/useCreateToken";
 import { useGetToken } from "hooks/useGetToken";
+import { useIsMfaLoginEnabled } from "hooks/useIsMfaLoginEnabled";
+import { useStartLoginChallenge } from "hooks/useLoginChallenge";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
 import VerifyEmailService from "services/VerifyEmailService";
 import {
   REGISTER,
   LOGIN,
   INITIALIZE,
-  EMAIL_VERIFICATION,
   SHOW_POLICY_QUERY_PARAM,
   USER_EMAIL_QUERY_PARAMETER_NAME,
   NEXT_QUERY_PARAMETER_NAME,
@@ -26,12 +32,10 @@ import { processGraphQLErrorData } from "utils/apollo";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
 import { ERROR_CODES } from "utils/errorCodes";
 import { SPACING_4 } from "utils/layouts";
-import macaroon from "utils/macaroons";
 import { stringifySearchParams, getSearchParams } from "utils/network";
 
 const AuthorizationContainer = () => {
   const { pathname } = useLocation();
-  const dispatch = useDispatch();
 
   const { invited: queryInvited } = getSearchParams();
 
@@ -47,22 +51,64 @@ const AuthorizationContainer = () => {
 
   const { onSend: sendEmailVerificationCode, isLoading: isSendEmailVerificationCodeLoading } = useSendEmailVerificationCode();
 
-  const [createToken, { loading: loginLoading }] = useCreateTokenMutation();
+  // Set VITE_MFA_LOGIN=true in `.env` to exercise the two-step login against the mocked
+  // transport; with the flag off the original single-step login runs untouched.
+  const isMfaLoginEnabled = useIsMfaLoginEnabled();
+
+  const [createToken, { loading: legacyLoginLoading }] = useCreateTokenMutation();
+
+  const { onCreateToken, isLoading: mfaLoginLoading } = useCreateToken();
+
+  const loginLoading = isMfaLoginEnabled ? mfaLoginLoading : legacyLoginLoading;
+
+  const [loginError, setLoginError] = useState<LoginFormError | null>(null);
 
   const [createUser, { loading: registerLoading }] = useCreateUserMutation();
 
-  const handleLogin = async ({ email, password }) => {
+  const completeSignIn = useCompleteSignIn();
+
+  const startLoginChallenge = useStartLoginChallenge();
+
+  const handleLegacyLogin = async ({ email, password }: { email: string; password: string }) => {
     try {
       const { data } = await createToken({ variables: { email, password } });
-      const caveats = macaroon.processCaveats(macaroon.deserialize(data.token.token).getCaveats());
-      dispatch(initialize({ ...data.token, caveats }));
+      const issuedToken = data?.token;
+
+      if (issuedToken?.token) {
+        completeSignIn({ ...issuedToken, token: issuedToken.token });
+      }
     } catch (error) {
       if (error instanceof ApolloError) {
         const errorsData = error.graphQLErrors.map(processGraphQLErrorData);
         if (errorsData.some(({ errorCode }) => errorCode === ERROR_CODES.OA0073)) {
-          navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
+          navigate(getEmailVerificationUrl(email));
         }
       }
+    }
+  };
+
+  const handleMfaLogin = async ({ email, password }: { email: string; password: string }) => {
+    setLoginError(null);
+
+    try {
+      const { status, data } = await onCreateToken({ email, password });
+
+      if (status === CREATE_TOKEN_STATUS.CHALLENGE_REQUIRED) {
+        startLoginChallenge(data);
+        return;
+      }
+
+      completeSignIn(data);
+    } catch (error) {
+      if (isEmailNotVerifiedError(error)) {
+        navigate(getEmailVerificationUrl(email));
+        return;
+      }
+
+      // Anything else keeps the visitor on the password step with a retryable message.
+      setLoginError({
+        messageId: isInvalidCredentialsError(error) ? "signIn:invalidCredentials" : "somethingWentWrong"
+      });
     }
   };
 
@@ -71,9 +117,10 @@ const AuthorizationContainer = () => {
 
     trackEvent({ category: GA_EVENT_CATEGORIES.USER, action: "Registered", label: "optscale" });
 
-    if (data.user.verified) {
-      const caveats = macaroon.processCaveats(macaroon.deserialize(data.user.token).getCaveats());
-      return dispatch(initialize({ ...data.user, caveats }));
+    const user = data?.user;
+
+    if (user?.verified && user.token) {
+      return completeSignIn({ ...user, token: user.token });
     }
 
     const { [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability } = getSearchParams() as {
@@ -81,26 +128,30 @@ const AuthorizationContainer = () => {
     };
 
     await sendEmailVerificationCode(email, {
-      [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: Object.values(OPTSCALE_CAPABILITY).includes(capability)
+      [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: Object.values<string>(OPTSCALE_CAPABILITY).includes(capability)
         ? capability
         : undefined
     });
 
-    return navigate(
-      `${EMAIL_VERIFICATION}?${stringifySearchParams({
-        email,
-        [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability
-      })}`
-    );
+    return navigate(getEmailVerificationUrl(email, capability));
   };
 
   const isInvited = queryInvited !== undefined;
 
   const createForm =
     {
-      [LOGIN]: () => (
-        <LoginForm onSubmit={handleLogin} isLoading={loginLoading} disabled={registerLoading} isInvited={isInvited} />
-      ),
+      [LOGIN]: () =>
+        isMfaLoginEnabled ? (
+          <TwoStepLoginForm
+            onSubmit={handleMfaLogin}
+            isLoading={loginLoading}
+            disabled={registerLoading}
+            isInvited={isInvited}
+            error={loginError}
+          />
+        ) : (
+          <LoginForm onSubmit={handleLegacyLogin} isLoading={loginLoading} disabled={registerLoading} isInvited={isInvited} />
+        ),
       [REGISTER]: () => (
         <RegistrationForm
           onSubmit={handleRegister}

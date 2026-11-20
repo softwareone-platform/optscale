@@ -3,11 +3,14 @@ import reactPlugin from "eslint-plugin-react";
 
 export default [
   {
-    // src/ is upstream OptScale code, kept byte-identical so upstream syncs stay mechanical. It
-    // follows upstream's formatting (trailing commas), which this fork's prettier config forbids —
-    // linting it would fail on hundreds of lines nobody here is allowed to change. Our own code
-    // lives in the theme, so that is what gets checked.
+    // src/ is mostly upstream OptScale code in upstream's formatting (trailing commas), which this
+    // fork's prettier config forbids — linting it would fail on hundreds of lines that must stay as
+    // upstream wrote them. So only the theme is checked; this fork's own files in src/ are not.
     ignores: ["src/*", "!src/themes", "src/themes/*", "!src/themes/finops"]
+  },
+  {
+    // Third-party code copied verbatim; see src/vendor/qrcode-generator/README.md.
+    ignores: ["src/vendor/**"]
   },
   ...hystaxConfig,
   {

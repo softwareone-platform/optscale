@@ -18,6 +18,7 @@ import Hidden from "components/Hidden";
 import IconButton from "components/IconButton";
 import Logo from "components/Logo";
 import MainMenu from "components/MainMenu";
+import MockedApiDevPanelSlot from "components/MockedApiDevPanelSlot";
 import PageContentWrapper from "components/PageContentWrapper";
 import PendingInvitationsAlert from "components/PendingInvitationsAlert";
 import SubscriptionStatusTopAlert from "components/SubscriptionStatusTopAlert";
@@ -167,6 +168,7 @@ const BaseLayout = ({ children, showMainMenu = false, showOrganizationSelector =
         return (
           <>
             <TopAlertWrapper />
+            <MockedApiDevPanelSlot />
             {isLoadingProps.getSubscriptionLoading || isDemo || !isBillingIntegrationEnabled ? null : (
               <SubscriptionStatusTopAlert />
             )}

@@ -1,3 +1,4 @@
+import { IS_MFA_LOGIN_ENABLED } from "utils/mfaLogin";
 import acceptInvitationRoute from "./acceptInvitationRoute";
 import anomaliesRoute from "./anomaliesRoute";
 import anomalyRoute from "./anomalyRoute";
@@ -53,6 +54,8 @@ import mlEditArtifactRoute from "./mlEditArtifactRoute";
 import mlEditModelRoute from "./mlEditModelRoute";
 import mlEditRunArtifactRoute from "./mlEditRunArtifactRoute";
 import mlEditTaskRoute from "./mlEditTaskRoute";
+import mfaChallengeRoute from "./mfaChallengeRoute";
+import mfaEnrollmentRoute from "./mfaEnrollmentRoute";
 import mlExecutorsRoute from "./mlExecutorsRoute";
 import mlMetricsRoute from "./mlMetricsRoute";
 import mlModel from "./mlModel";
@@ -77,6 +80,7 @@ import poolsRoute from "./poolsRoute";
 import poolTtlAnalysisRoute from "./poolTtlAnalysisRoute";
 import powerScheduleDetailsRoute from "./powerScheduleDetailsRoute";
 import powerSchedulesRoute from "./powerSchedulesRoute";
+import profileRoute from "./profileRoute";
 import publicMlRun from "./publicMlRun";
 import quotaRoute from "./quotaRoute";
 import quotasRoute from "./quotasRoute";
@@ -97,6 +101,9 @@ import themeSettingsRoute from "./themeSettingsRoute";
 import ttlAnalysisRoute from "./ttlAnalysisRoute";
 import usersRoute from "./usersRoute";
 
+// The MFA screens and the Profile page exist only while the MFA work is on.
+const mfaRoutes = IS_MFA_LOGIN_ENABLED ? [mfaChallengeRoute, mfaEnrollmentRoute, profileRoute] : [];
+
 export const routes = [
   acceptInvitationRoute,
   anomaliesRoute,
@@ -116,6 +123,7 @@ export const routes = [
   quotaRoute,
   quotasRoute,
   usersRoute,
+  ...mfaRoutes,
   inviteEmployeesRoute,
   dataSourcesRoute,
   dataSourceOverviewRoute,
