@@ -13,6 +13,7 @@ export const CONNECTION_TYPES = Object.freeze({
   GCP_TENANT: "gcpTenant",
   NEBIUS: "nebius",
   DATABRICKS: "databricks",
+  FOCUS: "focus",
   KUBERNETES: "kubernetes"
 });
 

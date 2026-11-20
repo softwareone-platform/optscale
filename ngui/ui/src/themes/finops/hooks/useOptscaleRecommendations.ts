@@ -16,6 +16,7 @@ import InstancesMigration from "containers/RecommendationsOverviewContainer/reco
 import InstanceSubscription from "containers/RecommendationsOverviewContainer/recommendations/InstanceSubscription";
 import IntelligentTiering from "containers/RecommendationsOverviewContainer/recommendations/IntelligentTiering";
 import NebiusMigration from "containers/RecommendationsOverviewContainer/recommendations/NebiusMigration";
+import ObsoleteImages from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteImages";
 import ObsoleteIps from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteIps";
 import ObsoleteSnapshotChains from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteSnapshotChains";
 import ObsoleteSnapshots from "containers/RecommendationsOverviewContainer/recommendations/ObsoleteSnapshots";
@@ -30,9 +31,11 @@ import { useIsNebiusConnectionEnabled } from "hooks/useIsNebiusConnectionEnabled
 
 const NEBIUS_RECOMMENDATIONS = [CvocAgreementOpportunities, AbandonedNebiusS3Buckets, NebiusMigration];
 
+const DEPRECATED_RECOMMENDATIONS = [ObsoleteImages];
+
 export const NEBIUS_RECOMMENDATION_TYPES = NEBIUS_RECOMMENDATIONS.map((Recommendation) => new Recommendation().type);
 
-export const useOptscaleRecommendations = () => {
+export const useOptscaleRecommendations = ({ withDeprecated = false }: { withDeprecated?: boolean } = {}) => {
   const isNebiusConnectionEnabled = useIsNebiusConnectionEnabled();
 
   return useMemo(() => {
@@ -61,9 +64,10 @@ export const useOptscaleRecommendations = () => {
       PublicS3Buckets,
       SnapshotsWithNonUsedImages,
       AbandonedImages,
-      ...(isNebiusConnectionEnabled ? NEBIUS_RECOMMENDATIONS : [])
+      ...(isNebiusConnectionEnabled ? NEBIUS_RECOMMENDATIONS : []),
+      ...(withDeprecated ? DEPRECATED_RECOMMENDATIONS : [])
     ];
 
     return Object.fromEntries(recommendations.map((Rec) => [new Rec().type, Rec]));
-  }, [isNebiusConnectionEnabled]);
+  }, [isNebiusConnectionEnabled, withDeprecated]);
 };
