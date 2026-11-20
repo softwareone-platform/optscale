@@ -1,6 +1,7 @@
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { MockedApi } from "./src/themes/finops/api/mocked/http/mockedApiPlugin";
 import { ThemeResolver } from './src/utils/themeResolver';
 
 const parseViteHost = (value?: string): string | boolean => {
@@ -41,7 +42,16 @@ export default defineConfig(({ mode }) => {
   // https://vitejs.dev/guide/api-javascript.html#loadenv
   const env = loadEnv(mode, process.cwd());
 
-  const { VITE_BUILD_DIR, VITE_PORT, VITE_PROXY, VITE_PREVIEW_PORT, VITE_HOST, VITE_ALLOWED_HOSTS, VITE_APP_THEME } = env;
+  const {
+    VITE_BUILD_DIR,
+    VITE_PORT,
+    VITE_PROXY,
+    VITE_PREVIEW_PORT,
+    VITE_HOST,
+    VITE_ALLOWED_HOSTS,
+    VITE_APP_THEME,
+    VITE_MOCKED_API
+  } = env;
 
   return {
     build: {
@@ -83,7 +93,13 @@ export default defineConfig(({ mode }) => {
         ])
       )
     },
-    plugins: [react(), ThemeResolver(VITE_APP_THEME || ''), tsconfigPaths()],
+    plugins: [
+      react(),
+      ThemeResolver(VITE_APP_THEME || ''),
+      tsconfigPaths(),
+      // Answers the endpoints the backend has not shipped yet; VITE_MOCKED_API=false opts out.
+      MockedApi(VITE_MOCKED_API !== "false")
+    ],
     // TODO: Some of the tests are still failing
     test: {
       server: {
