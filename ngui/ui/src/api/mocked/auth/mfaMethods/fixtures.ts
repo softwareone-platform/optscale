@@ -12,13 +12,16 @@ import confirmedWithToken from "api/mocked/responses/auth/v2/users/mfa_methods/2
 import emailEnrollment from "api/mocked/responses/auth/v2/users/mfa_methods/201-email-enrollment.json";
 import totpEnrollment from "api/mocked/responses/auth/v2/users/mfa_methods/201-totp-enrollment.json";
 import invalidValue from "api/mocked/responses/auth/v2/users/mfa_methods/400-invalid-value.json";
+import notProvided from "api/mocked/responses/auth/v2/users/mfa_methods/400-not-provided.json";
 import tokenRequired from "api/mocked/responses/auth/v2/users/mfa_methods/401-token-required.json";
 import codeRequestedTooSoon from "api/mocked/responses/auth/v2/users/mfa_methods/403-code-requested-too-soon.json";
 import invalidAuthenticationCode from "api/mocked/responses/auth/v2/users/mfa_methods/403-invalid-authentication-code.json";
+import lastMfaMethodEnforced from "api/mocked/responses/auth/v2/users/mfa_methods/403-last-mfa-method-enforced.json";
 import mfaAlreadyEnrolled from "api/mocked/responses/auth/v2/users/mfa_methods/403-mfa-already-enrolled.json";
 import notFound from "api/mocked/responses/auth/v2/users/mfa_methods/404-not-found.json";
 import mfaMethodAlreadyConfirmed from "api/mocked/responses/auth/v2/users/mfa_methods/409-mfa-method-already-confirmed.json";
 import mfaMethodExists from "api/mocked/responses/auth/v2/users/mfa_methods/409-mfa-method-exists.json";
+import mfaMethodNotConfirmed from "api/mocked/responses/auth/v2/users/mfa_methods/409-mfa-method-not-confirmed.json";
 import internalError from "api/mocked/responses/auth/v2/users/mfa_methods/500-internal-error.json";
 import serviceUnavailable from "api/mocked/responses/auth/v2/users/mfa_methods/503-service-unavailable.json";
 import { getCurrentUTCTimeInSec } from "utils/datetime";
@@ -60,21 +63,21 @@ export const ENROLLMENT_BODY: Record<MfaMethodType, MfaEnrollment> = {
 // Keys match `AUTH_ERROR_CODE`'s, so `fixtures.test.ts` can pair each file with its code.
 export const ERROR_BODY = Object.freeze({
   INVALID_VALUE: asErrorBody(invalidValue),
+  NOT_PROVIDED: asErrorBody(notProvided),
   TOKEN_REQUIRED: asErrorBody(tokenRequired),
   CODE_REQUESTED_TOO_SOON: asErrorBody(codeRequestedTooSoon),
   INVALID_AUTHENTICATION_CODE: asErrorBody(invalidAuthenticationCode),
+  LAST_MFA_METHOD_ENFORCED: asErrorBody(lastMfaMethodEnforced),
   MFA_ALREADY_ENROLLED: asErrorBody(mfaAlreadyEnrolled),
   NOT_FOUND: asErrorBody(notFound),
   MFA_METHOD_EXISTS: asErrorBody(mfaMethodExists),
   MFA_METHOD_ALREADY_CONFIRMED: asErrorBody(mfaMethodAlreadyConfirmed),
+  MFA_METHOD_NOT_CONFIRMED: asErrorBody(mfaMethodNotConfirmed),
   INTERNAL_ERROR: asErrorBody(internalError),
   SERVICE_UNAVAILABLE: asErrorBody(serviceUnavailable)
 });
 
-/**
- * The fields the service fills per request: a fresh id and creation time, and a TOTP label the client sent.
- * Without one the file's label stays — who names a TOTP method is an open TDR question.
- */
+/** The fields the service fills per request: a fresh id and creation time, and the name the user gave a TOTP method. */
 export const issueEnrollment = (
   { type, userId, label }: { type: MfaMethodType; userId: string; label?: string },
   nowSeconds = getCurrentUTCTimeInSec()

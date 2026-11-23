@@ -3,7 +3,7 @@ import { ApolloError } from "@apollo/client";
 import { Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CREATE_TOKEN_STATUS, isEmailNotVerifiedError, isInvalidCredentialsError } from "api/auth/signIn";
+import { CREATE_TOKEN_STATUS, isEmailNotVerifiedError } from "api/auth/signIn";
 import LoginForm from "components/forms/LoginForm";
 import RegistrationForm from "components/forms/RegistrationForm";
 import TwoStepLoginForm from "components/forms/TwoStepLoginForm";
@@ -13,6 +13,7 @@ import Greeter from "components/Greeter";
 import MicrosoftSignInButton from "components/MicrosoftSignInButton";
 import OAuthSignIn from "components/OAuthSignIn";
 import Redirector from "components/Redirector";
+import { getPasswordSignInErrorMessageId } from "containers/AuthorizationContainer/passwordSignInError";
 import { initialize } from "containers/InitializeContainer/redux";
 import { useCreateTokenMutation, useCreateUserMutation, useSignInMutation } from "graphql/__generated__/hooks/auth";
 import { useCompleteSignIn } from "hooks/useCompleteSignIn";
@@ -112,9 +113,7 @@ const AuthorizationContainer = () => {
       }
 
       // Anything else keeps the visitor on the password step with a retryable message.
-      setLoginError({
-        messageId: isInvalidCredentialsError(error) ? "signIn:invalidCredentials" : "somethingWentWrong"
-      });
+      setLoginError({ messageId: getPasswordSignInErrorMessageId(error) });
     }
   };
 

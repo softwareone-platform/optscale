@@ -25,8 +25,8 @@ const MfaMethodChoice = ({ confirmedTypes, onChoose }: MfaMethodChoiceProps) => 
       <FormattedMessage id="mfaSetup:selectMethod" />
     </Typography>
     {METHOD_TYPES.map((type) => {
-      // A type can be set up once; the service answers 409 for a second one.
-      const isConfirmed = confirmedTypes.includes(type);
+      // One e-mail method only — the service answers 409 for a second; any number of authenticator apps.
+      const isConfirmed = type === MFA_METHOD_TYPE.EMAIL && confirmedTypes.includes(type);
 
       return (
         <MfaMethodTile

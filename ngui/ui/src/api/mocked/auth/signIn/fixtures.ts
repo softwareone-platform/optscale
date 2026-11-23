@@ -60,7 +60,7 @@ export const ERROR_BODY = Object.freeze({
   INVALID_MFA_CODE: asErrorBody(invalidMfaCode),
   MFA_ATTEMPTS_EXCEEDED: asErrorBody(mfaAttemptsExceeded),
   TOO_MANY_FAILED_ATTEMPTS: asErrorBody(tooManyFailedAttempts),
-  // Our proposal, in no spec yet: an `enrollment_required` challenge has no method to check a code against.
+  // An `enrollment_required` challenge has no method to check a code against.
   MFA_ENROLLMENT_REQUIRED: asErrorBody(mfaEnrollmentRequired),
   LOGIN_CHALLENGE_NOT_FOUND: asErrorBody(loginChallengeNotFound)
 });

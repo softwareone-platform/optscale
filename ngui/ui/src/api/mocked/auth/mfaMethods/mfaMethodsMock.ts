@@ -21,10 +21,8 @@ import { ERROR_BODY, issueEnrollment, STATUS_BODY } from "./fixtures";
 import { DEFAULT_SECURITY_SCENARIO, SECURITY_SCENARIO, SecurityScenario } from "./scenarios";
 
 /**
- * Stand in for `/auth/v2/users/{user_id}/mfa_methods…`, following the auth service's enrollment branch where it
- * answers (start, confirm) and the TDR elsewhere. Each is typed off the real call, so a contract change breaks it.
- * Where neither says what happens — which method becomes default after the default is removed, removing the last
- * method under enforcement — the mock does nothing special.
+ * Stand in for `/auth/v2/users/{user_id}/mfa_methods…`, following the auth service's rules and error codes
+ * (`auth/auth_server/controllers/mfa_method.py`). Each is typed off the real call, so a contract change breaks it.
  */
 
 // Keyed by every scenario, so a new one fails to compile until it names its starting point.
@@ -97,7 +95,13 @@ export const startEnrollmentFor = (
   user: UserMfa,
   { userId, type, label }: { userId: string; type: MfaMethodType; label?: string }
 ): MfaEnrollment => {
-  if (user.methods.some((method) => method.type === type && method.confirmed)) {
+  // Several authenticator apps tell themselves apart by the name the user gives each.
+  if (type === MFA_METHOD_TYPE.TOTP && label === undefined) {
+    throw authError(ERROR_BODY.NOT_PROVIDED, ["label"]);
+  }
+
+  // Only one e-mail method: it always mails the account's own address.
+  if (type === MFA_METHOD_TYPE.EMAIL && user.methods.some((method) => method.type === type && method.confirmed)) {
     throw authError(ERROR_BODY.MFA_METHOD_EXISTS, [type]);
   }
 
@@ -112,8 +116,8 @@ export const startEnrollmentFor = (
 
   const enrollment = issueEnrollment({ type, userId, label });
 
-  // Starting again replaces an unfinished enrollment of the same type.
-  setUserMethods(userId, [...user.methods.filter((method) => method.type !== type), enrollment]);
+  // Starting again replaces an unfinished enrollment of the same type; confirmed ones stay.
+  setUserMethods(userId, [...user.methods.filter((method) => method.type !== type || method.confirmed), enrollment]);
 
   return enrollment;
 };
@@ -165,6 +169,15 @@ export const updateMfaMethodMock = async (
   const user = loadSignedInUser(params, scenario);
   const method = findMethod(user, methodId);
 
+  // The default can only move to another method, and an e-mail method keeps the masked address as its name.
+  if (is_default === false || (label !== undefined && method.type === MFA_METHOD_TYPE.EMAIL)) {
+    throw authError(ERROR_BODY.INVALID_VALUE, [is_default === false ? "is_default" : "label"]);
+  }
+
+  if (is_default === true && !method.confirmed) {
+    throw authError(ERROR_BODY.MFA_METHOD_NOT_CONFIRMED, [methodId]);
+  }
+
   if (label !== undefined) {
     method.label = label;
   }
@@ -173,12 +186,12 @@ export const updateMfaMethodMock = async (
     for (const other of user.methods) {
       other.is_default = other === method;
     }
-  } else if (is_default === false) {
-    method.is_default = false;
   }
 
   return toMethodDetails(method);
 };
+
+const isMfaEnforcedFor = (user: UserMfa) => user.mfaEnforced || findMfaEnforcingOrganizations().length > 0;
 
 export const deleteMfaMethodMock = async (
   { methodId, ...params }: Parameters<DeleteMfaMethod>[0],
@@ -186,8 +199,20 @@ export const deleteMfaMethodMock = async (
 ): ReturnType<DeleteMfaMethod> => {
   const user = loadSignedInUser(params, scenario);
   const method = findMethod(user, methodId);
+  const otherConfirmed = user.methods.filter((other) => other !== method && other.confirmed);
+
+  if (method.confirmed && otherConfirmed.length === 0 && isMfaEnforcedFor(user)) {
+    throw authError(ERROR_BODY.LAST_MFA_METHOD_ENFORCED);
+  }
 
   user.methods = user.methods.filter((other) => other !== method);
+
+  // The oldest remaining confirmed method takes over as the default.
+  const [successor] = [...otherConfirmed].sort((a, b) => a.created_at - b.created_at);
+
+  if (method.is_default && successor) {
+    successor.is_default = true;
+  }
 };
 
 export const resetMfaMock = async (

@@ -2,7 +2,7 @@ import { ComponentType, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
-import { CreateTokenResponse, isInvalidVerificationCodeError } from "api/auth/signIn";
+import { CreateTokenResponse, isInvalidVerificationCodeError, isTooManyFailedAttemptsError } from "api/auth/signIn";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
 import { useCreateToken } from "hooks/useCreateToken";
 import { getSearchParams } from "utils/network";
@@ -17,6 +17,14 @@ type CodeSignInStepProps = {
   /** Upstream's form for the flow — each has its own resend link. */
   CodeForm: ComponentType<CodeFormProps>;
   onSignIn: (signIn: CreateTokenResponse) => void;
+};
+
+const getCodeSignInErrorMessageId = (error: unknown) => {
+  if (isTooManyFailedAttemptsError(error)) {
+    return "signIn:challengeTooManyFailedAttempts";
+  }
+
+  return isInvalidVerificationCodeError(error) ? "signIn:invalidVerificationCode" : "somethingWentWrong";
 };
 
 /**
@@ -36,7 +44,7 @@ const CodeSignInStep = ({ descriptionMessageId, CodeForm, onSignIn }: CodeSignIn
     try {
       onSignIn(await onCreateToken({ email, verification_code: code }));
     } catch (error) {
-      setErrorMessageId(isInvalidVerificationCodeError(error) ? "signIn:invalidVerificationCode" : "somethingWentWrong");
+      setErrorMessageId(getCodeSignInErrorMessageId(error));
     }
   };
 

@@ -3,7 +3,7 @@ import { act } from "react-dom/test-utils";
 import { Route } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AUTH_ERROR_CODE, AuthApiError } from "api/auth/errors";
-import { MFA_METHOD_TYPE } from "api/auth/mfaMethod";
+import { MFA_METHOD_TYPE, MfaMethodType } from "api/auth/mfaMethod";
 import { MfaEnrollment, MfaMethodDetails } from "api/auth/mfaMethods";
 import { click, find } from "tests/dom";
 import { renderWithProviders } from "tests/renderWithProviders";
@@ -44,7 +44,7 @@ const confirmed = ({ secret: _secret, otpauth_uri: _otpauthUri, ...method }: Mfa
 
 const authError = (status: number, errorCode: string) => new AuthApiError({ status, errorCode, reason: "" });
 
-const start = vi.fn<(type: string) => Promise<MfaEnrollment>>();
+const start = vi.fn<(params: { type: MfaMethodType; label?: string }) => Promise<MfaEnrollment>>();
 const confirm = vi.fn<(params: { methodId: string; code: string }) => Promise<MfaMethodDetails>>();
 const onConfirmed = vi.fn();
 const onClose = vi.fn();
@@ -81,7 +81,7 @@ const renderAddMfaMethod = (props: Partial<ComponentProps<typeof AddMfaMethod>> 
 
 describe("AddMfaMethod", () => {
   beforeEach(() => {
-    start.mockImplementation(async (type) => (type === MFA_METHOD_TYPE.TOTP ? TOTP_ENROLLMENT : EMAIL_ENROLLMENT));
+    start.mockImplementation(async ({ type }) => (type === MFA_METHOD_TYPE.TOTP ? TOTP_ENROLLMENT : EMAIL_ENROLLMENT));
     confirm.mockImplementation(async ({ methodId }) =>
       confirmed(methodId === TOTP_ENROLLMENT.id ? TOTP_ENROLLMENT : EMAIL_ENROLLMENT)
     );
@@ -102,12 +102,18 @@ describe("AddMfaMethod", () => {
       expect(find("btn_choose_mfa_method_email")).not.toBeNull();
     });
 
-    it("does not let a type that is already set up be added again", () => {
+    it("does not let a second e-mail method be added", () => {
+      renderAddMfaMethod({ confirmedTypes: [MFA_METHOD_TYPE.EMAIL] });
+
+      expect(find("btn_choose_mfa_method_email")?.hasAttribute("disabled")).toBe(true);
+      expect(find("chip_mfa_method_set_up_email")).not.toBeNull();
+    });
+
+    it("lets another authenticator app be added beside one already set up", () => {
       renderAddMfaMethod({ confirmedTypes: [MFA_METHOD_TYPE.TOTP] });
 
-      expect(find("btn_choose_mfa_method_totp")?.hasAttribute("disabled")).toBe(true);
-      expect(find("chip_mfa_method_set_up_totp")).not.toBeNull();
-      expect(find("btn_choose_mfa_method_email")?.hasAttribute("disabled")).toBe(false);
+      expect(find("btn_choose_mfa_method_totp")?.hasAttribute("disabled")).toBe(false);
+      expect(find("chip_mfa_method_set_up_totp")).toBeNull();
     });
 
     it("starts nothing until a method is chosen", () => {
@@ -118,16 +124,42 @@ describe("AddMfaMethod", () => {
   });
 
   describe("authenticator app", () => {
-    const openAuthenticatorApp = async () => {
-      renderAddMfaMethod();
-      await click("btn_choose_mfa_method_totp");
+    const nameDevice = async (name: string) => {
+      act(() => {
+        typeInto(find("input_mfa_device_name") as HTMLInputElement, name);
+      });
+      await click("btn_submit_mfa_device_name");
       await flush();
     };
 
-    it("starts the enrollment and shows the QR code and the manual key", async () => {
-      await openAuthenticatorApp();
+    const openAuthenticatorApp = async () => {
+      renderAddMfaMethod();
+      await click("btn_choose_mfa_method_totp");
+      await nameDevice("Google Pixel 10 Pro");
+    };
 
-      expect(start).toHaveBeenCalledWith(MFA_METHOD_TYPE.TOTP);
+    it("asks for the device's name before starting anything", async () => {
+      renderAddMfaMethod();
+      await click("btn_choose_mfa_method_totp");
+
+      expect(find("input_mfa_device_name")).not.toBeNull();
+      expect(start).not.toHaveBeenCalled();
+    });
+
+    it("does not start with a name of only spaces", async () => {
+      renderAddMfaMethod();
+      await click("btn_choose_mfa_method_totp");
+      await nameDevice("   ");
+
+      expect(start).not.toHaveBeenCalled();
+    });
+
+    it("starts the enrollment under the trimmed name and shows the QR code and the manual key", async () => {
+      renderAddMfaMethod();
+      await click("btn_choose_mfa_method_totp");
+      await nameDevice("  Google Pixel 10 Pro ");
+
+      expect(start).toHaveBeenCalledWith({ type: MFA_METHOD_TYPE.TOTP, label: "Google Pixel 10 Pro" });
       expect(find("img_mfa_qr_code")).not.toBeNull();
       expect(find("p_mfa_secret")?.textContent).toBe(TOTP_ENROLLMENT.secret);
     });

@@ -261,7 +261,9 @@ describe("findMockedHandler — enrolling during sign-in", () => {
   it("starts a method with the challenge in place of the token and answers 201 {method, token} once confirmed", async () => {
     const { challenge_id, path } = await enrollmentRequired();
 
-    const { status: startStatus, body: enrollment } = await call("POST", path, { body: { type: "totp", challenge_id } });
+    const { status: startStatus, body: enrollment } = await call("POST", path, {
+      body: { type: "totp", label: "My phone", challenge_id }
+    });
     const { id } = enrollment as { id: string };
     const { status, body } = await call("POST", `${path}/${id}/confirm`, {
       body: { code: MOCK_SIGN_IN_CREDENTIALS.mfaCode, challenge_id }
@@ -274,7 +276,7 @@ describe("findMockedHandler — enrolling during sign-in", () => {
 
   it("answers a wrong code with the challenge's attempts left", async () => {
     const { challenge_id, path } = await enrollmentRequired();
-    const { body: enrollment } = await call("POST", path, { body: { type: "totp", challenge_id } });
+    const { body: enrollment } = await call("POST", path, { body: { type: "totp", label: "My phone", challenge_id } });
 
     const { status, body } = await call("POST", `${path}/${(enrollment as { id: string }).id}/confirm`, {
       body: { code: "000000", challenge_id }
@@ -288,7 +290,7 @@ describe("findMockedHandler — enrolling during sign-in", () => {
     const { challenge_id } = await enrollmentRequired();
 
     const { status, body } = await call("POST", "/auth/v2/users/someone-else/mfa_methods", {
-      body: { type: "totp", challenge_id }
+      body: { type: "totp", label: "My phone", challenge_id }
     });
 
     expect(status).toBe(404);
@@ -302,7 +304,7 @@ describe("findMockedHandler — enrolling during sign-in", () => {
       body: { code: MOCK_SIGN_IN_CREDENTIALS.mfaCode, challenge_id }
     });
 
-    const { status, body } = await call("POST", path, { body: { type: "totp", challenge_id } });
+    const { status, body } = await call("POST", path, { body: { type: "totp", label: "My phone", challenge_id } });
 
     expect(status).toBe(404);
     expect(body).toMatchObject({ error: { error_code: AUTH_ERROR_CODE.LOGIN_CHALLENGE_NOT_FOUND } });

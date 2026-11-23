@@ -2,7 +2,7 @@
   "error": {
     "status_code": 403,
     "error_code": "OA0090",
-    "reason": "Too many failed attempts. Try again later",
+    "reason": "Too many failed attempts, try again later",
     "params": []
   }
 }

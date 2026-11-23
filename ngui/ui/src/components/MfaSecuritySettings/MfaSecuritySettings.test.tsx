@@ -1,6 +1,7 @@
 import { act } from "react-dom/test-utils";
 import { Route } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { AUTH_ERROR_CODE, AuthApiError } from "api/auth/errors";
 import { MFA_METHOD_TYPE } from "api/auth/mfaMethod";
 import { MfaMethodDetails, MfaStatus } from "api/auth/mfaMethods";
 import { click, find } from "tests/dom";
@@ -32,7 +33,7 @@ const TOTP: MfaMethodDetails = {
   id: "a1d3",
   user_id: "9c2a",
   type: MFA_METHOD_TYPE.TOTP,
-  label: "Configured on Google Pixel 10 Pro",
+  label: "Google Pixel 10 Pro",
   is_default: true,
   confirmed: true,
   confirmed_at: 1_758_480_120,
@@ -91,7 +92,7 @@ describe("MfaSecuritySettings", () => {
 
     await renderSection();
 
-    expect(find("mfa_method_card_totp")?.textContent).toContain(TOTP.label);
+    expect(find("mfa_method_card_totp")?.textContent).toContain("Configured on Google Pixel 10 Pro");
     expect(find("mfa_method_card_email")?.textContent).toContain(EMAIL.label);
     expect(find("chip_default_mfa_method_totp")).not.toBeNull();
     expect(find("chip_default_mfa_method_email")).toBeNull();
@@ -135,13 +136,14 @@ describe("MfaSecuritySettings", () => {
     expect(find("mfa_method_card_totp")).not.toBeNull();
   });
 
-  it("does not offer a type that is already set up when adding", async () => {
-    getMfaStatusSpy.mockResolvedValue(status([TOTP]));
+  it("offers another authenticator app but no second e-mail method when adding", async () => {
+    getMfaStatusSpy.mockResolvedValue(status([TOTP, EMAIL]));
     await renderSection();
 
     await click("btn_add_mfa_method");
 
-    expect(find("btn_choose_mfa_method_totp")?.hasAttribute("disabled")).toBe(true);
+    expect(find("btn_choose_mfa_method_totp")?.hasAttribute("disabled")).toBe(false);
+    expect(find("btn_choose_mfa_method_email")?.hasAttribute("disabled")).toBe(true);
   });
 
   it("reloads the list once a method is added", async () => {
@@ -228,6 +230,51 @@ describe("MfaSecuritySettings", () => {
 
       expect(find("btn_remove_mfa_method_totp")?.getAttribute("aria-disabled")).toBe("true");
       expect(find("btn_remove_mfa_method_totp")?.textContent).toContain("only method cannot be removed");
+    });
+
+    it("renames an authenticator app and shows the list the service then returns", async () => {
+      getMfaStatusSpy
+        .mockResolvedValueOnce(status([TOTP, EMAIL]))
+        .mockResolvedValue(status([{ ...TOTP, label: "Work phone" }, EMAIL]));
+      updateMfaMethodSpy.mockResolvedValue({ ...TOTP, label: "Work phone" });
+      await renderSection();
+
+      await click("btn_mfa_method_actions_totp");
+      await click("btn_rename_mfa_method_totp");
+
+      expect((find("input_mfa_device_name") as HTMLInputElement).value).toBe(TOTP.label);
+
+      act(() => {
+        typeInto(find("input_mfa_device_name") as HTMLInputElement, "Work phone");
+      });
+      await click("btn_submit_mfa_device_name");
+      await act(async () => {});
+
+      expect(updateMfaMethodSpy).toHaveBeenCalledWith(expect.objectContaining({ methodId: TOTP.id, label: "Work phone" }));
+      expect(find("mfa_method_card_totp")?.textContent).toContain("Configured on Work phone");
+    });
+
+    it("offers no Rename for an e-mail method, named by its address", async () => {
+      getMfaStatusSpy.mockResolvedValue(status([TOTP, EMAIL]));
+      await renderSection();
+
+      await click("btn_mfa_method_actions_email");
+
+      expect(find("btn_rename_mfa_method_email")).toBeNull();
+    });
+
+    it("says why the last method cannot go when the service refuses it as enforced", async () => {
+      getMfaStatusSpy.mockResolvedValue(status([EMAIL]));
+      deleteMfaMethodSpy.mockRejectedValue(
+        new AuthApiError({ status: 403, errorCode: AUTH_ERROR_CODE.LAST_MFA_METHOD_ENFORCED, reason: "" })
+      );
+      await renderSection();
+
+      await click("btn_mfa_method_actions_email");
+      await click("btn_remove_mfa_method_email");
+      await click("btn_confirm_remove_mfa_method");
+
+      expect(find("p_mfa_action_error")?.textContent).toContain("only method cannot be removed");
     });
 
     it("says when a change could not be saved and keeps the list as it was", async () => {

@@ -1,0 +1,8 @@
+{
+  "error": {
+    "status_code": 403,
+    "error_code": "OA0091",
+    "reason": "At least one authentication method must remain configured because MFA is enforced by your organization",
+    "params": []
+  }
+}

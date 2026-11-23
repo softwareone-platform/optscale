@@ -42,7 +42,7 @@ export const useChallengeMfaEnrollment = ({
     };
 
     return {
-      start: (type) => startChallengeEnrollment({ userId, challengeId, type }).catch(endIfChallengeEnded),
+      start: ({ type, label }) => startChallengeEnrollment({ userId, challengeId, type, label }).catch(endIfChallengeEnded),
       confirm: async ({ methodId, code }) => {
         const { method, token } = await confirmChallengeEnrollment({ userId, challengeId, methodId, code }).catch(
           endIfChallengeEnded

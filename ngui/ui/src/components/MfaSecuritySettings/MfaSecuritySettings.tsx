@@ -4,10 +4,12 @@ import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
+import { AUTH_ERROR_CODE, AuthApiError } from "api/auth/errors";
 import Button from "components/Button";
 import InlineSeverityAlert from "components/InlineSeverityAlert";
 import AddMfaMethodModal from "components/SideModalManager/SideModals/AddMfaMethodModal";
 import RemoveMfaMethodModal from "components/SideModalManager/SideModals/RemoveMfaMethodModal";
+import RenameMfaMethodModal from "components/SideModalManager/SideModals/RenameMfaMethodModal";
 import { useOrganizations } from "hooks/coreData/useOrganizations";
 import { useGetToken } from "hooks/useGetToken";
 import { useMfaStatus } from "hooks/useMfaStatus";
@@ -27,7 +29,7 @@ const MfaSecuritySettings = () => {
 
   const openSideModal = useOpenTypedSideModal();
   const [isChanging, setIsChanging] = useState(false);
-  const [hasActionFailed, setHasActionFailed] = useState(false);
+  const [actionErrorMessageId, setActionErrorMessageId] = useState<string | null>(null);
 
   const methods = data?.methods ?? [];
   // The service names organizations by id; the ones this user belongs to are already in the app's cache.
@@ -40,14 +42,18 @@ const MfaSecuritySettings = () => {
 
   // One change at a time; the list reloads after it, so it shows what the service holds.
   const runAction = async (action: () => Promise<unknown>) => {
-    setHasActionFailed(false);
+    setActionErrorMessageId(null);
     setIsChanging(true);
 
     try {
       await action();
       await refetch();
-    } catch {
-      setHasActionFailed(true);
+    } catch (error) {
+      // The list was out of date: the organization started enforcing MFA after it loaded.
+      const isLastMethodEnforced =
+        error instanceof AuthApiError && error.errorCode === AUTH_ERROR_CODE.LAST_MFA_METHOD_ENFORCED;
+
+      setActionErrorMessageId(isLastMethodEnforced ? "mfaSettings:lastMethodEnforced" : "mfaSettings:actionFailed");
     } finally {
       setIsChanging(false);
     }
@@ -75,14 +81,20 @@ const MfaSecuritySettings = () => {
         {status === "error" && (
           <InlineSeverityAlert severity="error" messageId="mfaSettings:loadFailed" messageDataTestId="p_mfa_methods_error" />
         )}
-        {hasActionFailed && (
-          <InlineSeverityAlert severity="error" messageId="mfaSettings:actionFailed" messageDataTestId="p_mfa_action_error" />
+        {actionErrorMessageId && (
+          <InlineSeverityAlert severity="error" messageId={actionErrorMessageId} messageDataTestId="p_mfa_action_error" />
         )}
         {methods.map((method) => (
           <MfaMethodCard
             key={method.id}
             method={method}
             onSetDefault={() => runAction(() => actions.setDefault(method.id))}
+            onRename={() =>
+              openSideModal(RenameMfaMethodModal, {
+                currentName: method.label ?? "",
+                onRename: (name) => runAction(() => actions.rename(method.id, name))
+              })
+            }
             onRemove={() =>
               openSideModal(RemoveMfaMethodModal, {
                 methodType: method.type,

@@ -39,7 +39,7 @@ describe("completeLoginChallengeMock", () => {
       status: 403,
       errorCode: AUTH_ERROR_CODE.INVALID_MFA_CODE,
       params: [attempts_left - 1],
-      message: `Invalid verification code. ${attempts_left - 1} attempts left`
+      message: `Verification code is invalid, ${attempts_left - 1} attempts left`
     });
   });
 

@@ -1,0 +1,10 @@
+{
+  "error": {
+    "status_code": 400,
+    "error_code": "OA0032",
+    "reason": "%s is not provided",
+    "params": [
+      "label"
+    ]
+  }
+}

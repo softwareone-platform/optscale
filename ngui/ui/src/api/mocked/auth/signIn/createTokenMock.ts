@@ -4,6 +4,7 @@ import { MOCK_LOGIN_CHALLENGE, MOCK_SIGN_IN_CREDENTIALS } from "api/mocked/confi
 import { authError } from "api/mocked/errorBodies";
 import { storeChallenge } from "api/mocked/state/challenges";
 import { getMockPassword } from "api/mocked/state/password";
+import { refuseIfTooManyFailedAttempts } from "./challengeAttempts";
 import { CHALLENGE_BODY, ERROR_BODY, issueChallenge, issueToken } from "./fixtures";
 import { DEFAULT_SIGN_IN_SCENARIO, SIGN_IN_SCENARIO, SignInScenario } from "./scenarios";
 
@@ -13,6 +14,7 @@ type ChallengeScenario = Exclude<
   | typeof SIGN_IN_SCENARIO.REAL_SIGN_IN
   | typeof SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED
   | typeof SIGN_IN_SCENARIO.INTERNAL_ERROR
+  | typeof SIGN_IN_SCENARIO.MFA_LOCKED_OUT
 >;
 
 // Keyed by every challenge scenario, so a new one fails to compile until it names its response.
@@ -64,9 +66,14 @@ export const createTokenMock = async (
       throw authError(ERROR_BODY.EMAIL_NOT_VERIFIED);
     case SIGN_IN_SCENARIO.INTERNAL_ERROR:
       throw authError(ERROR_BODY.INTERNAL_ERROR);
+    case SIGN_IN_SCENARIO.MFA_LOCKED_OUT:
+      throw authError(ERROR_BODY.TOO_MANY_FAILED_ATTEMPTS);
     default: {
       const { body, ...fill } = CHALLENGE_RESPONSE[scenario];
       const challenge = issueChallenge(body, email, fill);
+
+      // The service checks the user's wrong codes before it starts another challenge.
+      refuseIfTooManyFailedAttempts(challenge.user_id);
 
       storeChallenge(challenge);
 

@@ -1,8 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { AUTH_ERROR_CODE, AuthApiError } from "api/auth/errors";
 import { CREATE_TOKEN_STATUS, LOGIN_CHALLENGE_STATE } from "api/auth/signIn/constants";
 import { AuthToken, LoginChallenge } from "api/auth/signIn/types";
-import { MOCK_SIGN_IN_CREDENTIALS } from "api/mocked/config";
+import { MOCK_MFA, MOCK_SIGN_IN_CREDENTIALS } from "api/mocked/config";
+import { mockState, resetMockState } from "api/mocked/state/mockState";
 import { getCurrentUTCTimeInSec } from "utils/datetime";
 import macaroon from "utils/macaroons";
 import { createTokenMock } from "./createTokenMock";
@@ -92,6 +93,29 @@ describe("createTokenMock", () => {
     const challenge = await challengeFor(SIGN_IN_SCENARIO.MFA_TOTP_DEFAULT);
 
     expect(challenge.expires_at).toBeGreaterThan(getCurrentUTCTimeInSec());
+  });
+
+  describe("after the user's 10 wrong codes in 15 minutes", () => {
+    afterEach(resetMockState);
+
+    it("refuses mfa_locked_out's password with OA0090", async () => {
+      await expect(signIn(SIGN_IN_SCENARIO.MFA_LOCKED_OUT)).rejects.toMatchObject({
+        status: 403,
+        errorCode: AUTH_ERROR_CODE.TOO_MANY_FAILED_ATTEMPTS
+      });
+    });
+
+    it("starts no new challenge, but still issues a token to a user without MFA", async () => {
+      const now = getCurrentUTCTimeInSec();
+      mockState.failedAttemptTimesByUser.set(MOCK_USER_ID, Array(MOCK_MFA.USER_FAILED_ATTEMPTS_LIMIT).fill(now));
+
+      await expect(signIn(SIGN_IN_SCENARIO.MFA_TOTP_DEFAULT)).rejects.toMatchObject({
+        errorCode: AUTH_ERROR_CODE.TOO_MANY_FAILED_ATTEMPTS
+      });
+      await expect(signIn(SIGN_IN_SCENARIO.TOKEN_ISSUED)).resolves.toMatchObject({
+        status: CREATE_TOKEN_STATUS.TOKEN_ISSUED
+      });
+    });
   });
 
   it("rejects email_not_verified with OA0073", async () => {

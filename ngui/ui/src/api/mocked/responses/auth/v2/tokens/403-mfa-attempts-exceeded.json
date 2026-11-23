@@ -2,7 +2,7 @@
   "error": {
     "status_code": 403,
     "error_code": "OA0087",
-    "reason": "Too many attempts",
+    "reason": "Too many failed attempts, sign in again",
     "params": []
   }
 }

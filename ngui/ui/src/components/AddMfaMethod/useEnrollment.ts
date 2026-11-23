@@ -8,12 +8,13 @@ import { getEnrollmentFailure } from "./utils";
 
 type UseEnrollmentParams = {
   type: MfaMethodType;
+  label?: string;
   calls: MfaEnrollmentCalls;
   onConfirmed: (method: MfaMethodDetails) => void;
 };
 
 /** One enrollment of `type`: started on demand, confirmed with a code, started again once it expires. */
-export const useEnrollment = ({ type, calls, onConfirmed }: UseEnrollmentParams) => {
+export const useEnrollment = ({ type, label, calls, onConfirmed }: UseEnrollmentParams) => {
   const [enrollment, setEnrollment] = useState<MfaEnrollment | null>(null);
   const [isStarting, setIsStarting] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -28,14 +29,14 @@ export const useEnrollment = ({ type, calls, onConfirmed }: UseEnrollmentParams)
     setIsStarting(true);
 
     try {
-      setEnrollment(await calls.start(type));
+      setEnrollment(await calls.start({ type, label }));
     } catch (error) {
       // A failed restart keeps the enrollment already shown — a resent e-mail code within the minute, say.
       setFailure(getEnrollmentFailure(error));
     } finally {
       setIsStarting(false);
     }
-  }, [calls, type]);
+  }, [calls, type, label]);
 
   const confirm = async (code: string) => {
     if (!enrollment) {

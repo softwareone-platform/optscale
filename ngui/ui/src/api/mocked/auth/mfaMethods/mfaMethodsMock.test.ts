@@ -18,6 +18,8 @@ import { SECURITY_SCENARIO } from "./scenarios";
 
 const CODE = MOCK_SIGN_IN_CREDENTIALS.mfaCode;
 
+const TOTP = { type: MFA_METHOD_TYPE.TOTP, label: "My phone" };
+
 // The store outlives each test, like the dev server's; a fresh user id keeps every test on its own row.
 let userCount = 0;
 const newUser = () => {
@@ -63,7 +65,7 @@ describe("getMfaStatusMock", () => {
 
   it("starts the user over when the dev panel picks another scenario", async () => {
     const user = newUser();
-    await startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.TOTP }, SECURITY_SCENARIO.NO_METHODS);
+    await startMfaEnrollmentMock({ ...user, ...TOTP }, SECURITY_SCENARIO.NO_METHODS);
 
     const mfa = await getMfaStatusMock(user, SECURITY_SCENARIO.TOTP_AND_EMAIL);
 
@@ -89,25 +91,38 @@ describe("startMfaEnrollmentMock", () => {
 
   it("does not list a pending enrollment among the methods", async () => {
     const user = newUser();
-    await startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.TOTP });
+    await startMfaEnrollmentMock({ ...user, ...TOTP });
 
     await expect(getMfaStatusMock(user)).resolves.toMatchObject({ methods: [], status: MFA_STATUS.NOT_CONFIGURED });
   });
 
-  it("answers 409 naming the type when a confirmed method of it exists", async () => {
+  it("answers 409 naming the type when the user already has a confirmed e-mail method", async () => {
     await expect(
-      startMfaEnrollmentMock({ ...newUser(), type: MFA_METHOD_TYPE.TOTP }, SECURITY_SCENARIO.TOTP_ONLY)
+      startMfaEnrollmentMock({ ...newUser(), type: MFA_METHOD_TYPE.EMAIL }, SECURITY_SCENARIO.TOTP_AND_EMAIL)
     ).rejects.toMatchObject({
       status: 409,
       errorCode: AUTH_ERROR_CODE.MFA_METHOD_EXISTS,
-      message: "Authentication method of type totp already exists"
+      message: "Authentication method of type email already exists"
     });
+  });
+
+  it("adds another authenticator app beside a confirmed one", async () => {
+    const user = newUser();
+    const { id } = await startMfaEnrollmentMock({ ...user, ...TOTP, label: "Tablet" }, SECURITY_SCENARIO.TOTP_ONLY);
+    await confirmMfaEnrollmentMock({ ...user, methodId: id, code: CODE }, SECURITY_SCENARIO.TOTP_ONLY);
+
+    const { methods } = await getMfaStatusMock(user, SECURITY_SCENARIO.TOTP_ONLY);
+
+    expect(methods.map(({ type, label }) => [type, label])).toEqual([
+      [MFA_METHOD_TYPE.TOTP, "Google Pixel 10 Pro"],
+      [MFA_METHOD_TYPE.TOTP, "Tablet"]
+    ]);
   });
 
   it("replaces an unfinished enrollment of the same type when started again", async () => {
     const user = newUser();
-    const first = await startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.TOTP });
-    const second = await startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.TOTP });
+    const first = await startMfaEnrollmentMock({ ...user, ...TOTP });
+    const second = await startMfaEnrollmentMock({ ...user, ...TOTP });
 
     await expect(confirmMfaEnrollmentMock({ ...user, methodId: first.id, code: CODE })).rejects.toMatchObject({ status: 404 });
     await expect(confirmMfaEnrollmentMock({ ...user, methodId: second.id, code: CODE })).resolves.toMatchObject({
@@ -131,16 +146,23 @@ describe("startMfaEnrollmentMock", () => {
     await expect(
       startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.EMAIL }, SECURITY_SCENARIO.EMAIL_SERVICE_DOWN)
     ).rejects.toMatchObject({ status: 503, errorCode: AUTH_ERROR_CODE.SERVICE_UNAVAILABLE });
-    await expect(
-      startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.TOTP }, SECURITY_SCENARIO.EMAIL_SERVICE_DOWN)
-    ).resolves.toMatchObject({ confirmed: false });
+    await expect(startMfaEnrollmentMock({ ...user, ...TOTP }, SECURITY_SCENARIO.EMAIL_SERVICE_DOWN)).resolves.toMatchObject({
+      confirmed: false
+    });
   });
 
-  it("labels an authenticator app the client did not name with null, and the method with the user's id", async () => {
+  it("answers 400 to an authenticator app without a name", async () => {
+    await expect(startMfaEnrollmentMock({ ...newUser(), type: MFA_METHOD_TYPE.TOTP })).rejects.toMatchObject({
+      status: 400,
+      errorCode: AUTH_ERROR_CODE.NOT_PROVIDED,
+      message: "label is not provided"
+    });
+  });
+
+  it("starts the method as the user's own", async () => {
     const user = newUser();
 
-    await expect(startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.TOTP })).resolves.toMatchObject({
-      label: null,
+    await expect(startMfaEnrollmentMock({ ...user, ...TOTP })).resolves.toMatchObject({
       user_id: user.userId,
       confirmed_at: 0
     });
@@ -209,7 +231,7 @@ describe("confirmMfaEnrollmentMock", () => {
 
   it("confirms the first method as the default and leaves the secret out of the answer", async () => {
     const user = newUser();
-    const { id } = await startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.TOTP });
+    const { id } = await startMfaEnrollmentMock({ ...user, ...TOTP });
 
     const method = await confirmMfaEnrollmentMock({ ...user, methodId: id, code: CODE });
 
@@ -230,7 +252,7 @@ describe("confirmMfaEnrollmentMock", () => {
 
   it("answers 403 to a wrong code and still accepts the right one afterwards", async () => {
     const user = newUser();
-    const { id } = await startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.TOTP });
+    const { id } = await startMfaEnrollmentMock({ ...user, ...TOTP });
 
     await expect(confirmMfaEnrollmentMock({ ...user, methodId: id, code: "000000" })).rejects.toMatchObject({
       status: 403,
@@ -264,7 +286,7 @@ describe("confirmMfaEnrollmentMock", () => {
   it("answers 404 once the pending enrollment is older than 15 minutes", async () => {
     vi.useFakeTimers();
     const user = newUser();
-    const { id } = await startMfaEnrollmentMock({ ...user, type: MFA_METHOD_TYPE.TOTP });
+    const { id } = await startMfaEnrollmentMock({ ...user, ...TOTP });
 
     vi.advanceTimersByTime(MOCK_MFA.PENDING_ENROLLMENT_TTL_SECONDS * 1000);
 
@@ -296,6 +318,35 @@ describe("updateMfaMethodMock", () => {
       status: 404
     });
   });
+
+  it("renames an authenticator app", async () => {
+    const user = newUser();
+    const [totp] = (await getMfaStatusMock(user, SECURITY_SCENARIO.TOTP_ONLY)).methods;
+
+    await expect(
+      updateMfaMethodMock({ ...user, methodId: totp.id, label: "Work phone" }, SECURITY_SCENARIO.TOTP_ONLY)
+    ).resolves.toMatchObject({ label: "Work phone" });
+  });
+
+  it("answers 400 to renaming an e-mail method, which keeps its masked address", async () => {
+    const user = newUser();
+    const { methods } = await getMfaStatusMock(user, SECURITY_SCENARIO.TOTP_AND_EMAIL);
+    const emailMethod = methods.find(({ type }) => type === MFA_METHOD_TYPE.EMAIL);
+
+    await expect(
+      updateMfaMethodMock({ ...user, methodId: emailMethod?.id ?? "", label: "Mine" }, SECURITY_SCENARIO.TOTP_AND_EMAIL)
+    ).rejects.toMatchObject({ status: 400, errorCode: AUTH_ERROR_CODE.INVALID_VALUE, message: "Invalid label" });
+  });
+
+  it("answers 409 to making a pending method the default", async () => {
+    const user = newUser();
+    const { id } = await startMfaEnrollmentMock({ ...user, ...TOTP });
+
+    await expect(updateMfaMethodMock({ ...user, methodId: id, is_default: true })).rejects.toMatchObject({
+      status: 409,
+      errorCode: AUTH_ERROR_CODE.MFA_METHOD_NOT_CONFIRMED
+    });
+  });
 });
 
 describe("deleteMfaMethodMock and resetMfaMock", () => {
@@ -307,6 +358,25 @@ describe("deleteMfaMethodMock and resetMfaMock", () => {
 
     const { methods } = await getMfaStatusMock(user, SECURITY_SCENARIO.TOTP_AND_EMAIL);
     expect(methods.map(({ type }) => type)).toEqual([MFA_METHOD_TYPE.EMAIL]);
+  });
+
+  it("makes the remaining method the default when the default is removed", async () => {
+    const user = newUser();
+    const [totp] = (await getMfaStatusMock(user, SECURITY_SCENARIO.TOTP_AND_EMAIL)).methods;
+
+    await deleteMfaMethodMock({ ...user, methodId: totp.id }, SECURITY_SCENARIO.TOTP_AND_EMAIL);
+
+    const { methods } = await getMfaStatusMock(user, SECURITY_SCENARIO.TOTP_AND_EMAIL);
+    expect(methods.map(({ type, is_default }) => [type, is_default])).toEqual([[MFA_METHOD_TYPE.EMAIL, true]]);
+  });
+
+  it("answers 403 to removing the last method while MFA is enforced", async () => {
+    const user = newUser();
+    const [method] = (await getMfaStatusMock(user, SECURITY_SCENARIO.ENFORCED_WITH_METHODS)).methods;
+
+    await expect(
+      deleteMfaMethodMock({ ...user, methodId: method.id }, SECURITY_SCENARIO.ENFORCED_WITH_METHODS)
+    ).rejects.toMatchObject({ status: 403, errorCode: AUTH_ERROR_CODE.LAST_MFA_METHOD_ENFORCED });
   });
 
   it("removes every method on reset", async () => {

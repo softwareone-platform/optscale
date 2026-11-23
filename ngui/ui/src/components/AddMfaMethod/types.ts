@@ -12,6 +12,7 @@ export type EnrollmentFailure = ObjectValues<typeof ENROLLMENT_FAILURE>;
  * (`useSignedInMfaEnrollment`); the enforced setup will pass ones that go through the login challenge.
  */
 export type MfaEnrollmentCalls = {
-  start: (type: MfaMethodType) => Promise<MfaEnrollment>;
+  // `label` names an authenticator app; an e-mail method is named by its masked address.
+  start: (params: { type: MfaMethodType; label?: string }) => Promise<MfaEnrollment>;
   confirm: (params: { methodId: string; code: string }) => Promise<MfaMethodDetails>;
 };

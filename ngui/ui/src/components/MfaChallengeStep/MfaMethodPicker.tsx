@@ -7,7 +7,7 @@ import { FormattedMessage } from "react-intl";
 import { MfaMethod } from "api/auth/mfaMethod";
 import FullWidthButton from "components/FullWidthButton";
 import InfoChip from "components/InfoChip";
-import MfaMethodTile from "components/MfaMethodTile";
+import MfaMethodTile, { MfaMethodDescription } from "components/MfaMethodTile";
 import { SPACING_2, SPACING_3 } from "utils/layouts";
 
 type MfaMethodPickerProps = {
@@ -46,7 +46,7 @@ const MfaMethodPicker = ({ methods, initiallySelectedMethodId, onUseSelectedMeth
             <MfaMethodTile
               key={method.id}
               type={method.type}
-              description={method.label}
+              description={method.label && <MfaMethodDescription type={method.type} label={method.label} />}
               chip={
                 method.is_default && <InfoChip label={<FormattedMessage id="default" />} data-test-id="chip_default_method" />
               }

@@ -26,12 +26,19 @@ const verify = (challengeId: string, code: string) =>
   completeLoginChallengeMock({ challenge_id: challengeId, method_id: TOTP_METHOD_ID, code }).catch((error) => error);
 
 const startEnrollment = ({ user_id, challenge_id }: ReturnType<typeof signIn>) =>
-  startChallengeEnrollmentMock({ userId: user_id, challengeId: challenge_id, type: "totp" }).catch((error) => error);
+  startChallengeEnrollmentMock({ userId: user_id, challengeId: challenge_id, type: "totp", label: "My phone" }).catch(
+    (error) => error
+  );
 
 describe("the limits on MFA codes across a user's challenges", () => {
   it("refuses another sign-in's enrollment once one of the user's challenges enrolled a method", async () => {
     const [first, second] = [signIn(CHALLENGE_BODY.ENROLLMENT_REQUIRED), signIn(CHALLENGE_BODY.ENROLLMENT_REQUIRED)];
-    const { id } = await startChallengeEnrollmentMock({ userId: first.user_id, challengeId: first.challenge_id, type: "totp" });
+    const { id } = await startChallengeEnrollmentMock({
+      userId: first.user_id,
+      challengeId: first.challenge_id,
+      type: "totp",
+      label: "My phone"
+    });
     await confirmChallengeEnrollmentMock({
       userId: first.user_id,
       challengeId: first.challenge_id,

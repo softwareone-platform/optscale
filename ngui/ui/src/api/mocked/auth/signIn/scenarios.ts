@@ -13,6 +13,7 @@ export const SIGN_IN_SCENARIO = Object.freeze({
   MFA_LAST_ATTEMPT: "mfa_last_attempt",
   MFA_EXPIRING: "mfa_expiring",
   ENROLLMENT_REQUIRED: "enrollment_required",
+  MFA_LOCKED_OUT: "mfa_locked_out",
   EMAIL_NOT_VERIFIED: "email_not_verified",
   INTERNAL_ERROR: "internal_error"
 } as const);
@@ -75,7 +76,13 @@ export const SIGN_IN_SCENARIO_INFO: Record<SignInScenario, { label: string; desc
     label: "MFA enforced by organization, not set up",
     description: "Must add a method before getting in.",
     details:
-      "202 LoginChallenge, state enrollment_required, methods empty. /mfa-enrollment adds one under the challenge; confirming it issues the token. A code sent to /tokens answers 403 OA0078. Once one tab enrolls, another tab's challenge answers 403 OA0089; 10 wrong codes in 15 minutes, across sign-ins, answer 403 OA0090."
+      "202 LoginChallenge, state enrollment_required, methods empty. /mfa-enrollment adds one under the challenge; confirming it issues the token. A code sent to /tokens answers 403 OA0088. Once one tab enrolls, another tab's challenge answers 403 OA0089; 10 wrong codes in 15 minutes, across sign-ins, answer 403 OA0090."
+  },
+  [SIGN_IN_SCENARIO.MFA_LOCKED_OUT]: {
+    label: "Locked out — too many wrong codes",
+    description: "The password is refused for 15 minutes.",
+    details:
+      "403 OA0090 to the password: the user entered 10 wrong codes in the last 15 minutes, across sign-ins, so the service starts no new challenge. Ten wrong codes under the other MFA scenarios lead here too."
   },
   [SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED]: {
     label: "E-mail not verified",
@@ -101,6 +108,7 @@ export const SIGN_IN_SCENARIO_STATUS: Record<SignInScenario, ScenarioStatusInfo>
   [SIGN_IN_SCENARIO.MFA_LAST_ATTEMPT]: { status: SCENARIO_STATUS.READY },
   [SIGN_IN_SCENARIO.MFA_EXPIRING]: { status: SCENARIO_STATUS.READY },
   [SIGN_IN_SCENARIO.ENROLLMENT_REQUIRED]: { status: SCENARIO_STATUS.READY },
+  [SIGN_IN_SCENARIO.MFA_LOCKED_OUT]: { status: SCENARIO_STATUS.READY },
   [SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED]: { status: SCENARIO_STATUS.READY },
   [SIGN_IN_SCENARIO.INTERNAL_ERROR]: { status: SCENARIO_STATUS.READY }
 };
@@ -120,7 +128,10 @@ export const SIGN_IN_SCENARIO_GROUPS: { label: string; scenarios: SignInScenario
     ]
   },
   { label: "202 — Enrollment (enrollment_required)", scenarios: [SIGN_IN_SCENARIO.ENROLLMENT_REQUIRED] },
-  { label: "Errors", scenarios: [SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED, SIGN_IN_SCENARIO.INTERNAL_ERROR] }
+  {
+    label: "Errors",
+    scenarios: [SIGN_IN_SCENARIO.MFA_LOCKED_OUT, SIGN_IN_SCENARIO.EMAIL_NOT_VERIFIED, SIGN_IN_SCENARIO.INTERNAL_ERROR]
+  }
 ];
 
 export const isSignInScenario = (value: unknown): value is SignInScenario =>

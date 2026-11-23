@@ -6,7 +6,8 @@ export {
   getMfaVerificationFailure,
   isEmailNotVerifiedError,
   isInvalidCredentialsError,
-  isInvalidVerificationCodeError
+  isInvalidVerificationCodeError,
+  isTooManyFailedAttemptsError
 } from "./errors";
 export { resolveLoginOptions } from "./loginOptions";
 export { requestChallengeCode } from "./requestChallengeCode";

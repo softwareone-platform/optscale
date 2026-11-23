@@ -2,7 +2,7 @@
   "error": {
     "status_code": 403,
     "error_code": "OA0086",
-    "reason": "Invalid verification code. %s attempts left",
+    "reason": "Verification code is invalid, %s attempts left",
     "params": []
   }
 }

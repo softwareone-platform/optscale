@@ -2,7 +2,7 @@
   "error": {
     "status_code": 403,
     "error_code": "OA0089",
-    "reason": "An authentication method is already enrolled",
+    "reason": "An authentication method is already enrolled, sign in again",
     "params": []
   }
 }

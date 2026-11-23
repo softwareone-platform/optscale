@@ -12,6 +12,10 @@ export const isInvalidVerificationCodeError = (error: unknown): boolean =>
 
 export const isEmailNotVerifiedError = (error: unknown): boolean => hasErrorCode(error, AUTH_ERROR_CODE.EMAIL_NOT_VERIFIED);
 
+/** The user's 10 wrong codes in 15 minutes: refused even before a challenge, at the password or e-mailed code. */
+export const isTooManyFailedAttemptsError = (error: unknown): boolean =>
+  hasErrorCode(error, AUTH_ERROR_CODE.TOO_MANY_FAILED_ATTEMPTS);
+
 /** What a wrong code under a challenge leaves; `null` for any other error, or a count the service left out. */
 export const getAttemptsLeft = (error: unknown) => {
   if (!hasErrorCode(error, AUTH_ERROR_CODE.INVALID_MFA_CODE)) {

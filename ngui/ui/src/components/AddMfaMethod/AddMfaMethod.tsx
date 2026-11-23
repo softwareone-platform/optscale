@@ -23,7 +23,7 @@ const SETUP_STEP: Record<MfaMethodType, AddMfaMethodStep> = {
 };
 
 export type AddMfaMethodProps = {
-  /** Types the user already has a confirmed method of — they cannot be added again. */
+  /** Types the user already has a confirmed method of — e-mail cannot be added again. */
   confirmedTypes: MfaMethodType[];
   accountEmail: string;
   calls: MfaEnrollmentCalls;
