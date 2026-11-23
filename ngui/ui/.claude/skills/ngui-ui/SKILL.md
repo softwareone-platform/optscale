@@ -108,7 +108,7 @@ the same result. Treat these as the baseline, not as something you broke:
 | Check                     | Pre-existing state                                                                                                                                                                       |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `pnpm type:check`         | **~15,300 error lines**, ~1,470 of them inside `src/themes/finops`. Not a usable gate. Baseline it before your first edit, then diff — recipe below. Your files must add **zero** lines. |
-| `pnpm translate:validate` | 5 coverage failures for `awsUseExternalId` and `regionScope*`. Confirm your keys are absent from the diff.                                                                               |
+| `pnpm translate:validate` | Coverage fails on keys upstream syncs add untranslated. Confirm none of your keys is in the `missing` lists.                                                                             |
 | `pnpm prettier:check`     | `src/themes/finops/utils/features/README.md` is unformatted. Leave it; don't sweep it into your diff.                                                                                    |
 
 `pnpm build` **is** clean, and is the only check that exercises the theme resolver and the lazy page
@@ -133,6 +133,8 @@ git diff --cached --name-only --relative --diff-filter=d -- src | grep -E '\.(ts
 `--relative` turns the monorepo-root paths (`ngui/ui/src/…`) into ones that resolve from `ngui/ui`.
 `xargs -r` skips prettier when nothing is staged — a bare `npx prettier --write` with no files waits on
 stdin forever. In zsh an unquoted `$FILES` is one argument, so don't collect the list in a variable.
+A staged upstream file (`containers/AuthorizationContainer/AuthorizationContainer.tsx`) gets upstream's own lines
+reformatted too — leave such files out of the list, or `git restore` them back to the staged version afterwards.
 
 ### `translate:sort` rewrites upstream
 
@@ -260,22 +262,23 @@ before hand-rolling:
 
 Components the MFA work built, meant for reuse (`components/…`):
 
-| Component               | Use for                                                                                                                                            |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AddMfaMethod`          | Choose, set up and confirm a method — the content of the `AddMfaMethodModal` side modal; the caller passes its `MfaEnrollmentCalls`                |
-| `MfaMethodIcon`         | A method type's icon, plus `MFA_METHOD_NAME_MESSAGE_ID`                                                                                            |
-| `MfaChallengeStep`      | The sign-in MFA screen (`/mfa`); `MfaEnrollmentStep` is the enforced setup (`/mfa-enrollment`)                                                     |
-| `LoginChallenge`        | What `/mfa` and `/mfa-enrollment` share: `LoginChallengeScreen`, `useChallengeEnding`, `BackToLoginButton`, `MfaChallengeEnded`, `formatCountdown` |
-| `SignInCard`            | A pre-app step as one card on the page background (the invitation screen's look)                                                                   |
-| `Button`                | `isLoading`: disabled, spinner in place of the start icon — in main's and in the theme override                                                    |
-| `InfoChip`              | The info-coloured chip: "Default", "Already set up"                                                                                                |
-| `FullWidthButton`       | The sign-in screens' large, full-width, filled button                                                                                              |
-| `MfaMethodTile`         | A method as one bordered tile: picker (radio), code entry, add dialog (button), Security (menu)                                                    |
-| `CodeSignIn`            | E-mailed-code sign-in step, success step and `useProceedToApp` for recovery and verification                                                       |
-| `MfaSecuritySettings`   | Profile → Security: the methods list, set default, remove                                                                                          |
-| `OrganizationMfaPolicy` | Settings → Security: the organization's "Enforce MFA" switch, confirmed in `ChangeMfaEnforcementModal`                                             |
-| `MfaSetupPrompt`        | Dismissable home-page nudge for users without MFA                                                                                                  |
-| `MockedApiDevPanelSlot` | The dev panel's mount point — see above                                                                                                            |
+| Component               | Use for                                                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `AddMfaMethod`          | Choose, set up and confirm a method — the content of the `AddMfaMethodModal` side modal; the caller passes its `MfaEnrollmentCalls`                          |
+| `MfaMethodIcon`         | A method type's icon, plus `MFA_METHOD_NAME_MESSAGE_ID`                                                                                                      |
+| `MfaChallengeStep`      | The sign-in MFA screen (`/mfa`); `MfaEnrollmentStep` is the enforced setup (`/mfa-enrollment`)                                                               |
+| `LoginChallenge`        | What `/mfa` and `/mfa-enrollment` share: `LoginChallengeScreen`, `useChallengeEnding`, `BackToLoginButton`, `MfaChallengeEnded`, `formatCountdown`           |
+| `SignInCard`            | A pre-app step as one card on the page background (the invitation screen's look)                                                                             |
+| `Button`                | `isLoading`: disabled, spinner in place of the start icon — in main's and in the theme override                                                              |
+| `InfoChip`              | The info-coloured chip: "Default", "Already set up"                                                                                                          |
+| `FullWidthButton`       | The sign-in screens' large, full-width, filled button                                                                                                        |
+| `MfaMethodTile`         | A method as one bordered tile: picker (radio), code entry, add dialog (button), Security (menu); `MfaMethodDescription` is its "Configured on {device}" line |
+| `MfaDeviceNameForm`     | Names an authenticator app — the setup step before the QR code, and Rename in Security                                                                       |
+| `CodeSignIn`            | E-mailed-code sign-in step, success step and `useProceedToApp` for recovery and verification                                                                 |
+| `MfaSecuritySettings`   | Profile → Security: the methods list, set default, remove                                                                                                    |
+| `OrganizationMfaPolicy` | Settings → Security: the organization's "Enforce MFA" switch, confirmed in `ChangeMfaEnforcementModal`                                                       |
+| `MfaSetupPrompt`        | Dismissable home-page nudge for users without MFA                                                                                                            |
+| `MockedApiDevPanelSlot` | The dev panel's mount point — see above                                                                                                                      |
 
 OptScale has no centred modals: an extra step opens a **side modal**. A class in
 `components/SideModalManager/SideModals/` (the MFA ones extend `sideModalBase<Payload>()` for a typed payload) is

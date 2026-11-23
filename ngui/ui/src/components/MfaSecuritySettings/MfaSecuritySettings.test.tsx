@@ -33,7 +33,7 @@ const TOTP: MfaMethodDetails = {
   id: "a1d3",
   user_id: "9c2a",
   type: MFA_METHOD_TYPE.TOTP,
-  label: "Google Pixel 10 Pro",
+  label: "Label example Google Pixel 10 Pro",
   is_default: true,
   confirmed: true,
   confirmed_at: 1_758_480_120,

@@ -135,7 +135,7 @@ describe("AddMfaMethod", () => {
     const openAuthenticatorApp = async () => {
       renderAddMfaMethod();
       await click("btn_choose_mfa_method_totp");
-      await nameDevice("Google Pixel 10 Pro");
+      await nameDevice("Label example Google Pixel 10 Pro");
     };
 
     it("asks for the device's name before starting anything", async () => {
@@ -157,9 +157,9 @@ describe("AddMfaMethod", () => {
     it("starts the enrollment under the trimmed name and shows the QR code and the manual key", async () => {
       renderAddMfaMethod();
       await click("btn_choose_mfa_method_totp");
-      await nameDevice("  Google Pixel 10 Pro ");
+      await nameDevice("  Label example Google Pixel 10 Pro ");
 
-      expect(start).toHaveBeenCalledWith({ type: MFA_METHOD_TYPE.TOTP, label: "Google Pixel 10 Pro" });
+      expect(start).toHaveBeenCalledWith({ type: MFA_METHOD_TYPE.TOTP, label: "GLabel example Google Pixel 10 Pro" });
       expect(find("img_mfa_qr_code")).not.toBeNull();
       expect(find("p_mfa_secret")?.textContent).toBe(TOTP_ENROLLMENT.secret);
     });

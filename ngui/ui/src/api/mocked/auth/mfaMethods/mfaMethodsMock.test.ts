@@ -114,7 +114,7 @@ describe("startMfaEnrollmentMock", () => {
     const { methods } = await getMfaStatusMock(user, SECURITY_SCENARIO.TOTP_ONLY);
 
     expect(methods.map(({ type, label }) => [type, label])).toEqual([
-      [MFA_METHOD_TYPE.TOTP, "Google Pixel 10 Pro"],
+      [MFA_METHOD_TYPE.TOTP, "Label example Google Pixel 10 Pro"],
       [MFA_METHOD_TYPE.TOTP, "Tablet"]
     ]);
   });

@@ -8,7 +8,7 @@
     {
       "id": "a1d3f7c0-2e18-4c9b-9a55-7b0d1c4e6f32",
       "type": "totp",
-      "label": "Google Pixel 10 Pro",
+      "label": "Label example Google Pixel 10 Pro",
       "is_default": false,
       "confirmed": true
     },
