@@ -22,6 +22,7 @@ from ffc_api.ffc_api_server.app.schemas.datasources import (
     DataSourceDetailRead,
     DataSourceDetails,
     DiscoveryItem,
+    FocusDetails,
     GcpDetails,
     ImportStatus,
     MetricsInfo,
@@ -176,6 +177,19 @@ def _build_details(
                 billing_dataset_name=billing_data.get("dataset_name"),
                 billing_table_name=billing_data.get("table_name"),
                 billing_project_id=billing_data.get("project_id"),
+            )
+        case CloudTypes.FOCUS.value:
+            # credentials are empty for anonymous access: only the key id is exposed
+            credentials = config.get("credentials") or {}
+            return FocusDetails(
+                connected_at=connected_at,
+                bucket_name=config.get("bucket_name"),
+                bucket_prefix=config.get("bucket_prefix"),
+                s3_endpoint=config.get("s3_endpoint"),
+                region_name=config.get("region_name"),
+                access_key_id=credentials.get("access_key_id"),
+                file_pattern=config.get("file_pattern"),
+                mapping=config.get("mapping"),
             )
     return None
 
