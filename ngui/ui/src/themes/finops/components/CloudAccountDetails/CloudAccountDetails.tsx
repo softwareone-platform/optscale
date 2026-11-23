@@ -13,6 +13,7 @@ import PageContentWrapper from "components/PageContentWrapper";
 import {
   DisconnectCloudAccountModal,
   UpdateDataSourceCredentialsModal,
+  EditFocusMappingModal,
   RenameDataSourceModal,
   KubernetesIntegrationModal,
   DataSourceBillingReimportModal
@@ -36,6 +37,7 @@ import {
   ENVIRONMENT,
   AZURE_TENANT,
   DATABRICKS,
+  FOCUS,
   AZURE_CNR,
   GCP_CNR,
   ALIBABA_CNR,
@@ -130,6 +132,19 @@ const PageActionBar = ({ id, type, parentId, name, config, dataSourceProps, last
             show: parentId,
             value: <FormattedMessage id="updateChildDataSourceCredentialsWarning" />
           }
+        })
+      },
+      {
+        show: type === FOCUS,
+        getItem: () => ({
+          key: "cloudAccountDetails-edit-focus-mapping",
+          icon: <SettingsIcon fontSize="small" />,
+          messageId: "editMapping",
+          dataTestId: "btn_edit_focus_mapping_modal",
+          type: "button",
+          isLoading,
+          action: () => openSideModal(EditFocusMappingModal, { name, id, config }),
+          requiredActions: ["MANAGE_CLOUD_CREDENTIALS"]
         })
       },
       getBillingReimportButton(),
@@ -263,6 +278,8 @@ const Tabs = ({
   lastMetricsRetrievalAttempt,
   lastGettingMetricAttemptError,
   discoveryInfos,
+  lastImportSourceId,
+  lastImportSourceAccountId,
   config,
   isLoading,
   isTenant
@@ -281,6 +298,8 @@ const Tabs = ({
           type={type}
           config={config}
           createdAt={createdAt}
+          lastImportSourceId={lastImportSourceId}
+          lastImportSourceAccountId={lastImportSourceAccountId}
         />
       ),
       renderCondition: () => type !== ENVIRONMENT
@@ -297,6 +316,8 @@ const Tabs = ({
           lastMetricsRetrievalAttempt={lastMetricsRetrievalAttempt}
           lastGettingMetricAttemptError={lastGettingMetricAttemptError}
           discoveryInfos={discoveryInfos}
+          // FOCUS data sources import billing reports only, monitoring metrics are not collected for them
+          withMonitoringMetricsImport={type !== FOCUS}
         />
       ),
       renderCondition: () => !isTenant
@@ -304,8 +325,8 @@ const Tabs = ({
     {
       title: UPLOAD_TAB,
       dataTestId: "tab_upload",
-      node: !!id && <UploadCloudReportDataContainer cloudAccountId={id} />,
-      renderCondition: () => type === AWS_CNR && isAwsReportUploadEnabled
+      node: !!id && <UploadCloudReportDataContainer cloudAccountId={id} dataSourceType={type} />,
+      renderCondition: () => (type === AWS_CNR && isAwsReportUploadEnabled) || type === FOCUS
     },
     {
       title: NODES_TAB,
@@ -348,6 +369,8 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
     last_getting_metrics_at: lastMetricsRetrieval,
     last_getting_metric_attempt_at: lastMetricsRetrievalAttempt,
     last_getting_metric_attempt_error: lastGettingMetricAttemptError,
+    last_import_source_id: lastImportSourceId,
+    last_import_source_account_id: lastImportSourceAccountId,
     details = {},
     config = {}
   } = data;
@@ -407,6 +430,8 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
                 lastMetricsRetrievalAttempt={lastMetricsRetrievalAttempt}
                 lastGettingMetricAttemptError={lastGettingMetricAttemptError}
                 discoveryInfos={discoveryInfos}
+                lastImportSourceId={lastImportSourceId}
+                lastImportSourceAccountId={lastImportSourceAccountId}
                 config={config}
                 isLoading={isLoading}
                 isTenant={isTenant}

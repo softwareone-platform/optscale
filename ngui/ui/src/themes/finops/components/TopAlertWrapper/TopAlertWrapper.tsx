@@ -7,10 +7,13 @@ import TopAlert from "@main/components/TopAlertWrapper/TopAlert";
 import type { AlertType, StoredAlert, TopAlertWrapperProps } from "@main/components/TopAlertWrapper/types";
 import { useAllDataSources } from "hooks/coreData/useAllDataSources";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
-import { AZURE_TENANT, ENVIRONMENT } from "utils/constants";
+import { AZURE_TENANT, ENVIRONMENT, GCP_TENANT } from "utils/constants";
 import { ALERT_TYPES } from "./constants";
 
-const getEligibleDataSources = (dataSources) => dataSources.filter(({ type }) => ![ENVIRONMENT, AZURE_TENANT].includes(type));
+const DATA_SOURCE_TYPES_EXCLUDED_FROM_PROCESSING_ALERT = [ENVIRONMENT, AZURE_TENANT, GCP_TENANT];
+
+const getEligibleDataSources = (dataSources) =>
+  dataSources.filter(({ type }) => !DATA_SOURCE_TYPES_EXCLUDED_FROM_PROCESSING_ALERT.includes(type));
 
 const TopAlertWrapper = ({ blacklistIds = [] }: TopAlertWrapperProps) => {
   const dispatch = useDispatch();
