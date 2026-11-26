@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import ActionBar from "components/ActionBar";
 import BillingSubscription from "components/BillingSubscription";
+import OrganizationMfaPolicy from "components/OrganizationMfaPolicy";
 import OrganizationSettings from "components/OrganizationSettings";
 import PageContentWrapper from "components/PageContentWrapper";
 import TabsWrapper from "components/TabsWrapper";
@@ -34,6 +35,11 @@ const Settings = () => {
       title: SETTINGS_TABS.ORGANIZATION,
       dataTestId: `tab_${SETTINGS_TABS.ORGANIZATION}`,
       node: <OrganizationSettings />,
+    },
+    {
+      title: SETTINGS_TABS.SECURITY,
+      dataTestId: `tab_${SETTINGS_TABS.SECURITY}`,
+      node: <OrganizationMfaPolicy />,
     },
     ...(isDemo || !isBillingIntegrationEnabled
       ? []

@@ -2,6 +2,10 @@ import hystaxConfig from "@hystax/eslint-config-ui";
 import reactPlugin from "eslint-plugin-react";
 
 export default [
+  {
+    // Third-party code copied verbatim; see src/vendor/qrcode-generator/README.md.
+    ignores: ["src/vendor/**"]
+  },
   ...hystaxConfig,
   {
     files: ["**/graphql/__generated__/**"],

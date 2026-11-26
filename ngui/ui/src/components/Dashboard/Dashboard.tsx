@@ -3,6 +3,7 @@ import { FormattedMessage } from "react-intl";
 import AlertDialog from "components/AlertDialog";
 import DashboardGridLayout from "components/DashboardGridLayout";
 import MailTo from "components/MailTo";
+import MfaSetupPrompt from "components/MfaSetupPrompt";
 import Mocked, { MESSAGE_TYPES } from "components/Mocked";
 import PageContentWrapper from "components/PageContentWrapper";
 import { PRODUCT_TOUR, useProductTour, useStartTour } from "components/Tour";
@@ -57,6 +58,7 @@ const Dashboard = () => {
     <>
       <Mocked mock={<DashboardMocked />} backdropMessageType={MESSAGE_TYPES.DASHBOARD}>
         <PageContentWrapper>
+          <MfaSetupPrompt />
           <DashboardGridLayout {...dashboardGridItems} />
         </PageContentWrapper>
       </Mocked>

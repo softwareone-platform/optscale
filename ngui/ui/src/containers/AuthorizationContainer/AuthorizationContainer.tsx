@@ -1,18 +1,18 @@
-import { ApolloError } from "@apollo/client";
 import { Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import LoginForm from "components/forms/LoginForm";
 import RegistrationForm from "components/forms/RegistrationForm";
+import TwoStepLoginForm from "components/forms/TwoStepLoginForm";
 import GoogleAuthButton from "components/GoogleAuthButton";
 import Greeter from "components/Greeter";
 import MicrosoftSignInButton from "components/MicrosoftSignInButton";
 import OAuthSignIn from "components/OAuthSignIn";
 import Redirector from "components/Redirector";
 import { initialize } from "containers/InitializeContainer/redux";
-import { useCreateTokenMutation, useCreateUserMutation, useSignInMutation } from "graphql/__generated__/hooks/auth";
+import { useCreateUserMutation, useSignInMutation } from "graphql/__generated__/hooks/auth";
 import { useGetToken } from "hooks/useGetToken";
 import { useOrganizationInfo } from "hooks/useOrganizationInfo";
+import { usePasswordSignIn } from "hooks/usePasswordSignIn";
 import VerifyEmailService from "services/VerifyEmailService";
 import {
   REGISTER,
@@ -25,9 +25,7 @@ import {
   OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME,
 } from "urls";
 import { GA_EVENT_CATEGORIES, trackEvent } from "utils/analytics";
-import { processGraphQLErrorData } from "utils/apollo";
 import { OPTSCALE_CAPABILITY } from "utils/constants";
-import { ERROR_CODES } from "utils/errorCodes";
 import { SPACING_4 } from "utils/layouts";
 import macaroon from "utils/macaroons";
 import { stringifySearchParams, getSearchParams } from "utils/network";
@@ -51,26 +49,11 @@ const AuthorizationContainer = () => {
 
   const { onSend: sendEmailVerificationCode, isLoading: isSendEmailVerificationCodeLoading } = useSendEmailVerificationCode();
 
-  const [createToken, { loading: loginLoading }] = useCreateTokenMutation();
+  const { signIn: signInWithPassword, isLoading: loginLoading, error: loginError } = usePasswordSignIn();
 
   const [createUser, { loading: registerLoading }] = useCreateUserMutation();
 
   const [signIn, { loading: signInLoading }] = useSignInMutation();
-
-  const handleLogin = async ({ email, password }) => {
-    try {
-      const { data } = await createToken({ variables: { email, password } });
-      const caveats = macaroon.processCaveats(macaroon.deserialize(data.token.token).getCaveats());
-      dispatch(initialize({ ...data.token, caveats }));
-    } catch (error) {
-      if (error instanceof ApolloError) {
-        const errorsData = error.graphQLErrors.map(processGraphQLErrorData);
-        if (errorsData.some(({ errorCode }) => errorCode === ERROR_CODES.OA0073)) {
-          navigate(`${EMAIL_VERIFICATION}?${stringifySearchParams({ email })}`);
-        }
-      }
-    }
-  };
 
   const handleRegister = async ({ email, password, name }: { email: string; password: string; name: string }) => {
     const { data } = await consumeUtmParams((utm) => createUser({ variables: { email, password, name, utm } }));
@@ -130,11 +113,12 @@ const AuthorizationContainer = () => {
   const createForm =
     {
       [LOGIN]: () => (
-        <LoginForm
-          onSubmit={handleLogin}
+        <TwoStepLoginForm
+          onSubmit={signInWithPassword}
           isLoading={loginLoading}
           disabled={registerLoading || signInLoading}
           isInvited={isInvited}
+          error={loginError}
         />
       ),
       [REGISTER]: () => (

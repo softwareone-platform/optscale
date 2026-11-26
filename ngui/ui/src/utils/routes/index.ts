@@ -43,6 +43,8 @@ import inviteEmployeesRoute from "./inviteEmployeesRoute";
 import k8sRightsizingRoute from "./k8sRightsizingRoute";
 import liveDemoRoute from "./liveDemoRoute";
 import loginRoute from "./loginRoute";
+import mfaChallengeRoute from "./mfaChallengeRoute";
+import mfaEnrollmentRoute from "./mfaEnrollmentRoute";
 import mlArtifactsRoute from "./mlArtifactsRoute";
 import mlModelCreateRoute from "./mlCreateModelRoute";
 import mlCreateRunArtifactRoute from "./mlCreateRunArtifactRoute";
@@ -77,6 +79,7 @@ import poolsRoute from "./poolsRoute";
 import poolTtlAnalysisRoute from "./poolTtlAnalysisRoute";
 import powerScheduleDetailsRoute from "./powerScheduleDetailsRoute";
 import powerSchedulesRoute from "./powerSchedulesRoute";
+import profileRoute from "./profileRoute";
 import publicMlRun from "./publicMlRun";
 import quotaRoute from "./quotaRoute";
 import quotasRoute from "./quotasRoute";
@@ -116,6 +119,9 @@ export const routes = [
   quotaRoute,
   quotasRoute,
   usersRoute,
+  mfaChallengeRoute,
+  mfaEnrollmentRoute,
+  profileRoute,
   inviteEmployeesRoute,
   dataSourcesRoute,
   dataSourceOverviewRoute,

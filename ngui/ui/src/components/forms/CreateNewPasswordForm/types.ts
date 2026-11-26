@@ -9,4 +9,6 @@ export type FormValues = {
 export type CreateNewPasswordFormProps = {
   onSubmit: (data: FormValues) => void;
   isLoading?: boolean;
+  /** The account being recovered; without it the form reads `?email=` off the URL, as upstream does. */
+  email?: string;
 };

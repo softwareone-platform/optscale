@@ -1,6 +1,7 @@
 import { forwardRef, ReactNode } from "react";
 import { TooltipProps as MuiTooltipProps } from "@mui/material";
 import MuiButton, { ButtonProps as MuiButtonProps } from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import Link from "@mui/material/Link";
 import { FormattedMessage } from "react-intl";
 import { NavLink, NavLinkProps } from "react-router-dom";
@@ -40,6 +41,8 @@ export type ButtonProps = MuiButtonProps &
     uppercase?: boolean;
     download?: boolean | string;
     tooltip?: TooltipProps;
+    /** While an action runs: disabled, with a spinner in place of the start icon. */
+    isLoading?: boolean;
   };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -62,6 +65,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       color = "info",
       type = "button",
       tooltip,
+      isLoading = false,
+      startIcon,
       ...rest
     }: ButtonProps,
     ref
@@ -92,7 +97,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         data-test-id={dataTestId}
         data-product-tour-id={dataProductTourId}
         onClick={onClick}
-        disabled={disabled}
+        disabled={disabled || isLoading}
+        startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : startIcon}
         variant={variant}
         size={size}
         type={type}

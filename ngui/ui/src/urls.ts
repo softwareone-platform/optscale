@@ -41,6 +41,12 @@ export const ACCEPT_INVITATIONS = "/accept-invitations";
 export const PASSWORD_RECOVERY = "/password-recovery";
 export const EMAIL_VERIFICATION = "/email-verification";
 
+// Reached with a login challenge after the password step, before any token exists.
+export const MFA_CHALLENGE = "/mfa";
+export const MFA_ENROLLMENT = "/mfa-enrollment";
+
+export const PROFILE = "/profile";
+
 export const POOL_BASE = "pool";
 export const POOLS_BASE = "pools";
 const POOL_IDENTIFIER = ":poolId";
@@ -638,3 +644,16 @@ export const CONTACT_US_URL = "https://hystax.com/contact-us/";
 
 export const AWS_DOCS_IAM_THIRD_PARTY_ACCESS =
   "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_common-scenarios_third-party.html";
+
+/** The login page with the address already filled in, for starting sign-in over; `search` keeps the rest of its query (`next`). */
+export const getLoginUrl = (email: string, search = "") => {
+  const params = new URLSearchParams(search);
+  params.set("email", email);
+
+  return `${LOGIN}?${params}`;
+};
+
+export const getPasswordRecoveryUrl = (email: string) => `${PASSWORD_RECOVERY}?${stringifySearchParams({ email })}`;
+
+export const getEmailVerificationUrl = (email: string, capability?: string) =>
+  `${EMAIL_VERIFICATION}?${stringifySearchParams({ email, [OPTSCALE_CAPABILITY_QUERY_PARAMETER_NAME]: capability })}`;

@@ -1,0 +1,33 @@
+import { describe, expect, it, vi } from "vitest";
+import { updateUserPassword } from "./users";
+
+const mockRequestAuth = vi.fn();
+
+vi.mock("../request", () => ({ requestAuth: (path: string, options: unknown) => mockRequestAuth(path, options) }));
+
+describe("updateUserPassword", () => {
+  it("patches only the password on the user, as that user", async () => {
+    mockRequestAuth.mockResolvedValue({ status: 200, data: { id: "9c2a" } });
+
+    const user = await updateUserPassword({ token: "MDAxY", userId: "9c2a/x", password: "n3w-Passw0rd" });
+
+    expect(mockRequestAuth).toHaveBeenCalledWith("/users/9c2a%2Fx", {
+      method: "PATCH",
+      body: { password: "n3w-Passw0rd" },
+      token: "MDAxY",
+    });
+    expect(user).toEqual({ id: "9c2a" });
+  });
+
+  it("sends the current password beside the new one when given", async () => {
+    mockRequestAuth.mockResolvedValue({ status: 200, data: { id: "9c2a" } });
+
+    await updateUserPassword({ token: "MDAxY", userId: "9c2a", password: "n3w-Passw0rd", currentPassword: "0ld-Passw0rd" });
+
+    expect(mockRequestAuth).toHaveBeenCalledWith("/users/9c2a", {
+      method: "PATCH",
+      body: { password: "n3w-Passw0rd", current_password: "0ld-Passw0rd" },
+      token: "MDAxY",
+    });
+  });
+});

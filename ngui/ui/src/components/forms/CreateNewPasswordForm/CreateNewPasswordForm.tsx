@@ -5,12 +5,12 @@ import { FIELD_NAMES } from "./constants";
 import { ConfirmPasswordField, EmailField, FormButtons, NewPasswordField } from "./FormElements";
 import { FormValues, CreateNewPasswordFormProps } from "./types";
 
-const CreateNewPasswordForm = ({ onSubmit, isLoading = false }: CreateNewPasswordFormProps) => {
+const CreateNewPasswordForm = ({ onSubmit, isLoading = false, email: accountEmail }: CreateNewPasswordFormProps) => {
   const { email } = getSearchParams() as { email: string };
 
   const methods = useForm<FormValues>({
     defaultValues: {
-      [FIELD_NAMES.EMAIL]: email,
+      [FIELD_NAMES.EMAIL]: accountEmail ?? email,
     },
   });
 

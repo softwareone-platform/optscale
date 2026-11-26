@@ -64,7 +64,7 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           rewrite: (p) => {
-            return p === '/api' ? p : p.replace(/^\/api/, "/");
+            return p.indexOf('/api/') === 0 ? p.replace(/^\/api/, "/") : p;
           }
         }
       }

@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -8,9 +9,11 @@ import CardHeader from "@mui/material/CardHeader";
 import MenuList from "@mui/material/MenuList";
 import Skeleton from "@mui/material/Skeleton";
 import Typography, { TypographyOwnProps } from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 import MenuItem from "components/MenuItem";
 import Tooltip from "components/Tooltip";
 import { useSignOut } from "hooks/useSignOut";
+import { PROFILE } from "urls";
 import { getInitials, isEllipsisActive } from "utils/strings";
 import useStyles from "./ProfileMenu.styles";
 
@@ -18,6 +21,8 @@ type ProfileMenuProps = {
   name: string;
   email: string;
   isLoading?: boolean;
+  /** Called after an item that navigates, so the hosting popover can close. */
+  onItemClick?: () => void;
 };
 
 type ProfileItemLabelProps = {
@@ -44,14 +49,25 @@ const ProfileItemLabel = ({ variant, label, dataTestId }: ProfileItemLabelProps)
   return isOverflow ? <Tooltip title={label}>{getLabel}</Tooltip> : getLabel;
 };
 
-const ProfileMenu = ({ name, email, isLoading = false }: ProfileMenuProps) => {
+const ProfileMenu = ({ name, email, isLoading = false, onItemClick }: ProfileMenuProps) => {
   const { classes } = useStyles();
 
   const getProfileIcon = () => (name ? getInitials(name) : <AccountCircleOutlinedIcon />);
 
   const signOut = useSignOut();
+  const navigate = useNavigate();
 
   const menuItems = [
+    {
+      messageId: "profile",
+      icon: PersonOutlineIcon,
+      onClick: () => {
+        navigate(PROFILE);
+        onItemClick?.();
+      },
+      dataTestId: "btn_profile_page",
+      key: "profileKey",
+    },
     {
       messageId: "signOut",
       icon: ExitToAppOutlinedIcon,
