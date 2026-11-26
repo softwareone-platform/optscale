@@ -1,0 +1,315 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+
+{% set name = texts.organization.name %}
+{% set id = texts.organization.id %}
+{% include 'partials/organization_block.html' %}
+
+<!-- Description -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 0px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-bottom: 20px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                The following user has just joined the organization on <strong><a
+                                                    href="https://{{etcd.control_panel_link}}{{texts.control_panel_parameters}}"
+                                                    target="_blank"
+                                                    rel="noopener">{{etcd.control_panel_link}}</a></strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Summary -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <!-- User email -->
+                <tr>
+                    <td class="column column-1" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-top: 5px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                User email
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="70%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                <strong>{{texts.user.email}}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- Employee id -->
+                <tr>
+                    <td class="column column-1" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                Employee id
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="70%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                <strong>{{texts.user.id}}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- Authentication type -->
+                <tr>
+                    <td class="column column-1" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                Authentication type
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="70%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                <strong>{{texts.user.authentication_type}}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- Organization id -->
+                <tr>
+                    <td class="column column-1" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                Organization id
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="70%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                <strong>{{texts.organization.id}}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- Organization name -->
+                <tr>
+                    <td class="column column-1" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                Organization name
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="70%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                <strong>{{texts.organization.name}}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- Number of users in organization -->
+                <tr>
+                    <td class="column column-1" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                Number of users in organization
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="70%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                <strong>{{texts.users_count}}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+{% set gotoLink = 'https://' + etcd.control_panel_link + texts.control_panel_parameters %}
+{% include 'partials/goto_button.html' %}
+
+{% endblock %}

@@ -24,7 +24,7 @@ const UploadCloudReportData = ({ dataSourceType, onUpload, isLoading }: UploadCl
       isSubmitDisabled={isRestricted}
       submitButtonTooltip={{
         show: isRestricted,
-        value: restrictionReasonMessage,
+        value: restrictionReasonMessage
       }}
     />
   ) : (

@@ -8,6 +8,7 @@ import pika
 import pika.exceptions
 import yaml
 import etcd
+import botocore
 import boto3
 from boto3.session import Config as BotoConfig
 from sqlalchemy import create_engine
@@ -261,11 +262,14 @@ class Configurator(object):
                 }
             ]
         }
-        self.s3_client.put_bucket_lifecycle_configuration(
-            Bucket=bucket_name,
-            LifecycleConfiguration=lifecycle_config,
-        )
-        logger.info('Gemini bucket lifecycle configuration updated')
+        try:
+            self.s3_client.put_bucket_lifecycle_configuration(
+                Bucket=bucket_name,
+                LifecycleConfiguration=lifecycle_config,
+            )
+            logger.info('Gemini bucket lifecycle configuration updated')
+        except botocore.exceptions.ClientError as e:
+            logger.warning('Failed to update Gemini bucket lifecycle configuration: %s', e)
 
 
 if __name__ == "__main__":

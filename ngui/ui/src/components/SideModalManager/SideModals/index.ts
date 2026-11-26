@@ -141,5 +141,5 @@ export {
   MlDeleteArtifactModal,
   DataSourceBillingReimportModal,
   ShareRunLinkModal,
-  AwsAssumedRoleCredentialsModal,
+  AwsAssumedRoleCredentialsModal
 };

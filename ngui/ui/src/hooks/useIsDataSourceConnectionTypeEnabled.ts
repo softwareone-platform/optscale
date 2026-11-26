@@ -21,7 +21,7 @@ export const useIsDataSourceConnectionTypeEnabled = () => {
         [CONNECTION_TYPES.DATABRICKS]: true,
         [CONNECTION_TYPES.FOCUS]: true,
         [CONNECTION_TYPES.KUBERNETES]: true,
-        [CONNECTION_TYPES.NEBIUS]: isNebiusConnectionEnabled,
+        [CONNECTION_TYPES.NEBIUS]: isNebiusConnectionEnabled
       })[type] ?? false,
     [isNebiusConnectionEnabled]
   );

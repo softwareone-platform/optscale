@@ -1,0 +1,649 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+
+{% set name = texts.organization.name %}
+{% set id = texts.organization.id %}
+{% include 'partials/organization_block.html' %}
+
+<!-- Booking status change -->
+{% if texts.environment_status_changed %}
+{% set changed_environment = texts.environment_status_changed.changed_environment %}
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 0px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="padding-left: 0px; padding-right: 20px; padding-top: 20px; padding-bottom: 20px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style=" font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                The environment resource {{changed_environment.name}}
+                                                ({{changed_environment.id}}) from {{texts.organization.name}}
+                                                ({{texts.organization.id}}) organization has been
+                                                <strong>{{changed_environment.status}}</strong>.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endif %}
+
+<!-- Property change -->
+{% if texts.environment_prop_changed %}
+{% set changed_environment = texts.environment_prop_changed.changed_environment %}
+<!-- Property change > Description -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 0px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="padding-top: 20px; padding-bottom: 20px; padding-left: 0px; padding-right: 20px">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            <p style=" font-size:16px; margin: 0;  font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                Property of the environment resource {{changed_environment.name}}
+                                                ({{changed_environment.id}}) from {{texts.organization.name}}
+                                                ({{texts.organization.id}}) organization has been changed:</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Property change > Table header -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="40%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; vertical-align: top; border-top: 0px; border-right: 0px; border-left: 0px">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                        <strong>Property</strong>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; vertical-align: top; border-top: 0px; border-right: 0px; border-left: 0px">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                        <strong>Previous Value</strong>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; border-top: 0px; border-right: 0px; border-left: 0px">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                        <strong>New Value</strong>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Property change > Table -->
+{% if changed_environment.property_info %}
+{% set property_info = changed_environment.property_info %}
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="40%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                        {{property_info.name}}
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                        {{property_info.previous_value}}
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="30%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 0px dotted transparent; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                        {{property_info.new_value}}
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endif %}
+{% endif %}
+
+<!-- Activity state change -->
+{% if texts.environment_state_changed %}
+{% set changed_environment = texts.environment_state_changed.changed_environment %}
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 0px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="padding-top: 20px; padding-bottom: 20px; padding-left: 0px; padding-right: 20px">
+                                    <p style=" font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                        <strong>Activity state</strong>
+                                        of the environment resource {{changed_environment.name}}
+                                        ({{changed_environment.id}}) from {{texts.organization.name}}
+                                        ({{texts.organization.id}}) organization has been changed from
+                                        <strong>{{changed_environment.previous_value}}</strong>
+                                        to
+                                        <strong>{{changed_environment.new_value}}</strong>.
+                                    </p>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endif %}
+
+<!-- Environment Info > Table title -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 24px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="padding-top: 20px; padding-bottom: 20px; padding-left: 0px; padding-right: 20px">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                        <strong>Environment resource</strong>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Environment Info > Table header -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="25%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; border-top: 0px; border-right: 0px; border-left: 0px">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                        <strong>Environment</strong>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="25%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; border-top: 0px; border-right: 0px; border-left: 0px">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                        <strong>Pool</strong>
+
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="25%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; border-top: 0px; border-right: 0px; border-left: 0px">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                        <strong>Status</strong>
+
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-4" width="25%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; border-top: 0px; border-right: 0px; border-left: 0px">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                        <strong>Upcoming bookings</strong>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Environment Info > Table -->
+{% if texts.environments_infos %}
+{% set info = texts.environments_infos %}
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="25%"
+                        style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad">
+                                    <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 15px; mso-line-height-alt: 18px; color: #434952;">
+                                        <a href="https://{{etcd.control_panel_link}}/resources/{{info.resource_id}}{{texts.control_panel_parameters}}&tab=details"
+                                           target="_blank" rel="noopener">{{info.resource_name}}</a>
+                                    </p>
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                        {{info.resource_type}}
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="25%"
+                        style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                        {{info.pool}}
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-3" width="25%"
+                        style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px; border-bottom: 1px solid #e3e3e3;">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style=" padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-family: 'Trebuchet MS', Tahoma, sans-serif">
+                                        <div class="txtTinyMce-wrapper"
+                                             style="font-size: 20px; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; mso-line-height-alt: 18px; color: #333f53; line-height: 1.5">
+                                            {% set status_info = info.status %}
+                                            <p style="padding-left: 10px; padding-right: 10px; font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                                {{status_info.Status}}
+                                            </p>
+                                            {% set details = status.details %}
+                                            <p style="padding-top: 10px; padding-bottom: 10px; font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;  mso-line-height-alt: 18px; color: #434952;">
+                                        <span style="font-size: 14px">
+                                          User:
+                                          <strong>{{details.User}}</strong>
+                                        </span>
+                                            </p>
+                                            <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
+                                                Since:
+                                                <strong>{{details.Since}}</strong>
+                                            </p>
+                                            <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
+                                                Until:
+                                                <strong>{{details.Until}}</strong>
+                                            </p>
+                                            <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
+                                                Available in: <strong>{{details.Remained}}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-4" width="25%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left;  border-bottom: 1px solid #e3e3e3; border-left: 0px dotted transparent; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px;">
+                                    <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
+                                      {% for booking in  upcoming_bookings %}
+                                      {% set details = booking.details %}
+                                    <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
+                                        User:
+                                        <strong>{{details.User}}</strong>
+
+                                    </p>
+                                    <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
+                                        Since:
+                                        <strong>{{details.Since}}</strong>
+                                    </p>
+                                    <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
+                                        Until:
+                                        <strong>{{details.Until}}</strong>
+                                    </p>
+                                    <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
+                                        Duration:
+                                        <strong>{{details.Duration}}</strong>
+                                    </p>
+                                    {% set status_info = booking.status_info %}
+                                    <p style="padding-top: 10px; padding-bottom: 10px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 16px; mso-line-height-alt: 18px; color: #434952;">
+                                        <strong>{{status_info.Status}}</strong>
+                                    </p>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endif %}
+
+<!-- Environment properties -->
+{% if exts.environments_infos.contains_envs %}
+<!-- Environment properties > Table title -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #FFFFFF">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="100%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top; padding-top: 24px; padding-bottom: 0px; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px">
+                        <table class="text_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 0px; padding-right: 20px">
+                                    <p style="padding-top: 20px; padding-bottom: 20px; font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#434952;line-height:1.2;">
+                                        <strong>Environment resource properties</strong>
+                                    </p>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Environment properties > Table header -->
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="40%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px; border-left: 0px">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; border-bottom: 0px solid #333f53; border-left: 0px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                        <strong>Property</strong>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="60%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 1px solid #333f53; border-left: 1px solid #e3e3e3; vertical-align: top; border-top: 0px; border-right: 0px; border-left: 0px">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad"
+                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 15px; padding-right: 15px; padding-top: 8px; padding-bottom: 8px; vertical-align: top; border-top: 0px; border-right: 0px;">
+                                    <p style="font-size:16px; margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif;mso-line-height-alt:18px;color:#000000;line-height:1.2;">
+                                        <strong>Value</strong>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- Environment properties > Table content -->
+{% for env_prop in texts.environments_infos.env_properties %}
+<table class="row" align="left" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation"
+       style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f7f6f5">
+    <tbody>
+    <tr>
+        <td>
+            <table class="row-content" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation"
+                   style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 100%"
+                   width="100%">
+                <tbody>
+                <tr>
+                    <td class="column column-1" width="40%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 1px solid #e3e3e3; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px;">
+                                    <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 15px; mso-line-height-alt: 18px; color: #000000;">
+                                        {{env_prop.env_key}}
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="column column-2" width="60%"
+                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; border-bottom: 1px solid #e3e3e3; border-right: 0px dotted transparent; border-top: 0px dotted transparent; vertical-align: top">
+                        <table class="text_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word">
+                            <tr>
+                                <td class="pad" style="padding-left: 15px; padding-top: 15px; padding-bottom: 15px;">
+                                    <p style="margin: 0; font-family:Arial, 'Trebuchet MS', Tahoma, sans-serif; font-size: 15px; mso-line-height-alt: 18px; color: #000000;">
+                                        {{env_prop.env_value}}
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endfor %}
+{% endif %}
+
+{% set gotoLink = 'https://' + etcd.control_panel_link + '/environments/' + texts.control_panel_parameters %}
+{% include 'partials/goto_button.html' %}
+
+
+{% endblock %}

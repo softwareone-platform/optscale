@@ -10,7 +10,7 @@ const DropzoneArea = ({ acceptedFiles, name = FIELD_NAME, maxFileSizeMb = 512 })
     control,
     formState: { errors },
     trigger,
-    clearErrors,
+    clearErrors
   } = useFormContext();
 
   return (
@@ -20,7 +20,7 @@ const DropzoneArea = ({ acceptedFiles, name = FIELD_NAME, maxFileSizeMb = 512 })
       rules={{
         required: {
           value: true,
-          message: "selectFileToUpload",
+          message: "selectFileToUpload"
         },
         validate: {
           type: (value) => (!isAcceptedFile(value, acceptedFiles) ? "fileTypeNotSupported" : true),

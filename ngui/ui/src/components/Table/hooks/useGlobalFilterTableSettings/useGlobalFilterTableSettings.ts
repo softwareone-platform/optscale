@@ -46,34 +46,34 @@ export const useGlobalFilterTableSettings = <TData>({
   withSearch,
   queryParamPrefix,
   enableSearchQueryParam,
-  rangeFilter,
+  rangeFilter
 }: UseGlobalFilterTableSettingsParams<TData>): UseGlobalFilterTableSettingsResult<TData> => {
   const { search, onSearchChange } = useSearch<TData>({
     queryParamPrefix,
-    enableSearchQueryParam,
+    enableSearchQueryParam
   });
 
   const { range, onRangeChange } = useRange<TData>({
-    rangeFilter,
+    rangeFilter
   });
 
   const globalFilter = useMemo(
     () => ({
       search,
-      range,
+      range
     }),
     [range, search]
   );
 
   return {
     state: {
-      globalFilter,
+      globalFilter
     },
     tableOptions: {
       getFilteredRowModel: getFilteredRowModel(),
-      globalFilterFn: globalFilterFn({ columns, withSearch, rangeFilter }),
+      globalFilterFn: globalFilterFn({ columns, withSearch, rangeFilter })
     },
     onSearchChange,
-    onRangeChange,
+    onRangeChange
   };
 };

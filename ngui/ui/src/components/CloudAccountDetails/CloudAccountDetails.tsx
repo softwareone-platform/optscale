@@ -15,7 +15,7 @@ import {
   EditFocusMappingModal,
   RenameDataSourceModal,
   KubernetesIntegrationModal,
-  DataSourceBillingReimportModal,
+  DataSourceBillingReimportModal
 } from "components/SideModalManager/SideModals";
 import SummaryGrid from "components/SummaryGrid";
 import TabsWrapper from "components/TabsWrapper";
@@ -41,7 +41,7 @@ import {
   GCP_CNR,
   ALIBABA_CNR,
   NEBIUS,
-  GCP_TENANT,
+  GCP_TENANT
 } from "utils/constants";
 import { summarizeChildrenDetails } from "utils/dataSources";
 import { SPACING_2 } from "utils/layouts";
@@ -52,7 +52,7 @@ const {
   UPLOAD: UPLOAD_TAB,
   NODES: NODES_TAB,
   ADVANCED: ADVANCED_TAB,
-  PRICING: PRICING_TAB,
+  PRICING: PRICING_TAB
 } = CLOUD_ACCOUNT_DETAILS_PAGE_TABS;
 
 const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoading }) => {
@@ -84,9 +84,9 @@ const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoadi
           disabled: !hasPreviousImport,
           tooltip: {
             show: !hasPreviousImport,
-            value: <FormattedMessage id="dataSourceNoBillingReportsProcessedYet" />,
-          },
-        }),
+            value: <FormattedMessage id="dataSourceNoBillingReportsProcessedYet" />
+          }
+        })
       };
     };
 
@@ -103,9 +103,9 @@ const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoadi
           action: () =>
             openSideModal(KubernetesIntegrationModal, {
               dataSourceId: id,
-              user: config.user,
-            }),
-        }),
+              user: config.user
+            })
+        })
       },
       {
         show: true,
@@ -117,8 +117,8 @@ const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoadi
           type: "button",
           isLoading,
           action: () => openSideModal(RenameDataSourceModal, { name, id }),
-          requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
-        }),
+          requiredActions: ["MANAGE_CLOUD_CREDENTIALS"]
+        })
       },
       {
         show: type !== ENVIRONMENT,
@@ -134,9 +134,9 @@ const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoadi
           disabled: parentId,
           tooltip: {
             show: parentId,
-            value: <FormattedMessage id="updateChildDataSourceCredentialsWarning" />,
-          },
-        }),
+            value: <FormattedMessage id="updateChildDataSourceCredentialsWarning" />
+          }
+        })
       },
       {
         show: type === FOCUS,
@@ -162,9 +162,9 @@ const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoadi
           type: "button",
           isLoading,
           action: () => openSideModal(DisconnectCloudAccountModal, { name, id, type, parentId }),
-          requiredActions: ["MANAGE_CLOUD_CREDENTIALS"],
-        }),
-      },
+          requiredActions: ["MANAGE_CLOUD_CREDENTIALS"]
+        })
+      }
     ]
       .map(({ show, getItem }) => (show ? getItem() : null))
       .filter((item) => item !== null);
@@ -174,7 +174,7 @@ const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoadi
     breadcrumbs: [
       <Link key={1} to={CLOUD_ACCOUNTS} component={RouterLink}>
         <FormattedMessage id="dataSourcesTitle" />
-      </Link>,
+      </Link>
     ],
     title: {
       text: name,
@@ -184,12 +184,12 @@ const PageActionBar = ({ id, type, parentId, name, config, lastImportAt, isLoadi
         ? {
             src: logo,
             alt: type,
-            dataTestId: `img_${type}`,
+            dataTestId: `img_${type}`
           }
         : // TODO: icon is used fro Environment only, replace with custom svg and keep only `logo`
-          { icon: Icon && <Icon /> },
+          { icon: Icon && <Icon /> }
     },
-    items: getActionBarItems(),
+    items: getActionBarItems()
   };
 
   return <ActionBar data={actionBarDefinition} />;
@@ -204,67 +204,67 @@ const Summary = ({ lastMonthCost, cost, forecast, isLoading }) => {
             type: SUMMARY_CARD_TYPES.EXTENDED,
             valueComponentType: SUMMARY_VALUE_COMPONENT_TYPES.FormattedMoney,
             valueComponentProps: {
-              value: cost,
+              value: cost
             },
             captionMessageId: "totalExpensesMonthToDate",
             relativeValueComponentType: SUMMARY_VALUE_COMPONENT_TYPES.FormattedNumber,
             relativeValueComponentProps: {
               value: getPercentageChangeModule(cost, lastMonthCost) / 100,
-              format: "percentage",
+              format: "percentage"
             },
             relativeValueCaptionMessageId: cost > lastMonthCost ? "moreThanForPreviousMonth" : "lessThanForPreviousMonth",
             dataTestIds: {
-              cardTestId: "card_total_exp",
+              cardTestId: "card_total_exp"
             },
             color: cost > lastMonthCost ? "error" : "success",
-            isLoading,
+            isLoading
           },
           {
             key: "forecastForThisMonth",
             type: SUMMARY_CARD_TYPES.EXTENDED,
             valueComponentType: SUMMARY_VALUE_COMPONENT_TYPES.FormattedMoney,
             valueComponentProps: {
-              value: forecast,
+              value: forecast
             },
             captionMessageId: "forecastForThisMonth",
             relativeValueComponentType: SUMMARY_VALUE_COMPONENT_TYPES.FormattedNumber,
             relativeValueComponentProps: {
               value: getPercentageChangeModule(forecast, lastMonthCost) / 100,
-              format: "percentage",
+              format: "percentage"
             },
             relativeValueCaptionMessageId: forecast > lastMonthCost ? "moreThanForPreviousMonth" : "lessThanForPreviousMonth",
             dataTestIds: {
-              cardTestId: "card_forecast",
+              cardTestId: "card_forecast"
             },
             color: forecast > lastMonthCost ? "error" : "success",
-            isLoading,
-          },
+            isLoading
+          }
         ]
       : [
           {
             key: "totalExpensesMonthToDate",
             valueComponentType: SUMMARY_VALUE_COMPONENT_TYPES.FormattedMoney,
             valueComponentProps: {
-              value: cost,
+              value: cost
             },
             captionMessageId: "totalExpensesMonthToDate",
             dataTestIds: {
-              cardTestId: "card_total_exp",
+              cardTestId: "card_total_exp"
             },
-            isLoading,
+            isLoading
           },
           {
             key: "forecastForThisMonth",
             valueComponentType: SUMMARY_VALUE_COMPONENT_TYPES.FormattedMoney,
             valueComponentProps: {
-              value: forecast,
+              value: forecast
             },
             captionMessageId: "forecastForThisMonth",
             dataTestIds: {
-              cardTestId: "card_forecast",
+              cardTestId: "card_forecast"
             },
-            isLoading,
-          },
+            isLoading
+          }
         ];
 
   return <SummaryGrid summaryData={getSummaryData()} />;
@@ -287,7 +287,7 @@ const Tabs = ({
   lastImportSourceAccountId,
   config,
   isLoading,
-  isTenant,
+  isTenant
 }) => {
   const isAwsReportUploadEnabled = useIsFeatureEnabled("show_aws_upload_report");
 
@@ -307,7 +307,7 @@ const Tabs = ({
           lastImportSourceAccountId={lastImportSourceAccountId}
         />
       ),
-      renderCondition: () => type !== ENVIRONMENT,
+      renderCondition: () => type !== ENVIRONMENT
     },
     {
       title: ADVANCED_TAB,
@@ -325,7 +325,7 @@ const Tabs = ({
           withMonitoringMetricsImport={type !== FOCUS}
         />
       ),
-      renderCondition: () => !isTenant,
+      renderCondition: () => !isTenant
     },
     {
       title: UPLOAD_TAB,
@@ -337,14 +337,14 @@ const Tabs = ({
       title: NODES_TAB,
       dataTestId: "tab_cost_model",
       node: !!id && <DataSourceNodesContainer cloudAccountId={id} costModel={config.cost_model} />,
-      renderCondition: () => type === KUBERNETES_CNR,
+      renderCondition: () => type === KUBERNETES_CNR
     },
     {
       title: PRICING_TAB,
       dataTestId: "tab_pricing",
       node: !!id && <DataSourceSkusContainer dataSourceId={id} costModel={config.cost_model} />,
-      renderCondition: () => type === DATABRICKS,
-    },
+      renderCondition: () => type === DATABRICKS
+    }
   ];
 
   return (
@@ -353,7 +353,7 @@ const Tabs = ({
       tabsProps={{
         tabs,
         name: "cloud-account",
-        defaultTab: type === ENVIRONMENT ? ADVANCED_TAB : DETAILS_TAB,
+        defaultTab: type === ENVIRONMENT ? ADVANCED_TAB : DETAILS_TAB
       }}
     />
   );
@@ -376,7 +376,7 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
     last_import_source_id: lastImportSourceId,
     last_import_source_account_id: lastImportSourceAccountId,
     details = {},
-    config = {},
+    config = {}
   } = data;
 
   const dataSources = useAllDataSources();
@@ -389,7 +389,7 @@ const CloudAccountDetails = ({ data = {}, isLoading = false }) => {
     cost = 0,
     last_month_cost: lastMonthCost = 0,
     forecast = 0,
-    discovery_infos: discoveryInfos,
+    discovery_infos: discoveryInfos
   } = { ...details, ...childrenDetails };
 
   const isTenant = [AZURE_TENANT, GCP_TENANT].includes(type);

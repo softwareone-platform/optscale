@@ -19,7 +19,7 @@ import {
   FocusPropertiesProps,
   GcpPropertiesProps,
   K8sPropertiesProps,
-  NebiusPropertiesProps,
+  NebiusPropertiesProps
 } from "./Properties/types";
 
 type CloudAccountType =
