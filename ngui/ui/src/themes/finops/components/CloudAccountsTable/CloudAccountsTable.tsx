@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import { Box, Typography } from "@mui/material";
@@ -18,7 +19,7 @@ import TableLoader from "@main/components/TableLoader";
 import Tooltip from "@main/components/Tooltip";
 import { CLOUD_ACCOUNT_CONNECT } from "@main/urls";
 import { getColorScale } from "@main/utils/charts";
-import { FORMATTED_MONEY_TYPES } from "@main/utils/constants";
+import { AWS_CNR, FORMATTED_MONEY_TYPES } from "@main/utils/constants";
 import { BILLING_IMPORT_STATUS, getBillingImportStatus, summarizeChildrenDetails } from "@main/utils/dataSources";
 import { DataSourceTagCell } from "@theme/shared/components/DataSourceTagCell/DataSourceTagCell";
 import { MPT_BOX_WHITE_SHADOW_RADIUS_2, MPT_BUTTON_DEFAULT_SUCCESS_TO_PRIMARY } from "@theme/utils/layouts";
@@ -33,21 +34,59 @@ import { MPT_BOX_WHITE_SHADOW_RADIUS_2, MPT_BUTTON_DEFAULT_SUCCESS_TO_PRIMARY } 
  * Everything else is a verbatim fork of upstream so cell rendering stays in sync.
  */
 
+const LastImportedFromCaption = ({ cloudAccounts, lastImportSourceId, lastImportSourceAccountId, dataTestId }) => {
+  const rootDataSource = lastImportSourceId
+    ? cloudAccounts.find(({ id: cloudAccountId }) => cloudAccountId === lastImportSourceId)
+    : undefined;
+
+  const getValue = () => {
+    if (rootDataSource) {
+      return <CloudLabel id={rootDataSource.id} name={rootDataSource.name} type={rootDataSource.type} />;
+    }
+
+    if (lastImportSourceId || lastImportSourceAccountId) {
+      return (
+        <>
+          {lastImportSourceAccountId ?? lastImportSourceId} <FormattedMessage id="deletedLabel" />
+        </>
+      );
+    }
+
+    return <FormattedMessage id="unknown" />;
+  };
+
+  return (
+    <Typography
+      component="div"
+      variant="caption"
+      data-test-id={dataTestId}
+      sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
+    >
+      <FormattedMessage id="lastFilledByRootAccount" />: {getValue()}
+    </Typography>
+  );
+};
+
 const NameCell = ({
   row: {
     original: {
       id,
       name,
       type,
+      config,
       details: { cost } = {},
       last_import_at: lastImportAt,
       last_import_attempt_at: lastImportAttemptAt,
       last_import_attempt_error: lastImportAttemptError,
-      children
+      last_import_source_id: lastImportSourceId,
+      last_import_source_account_id: lastImportSourceAccountId,
+      children,
+      isMasterAwsAccount
     },
     index
   },
-  colorScale
+  colorScale,
+  cloudAccounts
 }) => {
   const importStatus = getBillingImportStatus({
     timestamp: lastImportAt,
@@ -55,34 +94,52 @@ const NameCell = ({
     error: lastImportAttemptError
   });
 
+  const isLinkedAwsAccount = type === AWS_CNR && config?.linked;
+
+  const captions = [
+    importStatus === BILLING_IMPORT_STATUS.ERROR && {
+      key: "import_failed",
+      node: (
+        <Typography component="div" variant="caption">
+          <Tooltip title={lastImportAttemptError}>
+            <span>
+              <IconLabel
+                icon={<ErrorOutlineOutlinedIcon fontSize="inherit" color="error" />}
+                label={<FormattedMessage id="billingImportFailed" />}
+              />
+            </span>
+          </Tooltip>
+        </Typography>
+      )
+    },
+    isLinkedAwsAccount && {
+      key: "last_import_from",
+      node: (
+        <LastImportedFromCaption
+          cloudAccounts={cloudAccounts}
+          lastImportSourceId={lastImportSourceId}
+          lastImportSourceAccountId={lastImportSourceAccountId}
+          dataTestId={`caption_last_import_from_${index}`}
+        />
+      )
+    }
+  ].filter(Boolean);
+
   return (
-    <CaptionedCell
-      caption={
-        importStatus === BILLING_IMPORT_STATUS.ERROR
-          ? {
-              key: "import_failed",
-              node: (
-                <Typography component="div" variant="caption">
-                  <Tooltip title={lastImportAttemptError}>
-                    <span>
-                      <IconLabel
-                        icon={<ErrorOutlineOutlinedIcon fontSize="inherit" color="error" />}
-                        label={<FormattedMessage id="billingImportFailed" />}
-                      />
-                    </span>
-                  </Tooltip>
-                </Typography>
-              )
-            }
-          : undefined
-      }
-    >
+    <CaptionedCell caption={captions.length ? captions : undefined}>
       <CloudLabel
         id={id}
         name={name}
         type={type}
         dataTestId={`link_cloud_${index}`}
         startAdornment={cost && !children ? <Circle color={colorScale(id)} mr={1} /> : null}
+        endAdornment={
+          isMasterAwsAccount ? (
+            <Tooltip title={<FormattedMessage id="awsRootAccountTooltip" />}>
+              <AccountTreeOutlinedIcon fontSize="small" color="action" sx={{ ml: 1 }} data-test-id={`icon_aws_root_${index}`} />
+            </Tooltip>
+          ) : null
+        }
       />
     </CaptionedCell>
   );
@@ -103,7 +160,7 @@ const CloudAccountsTable = ({ cloudAccounts = [], isLoading = false }) => {
         cell: (cellData) => (
           <div className={classes.nameCellWrapper}>
             <Expander row={cellData.row} />
-            <NameCell {...cellData} colorScale={colorScale} />
+            <NameCell {...cellData} colorScale={colorScale} cloudAccounts={cloudAccounts} />
           </div>
         )
       },
@@ -143,16 +200,21 @@ const CloudAccountsTable = ({ cloudAccounts = [], isLoading = false }) => {
     // `intl` in the deps re-computes headers when the language changes — useIntl returns a fresh
     // object per locale, so referencing it is enough. Upstream omits this on purpose (they use the
     // singleton, which never changes), so this line is the actual behavioural fix.
-  }, [theme.palette.chart, classes.nameCellWrapper, intl]);
+  }, [theme.palette.chart, classes.nameCellWrapper, intl, cloudAccounts]);
 
   const data = useMemo(
     () =>
       cloudAccounts
         .map((dataSource) => {
-          const { id } = dataSource;
+          const { id, type, config } = dataSource;
           const children = cloudAccounts.filter(({ parent_id: parentId }) => parentId === id);
           const childrenDetails = summarizeChildrenDetails(children);
-          return { ...dataSource, children, details: { ...dataSource.details, ...childrenDetails } };
+          return {
+            ...dataSource,
+            children,
+            isMasterAwsAccount: type === AWS_CNR && !config?.linked,
+            details: { ...dataSource.details, ...childrenDetails }
+          };
         })
         .filter(({ parent_id: parentId }) => !parentId),
     [cloudAccounts]
