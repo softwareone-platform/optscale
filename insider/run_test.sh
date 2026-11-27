@@ -20,10 +20,10 @@ do
         "uv --project insider/${SERVICE} run pylint --rcfile=insider/.pylintrc --fail-under=9 --fail-on=E,F ./insider/${SERVICE}"
     echo "<<<Pylint tests"
 
-    if [[ "${SERVICE}" == "insider_api" ]]; then
+    if [[ "${SERVICE}" == "insider_api" || "${SERVICE}" == "insider_worker" ]]; then
         echo "Unit tests>>>"
         docker run -i --rm ${TEST_IMAGE}:${BUILD_TAG}  bash -c \
-            "uv --project insider/${SERVICE} run python -m unittest discover ./insider/insider_api/tests"
+            "uv --project insider/${SERVICE} run python -m unittest discover ./insider/${SERVICE}/tests"
         echo "<<Unit tests"
     fi
 

@@ -471,6 +471,17 @@ insider_worker:
     repository: insider_worker
     tag: *tag
     pullPolicy: Never
+  cpu_request: 250m
+  memory_request: 1024
+  memory_limit: 4096
+  malloc_arena_max: 2
+  liveness:
+    file: /tmp/insider-worker-alive
+    # the file must have been touched within this many minutes
+    stale_minutes: 15
+    initial_delay_seconds: 60
+    period_seconds: 60
+    failure_threshold: 3
 
 insider_api:
   name: &insider_api_name insider-api

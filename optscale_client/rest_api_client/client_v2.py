@@ -6,10 +6,10 @@ from optscale_client.rest_api_client.client import Client as Client_v1
 class Client(Client_v1):
     def __init__(self, address="127.0.0.1", port="80", api_version="v2",
                  url=None, http_provider=None, token='', secret='',
-                 verify=True):
+                 verify=True, timeout=None):
         super().__init__(address=address, port=port, api_version=api_version,
                          url=url, http_provider=http_provider, token=token,
-                         secret=secret, verify=verify)
+                         secret=secret, verify=verify, timeout=timeout)
 
     def get(self, url, body=None):
         if body:

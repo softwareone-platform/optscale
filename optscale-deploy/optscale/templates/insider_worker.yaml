@@ -37,3 +37,28 @@ spec:
           value: {{ .Values.etcd.service.name }}
         - name: HX_ETCD_PORT
           value: {{ .Values.etcd.service.externalPort | quote }}
+        # limit glibc malloc arenas: the price diff allocates millions of
+        # small objects and fragmented arenas would keep RSS at the peak
+        - name: MALLOC_ARENA_MAX
+          value: {{ $config.malloc_arena_max | quote }}
+        - name: LIVENESS_FILE
+          value: {{ $config.liveness.file | quote }}
+        resources:
+          requests:
+            cpu: {{ $config.cpu_request }}
+            memory: {{ $config.memory_request }}Mi
+          limits:
+            memory: {{ $config.memory_limit }}Mi
+        # the worker touches the liveness file on every consumer loop
+        # iteration while idle and on every processed page of prices while a
+        # discovery runs; a hang anywhere stops the touches
+        livenessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - test -n "$(find {{ $config.liveness.file }} -mmin -{{ $config.liveness.stale_minutes }} 2>/dev/null)"
+          initialDelaySeconds: {{ $config.liveness.initial_delay_seconds }}
+          periodSeconds: {{ $config.liveness.period_seconds }}
+          timeoutSeconds: 5
+          failureThreshold: {{ $config.liveness.failure_threshold }}

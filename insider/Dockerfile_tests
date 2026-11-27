@@ -8,8 +8,8 @@ COPY tools tools
 COPY optscale_client/insider_client optscale_client/insider_client
 
 COPY insider/.pylintrc insider/.coveragerc ./insider/
-COPY insider/insider_api/pyproject.toml insider/insider_api/uv.lock ./insider/insider_api/
+COPY insider/${IMAGE}/pyproject.toml insider/${IMAGE}/uv.lock ./insider/${IMAGE}/
 
-RUN uv --project insider/insider_api sync --locked
+RUN uv --project insider/${IMAGE} sync --locked
 
-COPY insider/insider_api/tests insider/insider_api/tests
+COPY insider/${IMAGE}/tests insider/${IMAGE}/tests

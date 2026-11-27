@@ -93,9 +93,12 @@ class AbstractHttpProvider(metaclass=ABCMeta):
 
 
 class RequestsHttpProvider(AbstractHttpProvider):
-    def __init__(self, url, token='', secret='', verify=True):
+    def __init__(self, url, token='', secret='', verify=True, timeout=None):
         self.url = url
         self.verify = verify
+        # (connect, read) seconds or a single float; None keeps requests'
+        # default of waiting forever
+        self.timeout = timeout
         self.session = requests.session()
         super().__init__(token, secret)
 
@@ -111,7 +114,8 @@ class RequestsHttpProvider(AbstractHttpProvider):
             data.seek(0, 0)
 
         response = self.session.request(method, full_url, data=data,
-                                        headers=headers, verify=self.verify)
+                                        headers=headers, verify=self.verify,
+                                        timeout=self.timeout)
         response.raise_for_status()
         response_body = None
         if response.status_code != requests.codes.no_content:
@@ -163,12 +167,12 @@ class FetchMethodHttpProvider(AbstractHttpProvider):
 class Client:
     def __init__(self, address="127.0.0.1", port="80", api_version="v1",
                  url=None, http_provider=None, token='', secret='',
-                 verify=True):
+                 verify=True, timeout=None):
         if http_provider is None:
             if url is None:
                 url = "http://%s:%s" % (address, port)
             http_provider = RequestsHttpProvider(
-                url, token, secret, verify)
+                url, token, secret, verify, timeout=timeout)
         self._http_provider = http_provider
         self._api_version = api_version
 

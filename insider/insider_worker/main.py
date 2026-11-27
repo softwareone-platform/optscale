@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import time
 from datetime import datetime, timezone
 
 import urllib3
@@ -12,6 +13,7 @@ from kombu.utils.debug import setup_logging
 from kombu import Exchange, Queue
 
 from optscale_client.config_client.client import Client as ConfigClient
+from insider.insider_worker import liveness
 from insider.insider_worker.migrator import Migrator
 from insider.insider_worker.processors.factory import get_processor_class
 
@@ -22,6 +24,13 @@ LOG = get_logger(__name__)
 TASK_EXCHANGE = Exchange(EXCHANGE_NAME, type='direct')
 TASK_QUEUE = Queue(QUEUE_NAME, TASK_EXCHANGE, routing_key=QUEUE_NAME)
 DISCOVERIES_THRESHOLD = 43200  # 12 hours in seconds
+MONGO_CLIENT_OPTIONS = {
+    # fail fast when the replica set is unreachable instead of hanging
+    'serverSelectionTimeoutMS': 30000,
+    'connectTimeoutMS': 20000,
+    # a single insert_many / update_many of one page must never block forever
+    'socketTimeoutMS': 600000,
+}
 
 
 class InsiderWorker(ConsumerMixin):
@@ -34,7 +43,8 @@ class InsiderWorker(ConsumerMixin):
     def mongo_client(self):
         if not self._mongo_client:
             mongo_params = self.config_cl.mongo_params()
-            self._mongo_client = MongoClient(mongo_params[0])
+            self._mongo_client = MongoClient(
+                mongo_params[0], **MONGO_CLIENT_OPTIONS)
         return self._mongo_client
 
     @property
@@ -44,6 +54,13 @@ class InsiderWorker(ConsumerMixin):
     def get_consumers(self, consumer, channel):
         return [consumer(queues=[TASK_QUEUE], accept=['json'],
                          callbacks=[self.process_task], prefetch_count=1)]
+
+    def on_consume_ready(self, connection, channel, consumers, **kwargs):
+        liveness.touch(force=True)
+
+    def on_iteration(self):
+        # called by ConsumerMixin on every drain loop while idle
+        liveness.touch()
 
     def get_last_discovery_ts(self, cloud_type):
         discoveries = self.discoveries.find(
@@ -71,8 +88,20 @@ class InsiderWorker(ConsumerMixin):
             'completed_at': 0
         }).inserted_id
 
-        get_processor_class(cloud_type)(
-            self.mongo_client, self.config_cl).process_prices(last_discovery_ts)
+        try:
+            get_processor_class(cloud_type)(
+                self.mongo_client, self.config_cl).process_prices(
+                last_discovery_ts)
+        except Exception as exc:
+            # keep completed_at at 0 (the API relies on it) but make a
+            # failed run distinguishable from a running one
+            failed_at = int(datetime.now(tz=timezone.utc).timestamp())
+            self.discoveries.update_one(
+                filter={'_id': discovery_id},
+                update={'$set': {'failed_at': failed_at,
+                                 'error': str(exc)[:1000]}}
+            )
+            raise
 
         end_process_time = int(datetime.now(tz=timezone.utc).timestamp())
         self.discoveries.update_one(
@@ -85,12 +114,19 @@ class InsiderWorker(ConsumerMixin):
                  end_process_time - start_process_time)
 
     def process_task(self, body, message):
+        # The message is only a trigger: ack it before the (hours long)
+        # processing so the broker's consumer_timeout cannot close the
+        # channel and redeliver it, which restarted the discovery from zero.
+        # A crash mid-run costs at most one day; the scheduler re-triggers
+        # and DISCOVERIES_THRESHOLD prevents double runs.
+        message.ack()
+        liveness.touch(force=True)
         try:
             LOG.info('Started processing for task: %s', body)
             self._process_task(body)
         except Exception as exc:
             LOG.exception('Prices discovery failed: %s', str(exc))
-        message.ack()
+        liveness.touch(force=True)
 
 
 if __name__ == '__main__':
@@ -104,14 +140,19 @@ if __name__ == '__main__':
         port=int(os.environ.get('HX_ETCD_PORT')),
     )
     config_cl.wait_configured()
+    liveness.touch(force=True)
     conn_str = 'amqp://{user}:{pass}@{host}:{port}'.format(
         **config_cl.read_branch('/rabbit'))
     with Connection(conn_str) as conn:
         try:
             migrator = Migrator(
                 config_cl, 'insider', 'insider/insider_worker/migrations')
+            migration_start = time.monotonic()
             with EtcdLock(config_cl, 'insider_migrations'):
                 migrator.migrate()
+            LOG.info('Migrations checked in %s seconds',
+                     int(time.monotonic() - migration_start))
+            liveness.touch(force=True)
             worker = InsiderWorker(conn, config_cl)
             worker.run()
         except KeyboardInterrupt:
