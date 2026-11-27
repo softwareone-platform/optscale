@@ -28,6 +28,7 @@ import {
   QueryBillingSubscriptionPlansArgs,
   QueryBillingSubscriptionArgs,
   MutationScheduleGeminiDataPreparationArgs,
+  MutationScheduleDataSourceReimportArgs,
   QueryGeminiDataPreparationArgs,
 } from "../../graphql/__generated__/types/restapi";
 import { getParams } from "../../utils/getParams.js";
@@ -94,8 +95,12 @@ class RestApiClient extends BaseClient {
           ...params.alibabaConfig,
           ...params.nebiusConfig,
           ...params.databricksConfig,
+          ...params.focusConfig,
           ...params.k8sConfig,
         },
+        // FOCUS mapping is a top-level parameter; undefined is dropped from the JSON body, null (reset) is sent
+        mapping: params.mapping,
+        auto_import: params.autoImport,
       },
     });
 
@@ -112,7 +117,6 @@ class RestApiClient extends BaseClient {
       body: JSON.stringify({
         name: params.name,
         last_import_at: params.lastImportAt,
-        last_import_modified_at: params.lastImportModifiedAt,
         config: {
           ...params.awsRootConfig,
           ...params.awsLinkedConfig,
@@ -124,8 +128,12 @@ class RestApiClient extends BaseClient {
           ...params.alibabaConfig,
           ...params.nebiusConfig,
           ...params.databricksConfig,
+          ...params.focusConfig,
           ...params.k8sConfig,
         },
+        // FOCUS mapping is a top-level parameter; undefined is dropped from the JSON body, null (reset) is sent
+        mapping: params.mapping,
+        auto_import: params.autoImport,
       }),
     });
 
@@ -457,6 +465,21 @@ class RestApiClient extends BaseClient {
     const geminiDataPreparation = await this.get(path);
 
     return geminiDataPreparation;
+  }
+
+  async scheduleDataSourceReimport(
+    dataSourceId: MutationScheduleDataSourceReimportArgs["dataSourceId"],
+    importFrom: MutationScheduleDataSourceReimportArgs["importFrom"]
+  ) {
+    await this.post("schedule_imports", {
+      body: {
+        cloud_account_id: dataSourceId,
+        import_from: importFrom,
+        reimport: true,
+      },
+    });
+
+    return true;
   }
 }
 

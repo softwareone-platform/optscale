@@ -8,6 +8,7 @@ import {
   AZURE_CNR,
   AZURE_TENANT,
   DATABRICKS,
+  FOCUS,
   GCP_CNR,
   GCP_TENANT,
   KUBERNETES_CNR,
@@ -37,7 +38,7 @@ const UpdateDataSourceCredentialsContainer = ({
     return "awsRootConfig";
   };
 
-  const onSubmit = (dataSourceId: string, { config: newConfig }: Params) => {
+  const onSubmit = (dataSourceId: string, { config: newConfig, autoImport }: Params) => {
     const configName = {
       [AWS_CNR]: getAwsConfigName(newConfig),
       [AZURE_TENANT]: "azureTenantConfig",
@@ -47,16 +48,18 @@ const UpdateDataSourceCredentialsContainer = ({
       [ALIBABA_CNR]: "alibabaConfig",
       [NEBIUS]: "nebiusConfig",
       [DATABRICKS]: "databricksConfig",
-      [KUBERNETES_CNR]: "k8sConfig"
+      [FOCUS]: "focusConfig",
+      [KUBERNETES_CNR]: "k8sConfig",
     }[type];
 
     updateDataSource({
       variables: {
         dataSourceId,
         params: {
-          [configName]: newConfig
-        }
-      }
+          [configName]: newConfig,
+          autoImport,
+        },
+      },
     }).then(() => {
       refetch([GET_AVAILABLE_FILTERS]);
       closeSideModal();

@@ -31,6 +31,9 @@ const resolvers: Resolvers = {
         case "databricks": {
           return "DatabricksDataSource";
         }
+        case "focus": {
+          return "FocusDataSource";
+        }
         case "kubernetes_cnr": {
           return "K8sDataSource";
         }
@@ -117,6 +120,9 @@ const resolvers: Resolvers = {
     },
     updateDataSource: async (_, { dataSourceId, params }, { dataSources }) => {
       return dataSources.restapi.updateDataSource(dataSourceId, params);
+    },
+    scheduleDataSourceReimport: async (_, { dataSourceId, importFrom }, { dataSources }) => {
+      return dataSources.restapi.scheduleDataSourceReimport(dataSourceId, importFrom);
     },
     updateEmployeeEmails: async (_, { employeeId, params }, { dataSources }) => {
       return dataSources.restapi.updateEmployeeEmails(employeeId, params);

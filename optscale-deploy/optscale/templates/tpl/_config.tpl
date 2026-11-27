@@ -27,6 +27,7 @@ etcd:
   release: {{ .Values.release }}
   katara_scheduler_timeout: {{ .Values.katara_scheduler_timeout }}
   bumi_scheduler_timeout: {{ .Values.bumi_scheduler_timeout }}
+  product_tracking_id: {{ .Values.product_tracking_id }}
   bumi_worker:
     max_retries: {{ .Values.bumi_worker.max_retries }}
     wait_timeout: {{ .Values.bumi_worker.wait_timeout }}
@@ -52,6 +53,10 @@ etcd:
         {{ $key }}: {{ $value | quote }}
     {{- end }}
   domains_blacklists:
+    marketing:
+      {{- range .Values.domains_blacklists.marketing }}
+        - {{ . | quote }}
+      {{- end}}
     new_employee_email:
       {{- range .Values.domains_blacklists.new_employee_email }}
         - {{ . | quote }}
@@ -289,7 +294,6 @@ etcd:
   diworker:
     max_report_imports_workers: {{ .Values.import_reports.max_workers }}
     csv_rewrite_days: {{ .Values.import_reports.csv_rewrite_days }}
-    active_import_threshold_secs: {{ .Values.import_reports.active_import_threshold_secs }}
     opentelemetry:
       enable_threading: true
       enable_urllib3: true

@@ -1,4 +1,6 @@
 fragment AwsDataSourceConfigFragment on AwsDataSource {
+  last_import_source_id
+  last_import_source_account_id
   config {
     assume_role_account_id
     assume_role_name
@@ -90,6 +92,20 @@ fragment DatabricksDataSourceConfigFragment on DatabricksDataSource {
   }
 }
 
+fragment FocusDataSourceConfigFragment on FocusDataSource {
+  config {
+    bucket_name
+    bucket_prefix
+    s3_endpoint
+    region_name
+    credentials {
+      access_key_id
+    }
+    file_pattern
+    mapping
+  }
+}
+
 fragment K8sDataSourceConfigFragment on K8sDataSource {
   config {
     cost_model {
@@ -167,6 +183,7 @@ query DataSources($organizationId: ID!) {
     ...AlibabaDataSourceConfigFragment
     ...NebiusDataSourceConfigFragment
     ...DatabricksDataSourceConfigFragment
+    ...FocusDataSourceConfigFragment
     ...K8sDataSourceConfigFragment
   }
 }
@@ -211,6 +228,7 @@ query DataSource($dataSourceId: ID!, $requestParams: DataSourceRequestParams) {
     ...AlibabaDataSourceConfigFragment
     ...NebiusDataSourceConfigFragment
     ...DatabricksDataSourceConfigFragment
+    ...FocusDataSourceConfigFragment
     ...K8sDataSourceConfigFragment
   }
 }
@@ -332,8 +350,13 @@ mutation UpdateDataSource($dataSourceId: ID!, $params: UpdateDataSourceInput!) {
     ...AlibabaDataSourceConfigFragment
     ...NebiusDataSourceConfigFragment
     ...DatabricksDataSourceConfigFragment
+    ...FocusDataSourceConfigFragment
     ...K8sDataSourceConfigFragment
   }
+}
+
+mutation ScheduleDataSourceReimport($dataSourceId: ID!, $importFrom: Int!) {
+  scheduleDataSourceReimport(dataSourceId: $dataSourceId, importFrom: $importFrom)
 }
 
 mutation DeleteDataSource($dataSourceId: ID!) {
