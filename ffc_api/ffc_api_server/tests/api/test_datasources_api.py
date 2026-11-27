@@ -36,7 +36,6 @@ async def test_get_datasources_with_parent(
         parent=parent,
         account_id="1111",
         last_import_at=1677722000,
-        last_import_modified_at=1677722001,
         last_import_attempt_at=1677722002,
         last_import_attempt_error="credentials expired",
     )
@@ -51,7 +50,6 @@ async def test_get_datasources_with_parent(
     assert item["parent"]["name"] == "Tenant"
     assert item["parent"]["type"] == "azure_tenant"
     assert item["last_import_at"] == 1677722000
-    assert item["last_import_modified_at"] == 1677722001
     assert item["last_import_attempt_at"] == 1677722002
     assert item["last_import_attempt_error"] == "credentials expired"
 

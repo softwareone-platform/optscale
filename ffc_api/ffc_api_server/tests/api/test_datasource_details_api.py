@@ -57,7 +57,6 @@ def cloud_account_response(datasource: DataSource, config: dict, **overrides) ->
         "deleted_at": 0,
         "config": config,
         "last_import_at": 0,
-        "last_import_modified_at": 0,
         "last_import_attempt_at": 0,
         "last_import_attempt_error": None,
         "last_getting_metrics_at": 0,
@@ -316,6 +315,85 @@ async def test_get_gcp_datasource(
     assert_no_secrets(response.json())
 
 
+async def test_get_focus_datasource(
+    admin_client: AsyncClient,
+    organization: Organization,
+    datasource_factory: ModelFactory[DataSource],
+    cloud_account_get,
+):
+    datasource = await datasource_factory(
+        organization=organization, type="focus", account_id="0f1e2d3c4b5a69788796a5b4c3d2e1f0"
+    )
+    mapping = {"cost": {"column": "BilledCost"}}
+    config = {
+        "bucket_name": "focus-exports",
+        "bucket_prefix": "reports",
+        "s3_endpoint": "https://storage.example.com",
+        "region_name": "eu-central-1",
+        "credentials": {
+            "access_key_id": "AKIAFOCUS",
+            "secret_access_key": "focus-secret",
+        },
+        "file_pattern": r"\.parquet$",
+        "mapping": mapping,
+    }
+    cloud_account_get.return_value = (200, cloud_account_response(datasource, config))
+
+    response = await admin_client.get(f"/admin/datasources/{datasource.id}")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["type"] == "focus"
+    assert body["details"] == {
+        "connected_at": CREATED_AT_ISO,
+        "bucket_name": "focus-exports",
+        "bucket_prefix": "reports",
+        "s3_endpoint": "https://storage.example.com",
+        "region_name": "eu-central-1",
+        "access_key_id": "AKIAFOCUS",
+        "file_pattern": r"\.parquet$",
+        "mapping": mapping,
+    }
+    assert "focus-secret" not in response.text
+    assert_no_secrets(body)
+
+
+async def test_get_focus_datasource_anonymous_access(
+    admin_client: AsyncClient,
+    organization: Organization,
+    datasource_factory: ModelFactory[DataSource],
+    cloud_account_get,
+):
+    datasource = await datasource_factory(organization=organization, type="focus")
+    config = {"bucket_name": "public-focus", "bucket_prefix": "", "credentials": None}
+    cloud_account_get.return_value = (200, cloud_account_response(datasource, config))
+
+    response = await admin_client.get(f"/admin/datasources/{datasource.id}")
+
+    assert response.json()["details"] == {
+        "connected_at": CREATED_AT_ISO,
+        "bucket_name": "public-focus",
+        "bucket_prefix": "",
+    }
+    assert_no_secrets(response.json())
+
+
+async def test_get_focus_datasource_manual_upload(
+    admin_client: AsyncClient,
+    organization: Organization,
+    datasource_factory: ModelFactory[DataSource],
+    cloud_account_get,
+):
+    datasource = await datasource_factory(organization=organization, type="focus")
+    # an upload only datasource is created with an empty config
+    cloud_account_get.return_value = (200, cloud_account_response(datasource, {}))
+
+    response = await admin_client.get(f"/admin/datasources/{datasource.id}")
+
+    assert response.json()["details"] == {"connected_at": CREATED_AT_ISO}
+    assert_no_secrets(response.json())
+
+
 async def test_get_unsupported_type_has_no_details(
     admin_client: AsyncClient,
     organization: Organization,
@@ -398,7 +476,6 @@ async def test_get_datasource_successful_imports(
             AWS_ROOT_CONFIG,
             last_import_at=IMPORT_AT,
             last_import_attempt_at=IMPORT_AT,
-            last_import_modified_at=LATER,
             last_getting_metrics_at=IMPORT_AT,
             last_getting_metric_attempt_at=IMPORT_AT,
             details={
@@ -424,7 +501,6 @@ async def test_get_datasource_successful_imports(
     assert body["billing"] == {
         "last_report_processed_at": IMPORT_AT_ISO,
         "last_attempt_at": IMPORT_AT_ISO,
-        "last_report_updated_at": LATER_ISO,
         "status": "completed",
     }
     assert body["metrics"] == {

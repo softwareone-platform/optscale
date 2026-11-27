@@ -22,6 +22,7 @@ ALLOWED_TYPES = [
     CloudTypes.GCP_CNR,
     CloudTypes.AZURE_CNR,
     CloudTypes.AZURE_TENANT,
+    CloudTypes.FOCUS,
 ]
 
 
@@ -35,7 +36,6 @@ class DataSourceRead(DataSourceBase):
     parent: DataSourceBase | None = None
     tags: list[TagRef] = []
     last_import_at: int
-    last_import_modified_at: int
     last_import_attempt_at: int
     last_import_attempt_error: str | None
 
@@ -121,13 +121,31 @@ class GcpDetails(BaseSchema):
     billing_project_id: Annotated[str | None, Field(examples=["my-billing-project"])] = None
 
 
-DataSourceDetails = AzureSubscriptionDetails | AzureTenantDetails | AwsDetails | GcpDetails
+class FocusDetails(BaseSchema):
+    """
+    FOCUS cost and usage files in an S3-compatible storage: the bucket fields
+    are unset for a manual upload datasource and `access_key_id` is unset when
+    the bucket is accessed anonymously. The secret access key is never exposed.
+    """
+
+    connected_at: datetime | None
+    bucket_name: Annotated[str | None, Field(examples=["focus-exports"])] = None
+    bucket_prefix: Annotated[str | None, Field(examples=["reports"])] = None
+    s3_endpoint: Annotated[str | None, Field(examples=["https://storage.example.com"])] = None
+    region_name: Annotated[str | None, Field(examples=["eu-central-1"])] = None
+    access_key_id: Annotated[str | None, Field(examples=["AKIAIOSFODNN7EXAMPLE"])] = None
+    file_pattern: Annotated[str | None, Field(examples=[r"\.(csv|parquet)$"])] = None
+    mapping: dict[str, Any] | None = None
+
+
+DataSourceDetails = (
+    AzureSubscriptionDetails | AzureTenantDetails | AwsDetails | GcpDetails | FocusDetails
+)
 
 
 class BillingInfo(BaseSchema):
     last_report_processed_at: datetime | None = None
     last_attempt_at: datetime | None = None
-    last_report_updated_at: datetime | None = None
     status: ImportStatus
     error: Annotated[str | None, Field(examples=["Bucket not found"])] = None
 
